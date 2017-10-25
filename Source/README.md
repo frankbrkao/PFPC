@@ -45,6 +45,9 @@
   - Create a github project and upload the source, and then share this project to Louis (DONE: 1017)
 
 # Submit history
+* 57.60200_submit_dc_1026_032611.csv
+  - set the prediction of a village to zero if this village is in 澎湖縣, 連江縣, 金門縣 (remove unrepresentative data)
+
 * 57.44300_submit_dc_1024_165546.csv
   - random foreset, set ntree=5000
 
@@ -57,8 +60,8 @@
 
 * 56.67500_submit_dc_1018_1449.csv
   - Cleaning pole data (correct village name)
-  - random foreset, set ntree=3000
+  - random foreset, set ntree=3000
 
 * 56.55600_submit_dc_1015_vill.csv
-  - Integrating village-level data of pole, family (instead of district-level)
+  - Integrating village-level data of pole, family (instead of district-level)
 

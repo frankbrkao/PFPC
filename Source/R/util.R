@@ -7,7 +7,7 @@ data_pre_processing <- function() {
     data <- list()
     data$train  <- read.csv("./data/train.csv",  fileEncoding="UTF-8")
     data$submit <- read.csv("./data/submit.csv", fileEncoding="UTF-8")
-    data$lastpd <- read.csv("./submit/57.44300_submit_dc_1024_165546.csv", fileEncoding="UTF-8")
+    data$lastpd <- read.csv("./submit/57.60200_submit_dc_1026_032611.csv", fileEncoding="UTF-8")
 
     info <- collect_info(data=data$train, lastpd=data$lastpd)
 
@@ -28,7 +28,8 @@ collect_info <- function(data, lastpd) {
 
     info <- list()
 
-    info$tn_tp <- c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
+    # info$tn_tp <- c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
+    info$tn_tp <- c("Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
     info$ts_tp <- c("NesatAndHaitang", "Megi")
     info$feature <- c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
 
@@ -39,7 +40,12 @@ collect_info <- function(data, lastpd) {
     row_none_zero <- which(tmp_sum > 0)
     message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(tmp_sum), NROW(row_zero), NROW(row_none_zero)))
 
-    info$row_zero <- row_zero
+    row_zero_village = which(data$CityName == "澎湖縣") %>%
+        c(which(data$CityName == "連江縣")) %>%
+        c(which(data$CityName == "金門縣"))
+
+    # info$row_zero <- row_zero
+    info$row_zero <- unique(c(row_zero, row_zero_village))
 
     col_selL <- c("VilCode", info$tn_tp)
     col_selR <- c("VilCode", info$ts_tp)
