@@ -20,6 +20,14 @@
   - Paper survey - features, learning method
 
 # Log
+* 1025
+  - Code restructure
+    data_preprocessing()
+    collect_info()
+    build_rf_model()
+    damage_forecasting()
+    gen_submit()
+
 * 1023
   - Support to batch processing all typhoons info
 

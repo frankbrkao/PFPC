@@ -236,7 +236,7 @@ damage_forecasting <- function(model, raw, real, pair, feature, row_zero, row_ma
 
 # =================================================================================================
 
-gen_submit <- function(submit, pd) {
+gen_submit <- function(train, submit, pd, en_train=F) {
 
     submit <- data$submit
     col_submit <- c("CityName", "TownName", "VilCode", "VilName")
@@ -248,10 +248,16 @@ gen_submit <- function(submit, pd) {
 
     f_submit <- paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
     submit_dc <- cbind(submit[col_submit], pd["NesatAndHaitang"], pd["Megi"])
-    names(submit_dc)
     write.csv(submit_dc, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
-
     message(sprintf("save to %s", f_submit))
+
+    if (!en_train)
+        return ("")
+
+    # f_train: for the purpose of analysis
+    f_train  <- paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), "_train.csv"), collapse='')
+    train_dc <- cbind(train, pd["NesatAndHaitang"], pd["Megi"])
+    write.csv(train_dc, file=f_train, row.names=FALSE, fileEncoding="UTF-8")
 }
 
 # =================================================================================================
@@ -482,4 +488,3 @@ gen_family_info <- function() {
     # missing_r <- missing_r[is.na(missing_r$CityName),]
     # missing_r
 }
-

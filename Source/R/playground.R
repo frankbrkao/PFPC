@@ -58,6 +58,6 @@ pd <- damage_forecasting(
     row_max=info$row_max,
     magic=info$magic)
 
-gen_submit(submit=data$submit, pd=pd)
+gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
 
 # =================================================================================================
