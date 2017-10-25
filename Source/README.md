@@ -38,7 +38,7 @@
 
 # Submit history
 * 57.44300_submit_dc_1024_165546.csv
-  - random foreset, set ntree=3000
+  - random foreset, set ntree=5000
 
 * 57.40700_submit_dc_1020_233555.csv
   - Set the upper bound of a prediction according to the power failure history

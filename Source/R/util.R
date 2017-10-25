@@ -1,4 +1,193 @@
 
+# =================================================================================================
+
+data_pre_processing <- function() {
+    # 載入颱風停電戶資料
+
+    data <- list()
+    data$train  <- read.csv("./data/train.csv",  fileEncoding="UTF-8")
+    data$submit <- read.csv("./data/submit.csv", fileEncoding="UTF-8")
+    data$lastpd <- read.csv("./submit/57.44300_submit_dc_1024_165546.csv", fileEncoding="UTF-8")
+
+    info <- collect_info(data=data$train)
+
+    raw_village <- gen_village_info(raw=data$train)
+    data$tp     <- gen_tp_raw(vil=raw_village, tp_damage=data$train, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
+    
+    md <- list()
+    md$data <- data
+    md$info <- info
+
+    return (md)
+}
+
+# =================================================================================================
+# Define column and row index
+
+collect_info <- function(data) {
+
+    info <- list()
+
+    info$tn_tp <- c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
+    info$ts_tp <- c("NesatAndHaitang", "Megi")
+    info$feature <- c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
+
+    info$row_max <- apply(data[, info$tn_tp], 1, max)
+
+    tmp_sum <- rowSums(data[, info$tn_tp])
+    row_zero <- which(tmp_sum == 0)
+    row_none_zero <- which(tmp_sum > 0)
+    message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(tmp_sum), NROW(row_zero), NROW(row_none_zero)))
+
+    info$row_zero <- row_zero
+
+    return (info)
+}
+
+# =================================================================================================
+
+gen_gust_info <- function() {
+
+    # 各颱風風力資料
+    # 資料來源為颱風資料庫(http://rdc28.cwb.gov.tw/)
+    library(xlsx)
+    gust <- xlsx::read.xlsx("./data/gust.xlsx", 1)
+    names(gust)[1] <- "CityName"
+    write.csv(gust, file="./data/gust.csv", row.names=F, fileEncoding="UTF-8")
+}
+
+# =================================================================================================
+
+gen_village_info <- function(raw=train) {
+
+    pole   <- read.csv("./data/pole.csv",   fileEncoding="UTF-8", stringsAsFactors=F)
+    family <- read.csv("./data/family.csv", fileEncoding="UTF-8", stringsAsFactors=F)
+
+    col_sel <- c("CityName", "TownName", "VilName", "VilCode", "key")
+
+    raw$key  <- paste0(raw$CityName, raw$TownName, raw$VilName)
+    raw <- left_join(raw[col_sel], pole, by="key")
+    raw <- left_join(raw, family,  by="key")
+
+    # TODO: Correct family info
+    # Set the missing value to 0
+    raw[is.na(raw)] <- 0
+
+    return (raw)
+}
+
+# =================================================================================================
+
+remove_tp_prefix <- function (x) { 
+    if (regexpr("_", x)[1] == -1) 
+        return (x) 
+    else 
+        return( strsplit(x, "_")[[1]][2] ) 
+}
+
+gen_tp_raw <- function(village, tp_damage, tn_tp, ts_tp) {
+    
+    gust <- read.csv("./data/gust.csv", fileEncoding="UTF-8")
+
+    tp_list  <- c(tn_tp, ts_tp)
+    col_city <- c("CityName")
+    col_gust <- colnames(gust)
+    
+    raw <- list()
+    
+    for (i in 1:NROW(tp_list)) {
+        tp_name <- tp_list[i]
+        
+        col_tp_maxWind <- paste0(tolower(tp_name), "_maxWind")
+        col_tp_gust    <- paste0(tolower(tp_name), "_gust")
+        col_sel        <- c(col_city, col_tp_maxWind, col_tp_gust)
+        
+        if (col_sel[2] %in% col_gust) {
+            raw[[tp_name]] <- left_join(village, gust[, col_sel], by="CityName")
+            names(raw[[tp_name]]) = sapply(names(raw[[tp_name]]), remove_tp_prefix, USE.NAMES=FALSE)
+        } else {
+            message(paste0("[W] No info in table gust, skip: ", tp_name))
+        }
+    }
+    
+    for (i in 1:NROW(tn_tp)) {
+        tp_name <- tn_tp[i]
+        col_sel  <- c("VilCode", tp_name)
+        
+        if ( !is.null(raw[[tp_name]]) ) {
+            raw[[tp_name]] <- left_join(raw[[tp_name]], tp_damage[, col_sel], by="VilCode")
+            colnames(raw[[tp_name]])[colnames(raw[[tp_name]]) == tp_name] <- "tp"
+        }
+    }
+    
+    return (raw)
+}
+
+# =================================================================================================
+
+build_rf_model <- function(raw, scope, features, row_zero, row_max) {
+    rf <- list()
+
+    col_real <- c("tp")
+    col_sel  <- c(features, col_real)
+
+    for (i in 1:length(scope)) {
+        idx <- scope[i]
+        
+        if ( is.null(raw[[idx]]) ) {
+            rf[[idx]] <- NULL
+        } else {
+            rf[[idx]] <- randomForest(tp~., data=raw[[idx]][, col_sel])
+            # rf[[idx]] <- randomForest(tp~., data=raw[[idx]][, col_sel], ntree=5000)
+            real <- raw[[idx]][, col_real]
+            pred <- gen_predict(model=rf[[idx]], raw=raw[[idx]][, features], row_zero=row_zero, row_max=row_max, magic_value=1.53)
+            score <- CM(real, pred)
+            message(sprintf("Training score: %2.6f - %s", score, idx))
+        }
+    }
+    
+    return (rf)
+}
+
+# =================================================================================================
+
+#  Morisita Similarity (CM)
+CM <- function(x, y) {
+    # Check variable type
+    x <- as.numeric(x)
+    y <- as.numeric(y)
+
+    x <- ifelse(x < 0, 0, x)
+    y <- ifelse(y < 0, 0, y)
+
+    # The formula
+    sim <- 2*sum(x*y)/(sum(x^2+y^2))
+    
+    return(sim)
+}
+
+Scoring <- function(real, pred) {
+    
+    score_1 <- CM(real[, 1], pred[, 1])
+    score_2 <- CM(real[, 2], pred[, 2])
+    score <- (score_1 + score_2) / 2.0
+    score <- ifelse(score < 0, 0, score) * 100
+    
+    message("score 1: ", score_1)
+    message("score 2: ", score_2)
+    message("  Final: ", score)
+}
+
+gen_predict <- function(model, raw, row_zero, row_max, magic_value=1) {
+    pd <- predict(model, newdata=raw) * magic_value
+    pd[row_zero] <- 0
+    pd <- apply(cbind(row_max, pd), 1, min)
+
+    return(pd)
+}
+
+# =================================================================================================
+
 gen_pole_info <- function() {
 
     # =============================================================================================
@@ -226,132 +415,3 @@ gen_family_info <- function() {
     # missing_r
 }
 
-gen_gust_info <- function() {
-
-    # 各颱風風力資料
-    # 資料來源為颱風資料庫(http://rdc28.cwb.gov.tw/)
-    library(xlsx)
-    gust <- xlsx::read.xlsx("./data/gust.xlsx", 1)
-    names(gust)[1] <- "CityName"
-    write.csv(gust, file="./data/gust.csv", row.names=F, fileEncoding="UTF-8")
-}
-
-# =================================================================================================
-
-gen_village_info <- function(raw=train) {
-
-    pole   <- read.csv("./data/pole.csv",   fileEncoding="UTF-8", stringsAsFactors=F)
-    family <- read.csv("./data/family.csv", fileEncoding="UTF-8", stringsAsFactors=F)
-
-    col_sel <- c("CityName", "TownName", "VilName", "VilCode", "key")
-
-    raw$key  <- paste0(raw$CityName, raw$TownName, raw$VilName)
-    raw <- left_join(raw[col_sel], pole, by="key")
-    raw <- left_join(raw, family,  by="key")
-
-    # TODO: Correct family info
-    # Set the missing value to 0
-    raw[is.na(raw)] <- 0
-
-    return (raw)
-}
-
-# =================================================================================================
-
-gen_tp_raw <- function(vil, gust, tp, col_tp, is_training=T) {
-
-    col_city <- c("CityName")
-    raw <- list()
-
-    for (i in 1:NROW(col_tp)) {
-        tp_name  <- col_tp[i]
-        col_sel  <- c("VilCode", tp_name)
-
-        col_tp_maxWind <- paste0(tolower(tp_name), "_maxWind")
-        col_tp_gust    <- paste0(tolower(tp_name), "_gust")
-        col_gust       <- c(col_city, col_tp_maxWind, col_tp_gust)
-
-        if ((col_gust[2] %in% colnames(gust))) {
-            raw[[i]] <- left_join(vil, gust[, col_gust], by="CityName")
-
-            colnames(raw[[i]])[colnames(raw[[i]]) == tp_name] <- "tp"
-            colnames(raw[[i]])[colnames(raw[[i]]) == col_tp_maxWind] <- "maxWind"
-            colnames(raw[[i]])[colnames(raw[[i]]) == col_tp_gust]    <- "gust"
-
-            if (!is_training) 
-               next
-
-            raw[[i]] <- left_join(raw[[i]], tp[, col_sel], by="VilCode")
-            colnames(raw[[i]])[colnames(raw[[i]]) == tp_name] <- "tp"
-
-        } else {
-            message(paste0("[W] No info in table gust, skip: ", tp_name))
-        }
-    }
-
-    names(raw) <- col_tp 
-
-   return (raw)
-}
-
-# =================================================================================================
-
-build_rf_model <- function(raw, col_feature) {
-    rf <- list()
-
-    col_real <- c("tp")
-    col_sel  <- c(col_feature, col_real)
-
-    for (i in 1:length(raw)) {
-        if ( is.null(raw[[i]]) ) {
-            rf[[i]] <- NULL
-        } else {
-            rf[[i]] <- randomForest(tp~., data=raw[[i]][, col_sel])
-            real <- raw[[i]][, col_real]
-            pred <- gen_predict(model=rf[[i]], raw=raw[[i]][, col_feature], row_zero=row_zero, row_max=fp_max, magic_value=1.53)
-            score <- CM(real, pred)
-            message(sprintf("Training score: %2.6f - %s", score, names(raw[i])))
-        }
-    }
-
-    names(rf) <- names(raw)
-
-    return (rf)
-}
-
-# =================================================================================================
-
-#  Morisita Similarity (CM)
-CM <- function(x, y) {
-    # Check variable type
-    x <- as.numeric(x)
-    y <- as.numeric(y)
-
-    x <- ifelse(x < 0, 0, x)
-    y <- ifelse(y < 0, 0, y)
-
-    # The formula
-    sim <- 2*sum(x*y)/(sum(x^2+y^2))
-    
-    return(sim)
-}
-
-Scoring <- function(real, pred) {
-    
-    score_1 <- CM(real[, 1], pred[, 1])
-    score_2 <- CM(real[, 2], pred[, 2])
-    score <- (score_1 + score_2) / 2.0
-    score <- ifelse(score < 0, 0, score) * 100
-    
-    message("score 1: ", score_1)
-    message("score 2: ", score_2)
-    message("  Final: ", score)
-}
-
-gen_predict <- function(model, raw, row_zero, row_max, magic_value=1) {
-    pd <- predict(model, newdata=raw) * magic_value
-    pd[row_zero] <- 0
-    pd <- apply(cbind(row_max, pd), 1, min)
-
-    return(pd)
-}
