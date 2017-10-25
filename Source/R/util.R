@@ -9,11 +9,11 @@ data_pre_processing <- function() {
     data$submit <- read.csv("./data/submit.csv", fileEncoding="UTF-8")
     data$lastpd <- read.csv("./submit/57.44300_submit_dc_1024_165546.csv", fileEncoding="UTF-8")
 
-    info <- collect_info(data=data$train)
+    info <- collect_info(data=data$train, lastpd=data$lastpd)
 
     raw_village <- gen_village_info(raw=data$train)
     data$tp     <- gen_tp_raw(vil=raw_village, tp_damage=data$train, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
-    
+
     md <- list()
     md$data <- data
     md$info <- info
@@ -24,7 +24,7 @@ data_pre_processing <- function() {
 # =================================================================================================
 # Define column and row index
 
-collect_info <- function(data) {
+collect_info <- function(data, lastpd) {
 
     info <- list()
 
@@ -40,6 +40,15 @@ collect_info <- function(data) {
     message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(tmp_sum), NROW(row_zero), NROW(row_none_zero)))
 
     info$row_zero <- row_zero
+
+    col_selL <- c("VilCode", info$tn_tp)
+    col_selR <- c("VilCode", info$ts_tp)
+    tp_list <- c(info$tn_tp, info$ts_tp)
+
+    tp <- left_join(data[col_selL], lastpd[col_selR], by="VilCode")
+    info$real <- round(tp[tp_list], 0)
+    info$magic <- rep(1.57, length(tp_list))
+    names(info$magic) <- tp_list
 
     return (info)
 }
@@ -166,24 +175,83 @@ CM <- function(x, y) {
     return(sim)
 }
 
-Scoring <- function(real, pred) {
-    
-    score_1 <- CM(real[, 1], pred[, 1])
-    score_2 <- CM(real[, 2], pred[, 2])
-    score <- (score_1 + score_2) / 2.0
+scoring <- function(real, pred) {
+
+    score <- NULL
+
+    for ( i in 1:ncol(real) ) {
+        cm <- CM(real[, i], pred[, i])
+        name <- colnames(pred)[i]
+        message(sprintf("score %d: %2.8f - %s", i, cm, name))
+        score <- c(score, cm)
+    }
+
+    score <- mean(score)
     score <- ifelse(score < 0, 0, score) * 100
-    
-    message("score 1: ", score_1)
-    message("score 2: ", score_2)
     message("  Final: ", score)
 }
 
 gen_predict <- function(model, raw, row_zero, row_max, magic_value=1) {
     pd <- predict(model, newdata=raw) * magic_value
+    pd <- round(pd, 0)
     pd[row_zero] <- 0
     pd <- apply(cbind(row_max, pd), 1, min)
 
     return(pd)
+}
+
+# =================================================================================================
+
+damage_forecasting <- function(model, raw, real, pair, feature, row_zero, row_max, magic) {
+
+    # tn_real <- NULL
+    ts_real <- NULL
+    # tn_pred <- NULL
+    ts_pred <- NULL
+
+    for (i in 1:nrow(pair)) {
+
+        bs <- pair[i, 1]
+        tg <- pair[i, 2]
+
+        # tn_pd <- gen_predict(model=model[[bs]], raw=raw[[bs]][feature], row_zero=row_zero, row_max=row_max, magic_value=magic[bs])
+        ts_pd <- gen_predict(model=model[[bs]], raw=raw[[tg]][feature], row_zero=row_zero, row_max=row_max, magic_value=magic[tg])
+
+        # tn_real <- cbind(tn_real, real[[bs]])
+        # tn_pred <- cbind(tn_pred, tn_pd)
+        ts_real <- cbind(ts_real, real[[tg]])
+        ts_pred <- cbind(ts_pred, ts_pd)
+    }
+
+    # colnames(tn_pred) <- pair[,1]
+    colnames(ts_pred) <- pair[,2]
+
+    # scoring(tn_real, tn_pred)
+    message("  base: ", paste(pair[, 1], collapse=", "))
+    message("target: ", paste(pair[, 2], collapse=", "))
+    scoring(ts_real, ts_pred)
+
+    return(as.data.frame(ts_pred))
+}
+
+# =================================================================================================
+
+gen_submit <- function(submit, pd) {
+
+    submit <- data$submit
+    col_submit <- c("CityName", "TownName", "VilCode", "VilName")
+
+    pd_path <- paste(c(getwd(), "/prediction/"), collapse='')
+    if ( !dir.exists(pd_path) ) {
+        dir.create(pd_path)
+    }
+
+    f_submit <- paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
+    submit_dc <- cbind(submit[col_submit], pd["NesatAndHaitang"], pd["Megi"])
+    names(submit_dc)
+    write.csv(submit_dc, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+
+    message(sprintf("save to %s", f_submit))
 }
 
 # =================================================================================================
