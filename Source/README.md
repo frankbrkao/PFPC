@@ -20,6 +20,9 @@
   - Paper survey - features, learning method
 
 # Log
+* 1023
+  - Support to batch processing all typhoons info
+
 * 1021
   - Set zero: Set the predicted value of a village to zero if the records of this village is always 0
   - Set upper bound: the predicted value should not exceed the maximum of the historical records
@@ -34,6 +37,9 @@
   - Create a github project and upload the source, and then share this project to Louis (DONE: 1017)
 
 # Submit history
+* 57.44300_submit_dc_1024_165546.csv
+  - random foreset, set ntree=3000
+
 * 57.40700_submit_dc_1020_233555.csv
   - Set the upper bound of a prediction according to the power failure history
 
@@ -41,10 +47,10 @@
   - Cleaning partial family data (correct district / village name)
   - Set the prediction of a village to zero if this village has no record of power failure
 
-* submit_dc_1018_1449_56.67500.csv
+* 56.67500_submit_dc_1018_1449.csv
   - Cleaning pole data (correct village name)
   - random foreset, set ntree=3000
 
-* submit_dc_1015_vill_56.55600.csv
+* 56.55600_submit_dc_1015_vill.csv
   - Integrating village-level data of pole, family (instead of district-level)
 

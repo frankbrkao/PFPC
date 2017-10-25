@@ -6,7 +6,8 @@
 # install.packages("randomForest")
 # install.packages("rJava")
 
-setwd("~/Work/git/Power_Failure_Prediction/Source")
+setwd("~/git/PFPC/Source")
+# setwd("~/Work/git/Power_Failure_Prediction/Source")
 # setwd("~/Repo/Frank/Power_Failure_Prediction/Source")
 
 library(tidyverse)
@@ -33,7 +34,7 @@ if ( !dir.exists(pd_path) ) {
 train  <- read.csv("./data/train.csv",  fileEncoding="UTF-8")
 submit <- read.csv("./data/submit.csv", fileEncoding="UTF-8")
 gust   <- read.csv("./data/gust.csv",   fileEncoding="UTF-8")
-lastpd <- read.csv("./submit/57.40700_submit_dc_1020_233555.csv", fileEncoding="UTF-8")
+lastpd <- read.csv("./submit/57.33500_submit_dc_1020_061302.csv", fileEncoding="UTF-8")
 
 # =================================================================================================
 # Define column and row index
