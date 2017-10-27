@@ -1,22 +1,21 @@
-
 # =================================================================================================
 
-data_pre_processing <- function() {
+data_pre_processing = function() {
     # 載入颱風停電戶資料
 
-    data <- list()
-    data$train  <- read.csv("./data/train.csv",  fileEncoding="UTF-8")
-    data$submit <- read.csv("./data/submit.csv", fileEncoding="UTF-8")
-    data$lastpd <- read.csv("./submit/57.60200_submit_dc_1026_032611.csv", fileEncoding="UTF-8")
+    data = list()
+    data$train  = read.csv("./data/train.csv",  fileEncoding="UTF-8")
+    data$submit = read.csv("./data/submit.csv", fileEncoding="UTF-8")
+    data$lastpd = read.csv("./submit/57.60200_submit_dc_1026_032611.csv", fileEncoding="UTF-8")
 
-    info <- collect_info(data=data$train, lastpd=data$lastpd)
+    info = collect_info(train=data$train, lastpd=data$lastpd)
 
-    raw_village <- gen_village_info(raw=data$train)
-    data$tp     <- gen_tp_raw(vil=raw_village, tp_damage=data$train, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
+    raw_village = gen_village_info(raw=data$train)
+    data$tp     = gen_tp_raw(village=raw_village, train=data$train, lastpd=data$lastpd, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
 
-    md <- list()
-    md$data <- data
-    md$info <- info
+    md      = list()
+    md$data = data
+    md$info = info
 
     return (md)
 }
@@ -24,140 +23,162 @@ data_pre_processing <- function() {
 # =================================================================================================
 # Define column and row index
 
-collect_info <- function(data, lastpd) {
+collect_info = function(train, lastpd) {
 
-    info <- list()
+    info = list()
 
-    # info$tn_tp <- c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
-    info$tn_tp <- c("Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
-    info$ts_tp <- c("NesatAndHaitang", "Megi")
-    info$feature <- c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
+    # info$tn_tp = c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
+    # info$tn_tp = c("Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
+    info$tn_tp = c("Dujuan", "Soudelor", "Matmo", "Nepartak", "MerantiAndMalakas")
+    info$ts_tp = c("NesatAndHaitang", "Megi")
+    info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
 
-    info$row_max <- apply(data[, info$tn_tp], 1, max)
+    # info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市", "新竹市")
+    info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市")    
 
-    tmp_sum <- rowSums(data[, info$tn_tp])
-    row_zero <- which(tmp_sum == 0)
-    row_none_zero <- which(tmp_sum > 0)
-    message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(tmp_sum), NROW(row_zero), NROW(row_none_zero)))
+    # =============================================================================================
 
-    row_zero_village = which(data$CityName == "澎湖縣") %>%
-        c(which(data$CityName == "連江縣")) %>%
-        c(which(data$CityName == "金門縣"))
+    info$row_max = apply(train[, info$tn_tp], 1, max)
 
-    # info$row_zero <- row_zero
-    info$row_zero <- unique(c(row_zero, row_zero_village))
+    row_sum  = rowSums(train[, info$tn_tp])
+    row_zero = which(row_sum == 0)
+    row_none_zero = which(row_sum > 0)
 
-    col_selL <- c("VilCode", info$tn_tp)
-    col_selR <- c("VilCode", info$ts_tp)
-    tp_list <- c(info$tn_tp, info$ts_tp)
+    row_zero_village = which(train$CityName %in% info$city_ig)
 
-    tp <- left_join(data[col_selL], lastpd[col_selR], by="VilCode")
-    info$real <- round(tp[tp_list], 0)
-    info$magic <- rep(1.57, length(tp_list))
-    names(info$magic) <- tp_list
+    # info$row_zero = row_zero
+    info$row_zero = unique(c(row_zero, row_zero_village))
+    
+    message(sprintf("row_zero: %d, village_zero: %d", NROW(row_zero), NROW(row_zero_village)))
+    message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(row_sum), NROW(info$row_zero), NROW(row_none_zero)))
+    
+    # =============================================================================================
+
+    col_selL = c("VilCode", info$tn_tp)
+    col_selR = c("VilCode", info$ts_tp)
+    tp_list = c(info$tn_tp, info$ts_tp)
+
+    tp = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
+    info$real  = round(tp[tp_list], 0)
+    info$magic = rep(1.57, length(tp_list))
+    names(info$magic) = tp_list
+
+    # =============================================================================================
+
+    row_city = list()
+    info$cities = setdiff(levels(train$City), info$city_ig)
+
+    for (city in info$cities)
+        row_city[[city]] = which(train$CityName == city)
+
+    info$row_city = row_city
 
     return (info)
 }
 
 # =================================================================================================
 
-gen_gust_info <- function() {
+gen_gust_info = function() {
 
     # 各颱風風力資料
     # 資料來源為颱風資料庫(http://rdc28.cwb.gov.tw/)
     library(xlsx)
-    gust <- xlsx::read.xlsx("./data/gust.xlsx", 1)
-    names(gust)[1] <- "CityName"
+    gust = xlsx::read.xlsx("./data/gust.xlsx", 1)
+    names(gust)[1] = "CityName"
     write.csv(gust, file="./data/gust.csv", row.names=F, fileEncoding="UTF-8")
 }
 
 # =================================================================================================
 
-gen_village_info <- function(raw=train) {
+gen_village_info = function(raw=train) {
 
-    pole   <- read.csv("./data/pole.csv",   fileEncoding="UTF-8", stringsAsFactors=F)
-    family <- read.csv("./data/family.csv", fileEncoding="UTF-8", stringsAsFactors=F)
+    pole   = read.csv("./data/pole.csv",   fileEncoding="UTF-8", stringsAsFactors=F)
+    family = read.csv("./data/family.csv", fileEncoding="UTF-8", stringsAsFactors=F)
 
-    col_sel <- c("CityName", "TownName", "VilName", "VilCode", "key")
+    col_sel = c("CityName", "TownName", "VilName", "VilCode", "key")
 
-    raw$key  <- paste0(raw$CityName, raw$TownName, raw$VilName)
-    raw <- left_join(raw[col_sel], pole, by="key")
-    raw <- left_join(raw, family,  by="key")
+    raw$key  = paste0(raw$CityName, raw$TownName, raw$VilName)
+    raw = left_join(raw[col_sel], pole, by="key")
+    raw = left_join(raw, family,  by="key")
 
     # TODO: Correct family info
     # Set the missing value to 0
-    raw[is.na(raw)] <- 0
+    raw[is.na(raw)] = 0
 
     return (raw)
 }
 
 # =================================================================================================
 
-remove_tp_prefix <- function (x) { 
-    if (regexpr("_", x)[1] == -1) 
-        return (x) 
-    else 
-        return( strsplit(x, "_")[[1]][2] ) 
+remove_tp_prefix = function (x) {
+    if (regexpr("_", x)[1] == -1)
+        return (x)
+    else
+        return( strsplit(x, "_")[[1]][2] )
 }
 
-gen_tp_raw <- function(village, tp_damage, tn_tp, ts_tp) {
-    
-    gust <- read.csv("./data/gust.csv", fileEncoding="UTF-8")
+gen_tp_raw = function(village, train, lastpd, tn_tp, ts_tp) {
 
-    tp_list  <- c(tn_tp, ts_tp)
-    col_city <- c("CityName")
-    col_gust <- colnames(gust)
+    gust = read.csv("./data/gust.csv", fileEncoding="UTF-8")
+
+    tp_list  = c(tn_tp, ts_tp)
+    col_city = c("CityName")
+    col_gust = colnames(gust)
+
+    # =============================================================================================
     
-    raw <- list()
+    col_selL  = c("VilCode", tn_tp)
+    col_selR  = c("VilCode", ts_tp)
+    tp_outage = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
+
+    # =============================================================================================    
     
-    for (i in 1:NROW(tp_list)) {
-        tp_name <- tp_list[i]
-        
-        col_tp_maxWind <- paste0(tolower(tp_name), "_maxWind")
-        col_tp_gust    <- paste0(tolower(tp_name), "_gust")
-        col_sel        <- c(col_city, col_tp_maxWind, col_tp_gust)
-        
+    raw = list()
+
+    for (tp in tp_list) {
+
+        col_tp_maxWind = paste0(tolower(tp), "_maxWind")
+        col_tp_gust    = paste0(tolower(tp), "_gust")
+        col_sel        = c(col_city, col_tp_maxWind, col_tp_gust)
+        col_outage     = c("VilCode", tp)
+
         if (col_sel[2] %in% col_gust) {
-            raw[[tp_name]] <- left_join(village, gust[, col_sel], by="CityName")
-            names(raw[[tp_name]]) = sapply(names(raw[[tp_name]]), remove_tp_prefix, USE.NAMES=FALSE)
+            raw_tp = left_join(village, gust[, col_sel], by="CityName")
+            names(raw_tp) = sapply(names(raw_tp), remove_tp_prefix, USE.NAMES=FALSE)
+
+            raw_tp = left_join(raw_tp, tp_outage[, col_outage], by="VilCode")
+            colnames(raw_tp)[colnames(raw_tp) == tp] = "n_outage"
+            
+            raw[[tp]] = raw_tp
         } else {
-            message(paste0("[W] No info in table gust, skip: ", tp_name))
+            message(paste0("[W] No info in table gust, skip: ", tp))
         }
     }
-    
-    for (i in 1:NROW(tn_tp)) {
-        tp_name <- tn_tp[i]
-        col_sel  <- c("VilCode", tp_name)
-        
-        if ( !is.null(raw[[tp_name]]) ) {
-            raw[[tp_name]] <- left_join(raw[[tp_name]], tp_damage[, col_sel], by="VilCode")
-            colnames(raw[[tp_name]])[colnames(raw[[tp_name]]) == tp_name] <- "tp"
-        }
-    }
-    
+
     return (raw)
 }
 
 # =================================================================================================
 
-build_rf_model <- function(raw, scope, features, row_zero, row_max) {
-    rf <- list()
+build_rf_model = function(raw, targets) {
 
-    col_real <- c("tp")
-    col_sel  <- c(features, col_real)
-
-    for (i in 1:length(scope)) {
-        idx <- scope[i]
+    features = info$features
+    
+    rf = list()
+    col_real = c("n_outage")
+    col_sel  = c(features, col_real)
+    
+    for (tp in targets) {
+        tp_data = raw[[tp]]
         
-        if ( is.null(raw[[idx]]) ) {
-            rf[[idx]] <- NULL
+        if ( is.null(tp_data) ) {
+            rf[[tp]] = NULL
         } else {
-            rf[[idx]] <- randomForest(tp~., data=raw[[idx]][, col_sel])
-            # rf[[idx]] <- randomForest(tp~., data=raw[[idx]][, col_sel], ntree=5000)
-            real <- raw[[idx]][, col_real]
-            pred <- gen_predict(model=rf[[idx]], raw=raw[[idx]][, features], row_zero=row_zero, row_max=row_max, magic_value=1.53)
-            score <- CM(real, pred)
-            message(sprintf("Training score: %2.6f - %s", score, idx))
+            rf[[tp]] = randomForest(n_outage~., data=tp_data[, col_sel], ntree=500)
+            real = tp_data[, col_real]
+            pred = gen_predict(model=rf[[tp]], raw=tp_data[, features], magic_value=1)
+            cm = CM(real, pred)
+            message(sprintf("Training score: %2.6f - %s", cm, tp))
         }
     }
     
@@ -166,94 +187,187 @@ build_rf_model <- function(raw, scope, features, row_zero, row_max) {
 
 # =================================================================================================
 
-#  Morisita Similarity (CM)
-CM <- function(x, y) {
-    # Check variable type
-    x <- as.numeric(x)
-    y <- as.numeric(y)
+# col_real = c("n_outage")
+# col_sel  = c(info$features, col_real)
+# 
+# t = build_rf_city_model(
+#     raw=data$tp$Soudelor[, col_sel],
+#     city=info$cities,
+#     row_city=info$row_city,
+#     features=info$features)
+# 
+# for (i in 1:length(info$tn_tp)) {
+#     idx = info$tn_tp[i]
+#     message(idx)
+#     t = build_rf_city_model(
+#         raw=data$tp[[idx]][, col_sel],
+#         city=info$cities,
+#         row_city=info$row_city,
+#         features=info$features)
+# }
+# 
+# build_rf_city_model = function(raw, city, row_city, features) {
+# 
+#     # features = info$features
+#     
+#     col_real = c("n_outage")
+#     col_sel  = c(features, col_real)
+# 
+#     # raw = data$tp$Soudelor[, col_sel]
+#     # city = info$cities
+#     # row_city = info$row_city
+# 
+#     rf_city  = list()
+#     score    = NULL
+#     real     = raw[, col_real]
+#     pred     = rep(0, length(real))
+# 
+#     for (i in 1:length(city)) {
+#         idx = city[i]
+#         row_sel  = row_city[[idx]]
+# 
+#         tn = raw[row_sel, col_sel]
+#         row_zero      = which(tn$tp < 1)
+#         row_none_zero = which(tn$tp > 0)
+# 
+#         # rf_city[[idx]] = randomForest(n_outage~., raw[row_sel, col_sel])
+#         # message(length(row_none_zero))
+#         if (length(row_none_zero) > 15) {
+#             rf_city[[idx]] = randomForest(n_outage~., tn[row_none_zero,])
+#             pred[row_sel] = predict(rf_city[[idx]], newdata=tn[features])
+#         } else {
+#             pred[row_sel] = 0
+#         }
+#         # pd = predict(rf_city[[idx]], newdata=tn[features])
+#         # pd[row_zero] = 0
+#         # pred[row_sel] = pd
+#         if (sum(real[row_sel]) > 0) {
+#             cm = CM(real[row_sel], pred[row_sel])
+#         } else {
+#             cm = 1
+#         }
+#         
+#         score = c(score, cm)
+#         message(sprintf("%s: %2.6f", idx, cm))
+#         
+#         # real = raw[row_sel, col_real]
+#         # pred = predict(rf_city[[idx]], newdata=raw[row_sel, features])
+#         # pred = round(pred, 0)
+#         # pred[row_zero] = 0
+#         #
+#         # score = CM(real, pred)
+#         # message(sprintf("%s: %2.6f", idx, score))
+#     }
+#     #
+#     message(sprintf("Avg city score: %2.6f", mean(score)))
+#     
+#     pred = round(pred, 0)
+#     pred = apply(cbind(info$row_max, pred), 1, min)
+#     pred[info$row_zero] = 0
+#     cm    = CM(real, pred)
+#     score = c(score, cm)
+#     
+#     message(sprintf("Training score: %2.6f", cm))
+#     
+#     return (rf_city)
+# }
 
-    x <- ifelse(x < 0, 0, x)
-    y <- ifelse(y < 0, 0, y)
+# =================================================================================================
+
+#  Morisita Similarity (CM)
+CM = function(x, y) {
+    # Check variable type
+    x = as.numeric(x)
+    y = as.numeric(y)
+
+    x = ifelse(x < 0, 0, x)
+    y = ifelse(y < 0, 0, y)
 
     # The formula
-    sim <- 2*sum(x*y)/(sum(x^2+y^2))
-    
+    sim = 2*sum(x*y)/(sum(x^2+y^2))
+
     return(sim)
 }
 
-scoring <- function(real, pred) {
+scoring = function(real, pred, bs, tg) {
 
-    score <- NULL
+    score = NULL
 
     for ( i in 1:ncol(real) ) {
-        cm <- CM(real[, i], pred[, i])
-        name <- colnames(pred)[i]
-        message(sprintf("score %d: %2.8f - %s", i, cm, name))
-        score <- c(score, cm)
+        cm = CM(real[, i], pred[, i])
+        bs_name = bs[i]
+        tg_name = tg[i]
+        message(sprintf("score: %2.12f - bs: %-20s, tg: %-20s", cm, bs_name, tg_name))
+        score = c(score, cm)
     }
 
-    score <- mean(score)
-    score <- ifelse(score < 0, 0, score) * 100
-    message("  Final: ", score)
+    score = mean(score)
+    score = ifelse(score < 0, 0, score) * 100
+    message(sprintf("final: %2.12f", score))
 }
 
-gen_predict <- function(model, raw, row_zero, row_max, magic_value=1) {
-    pd <- predict(model, newdata=raw) * magic_value
-    pd <- round(pd, 0)
-    pd[row_zero] <- 0
-    pd <- apply(cbind(row_max, pd), 1, min)
+gen_predict = function(model, raw, magic_value=1) {
+    
+    row_zero = info$row_zero
+    row_max  = info$row_max
+    
+    pd = predict(model, newdata=raw) * magic_value
+    pd = round(pd, 0)
+    pd[row_zero] = 0
+    pd = apply(cbind(row_max, pd), 1, min)
 
     return(pd)
 }
 
 # =================================================================================================
 
-damage_forecasting <- function(model, raw, real, pair, feature, row_zero, row_max, magic) {
+power_outage_forecasting = function(model, raw, real, pair) {
 
-    # tn_real <- NULL
-    ts_real <- NULL
-    # tn_pred <- NULL
-    ts_pred <- NULL
-
+    features = info$features
+    magic    = info$magic
+    
+    # tn_real = NULL
+    ts_real = NULL
+    # tn_pred = NULL
+    ts_pred = NULL
+    
     for (i in 1:nrow(pair)) {
 
-        bs <- pair[i, 1]
-        tg <- pair[i, 2]
+        bs = pair[i, 1]
+        tg = pair[i, 2]
 
-        # tn_pd <- gen_predict(model=model[[bs]], raw=raw[[bs]][feature], row_zero=row_zero, row_max=row_max, magic_value=magic[bs])
-        ts_pd <- gen_predict(model=model[[bs]], raw=raw[[tg]][feature], row_zero=row_zero, row_max=row_max, magic_value=magic[tg])
+        # tn_pd = gen_predict(model=model[[bs]], raw=raw[[bs]][features], magic_value=magic[bs])
+        ts_pd = gen_predict(model=model[[bs]], raw=raw[[tg]][features], magic_value=magic[tg])
 
-        # tn_real <- cbind(tn_real, real[[bs]])
-        # tn_pred <- cbind(tn_pred, tn_pd)
-        ts_real <- cbind(ts_real, real[[tg]])
-        ts_pred <- cbind(ts_pred, ts_pd)
+        # tn_real = cbind(tn_real, real[[bs]])
+        # tn_pred = cbind(tn_pred, tn_pd)
+        ts_real = cbind(ts_real, real[[tg]])
+        ts_pred = cbind(ts_pred, ts_pd)
     }
 
-    # colnames(tn_pred) <- pair[,1]
-    colnames(ts_pred) <- pair[,2]
+    # colnames(tn_pred) = pair[,1]
+    colnames(ts_pred) = pair[,2]
 
     # scoring(tn_real, tn_pred)
-    message("  base: ", paste(pair[, 1], collapse=", "))
-    message("target: ", paste(pair[, 2], collapse=", "))
-    scoring(ts_real, ts_pred)
+    scoring(ts_real, ts_pred, pair[,1], pair[,2])
 
     return(as.data.frame(ts_pred))
 }
 
 # =================================================================================================
 
-gen_submit <- function(train, submit, pd, en_train=F) {
+gen_submit = function(train, submit, pd, en_train=F) {
 
-    submit <- data$submit
-    col_submit <- c("CityName", "TownName", "VilCode", "VilName")
+    submit = data$submit
+    col_submit = c("CityName", "TownName", "VilCode", "VilName")
 
-    pd_path <- paste(c(getwd(), "/prediction/"), collapse='')
+    pd_path = paste(c(getwd(), "/prediction/"), collapse='')
     if ( !dir.exists(pd_path) ) {
         dir.create(pd_path)
     }
 
-    f_submit <- paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
-    submit_dc <- cbind(submit[col_submit], pd["NesatAndHaitang"], pd["Megi"])
+    f_submit = paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
+    submit_dc = cbind(submit[col_submit], pd["NesatAndHaitang"], pd["Megi"])
     write.csv(submit_dc, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
     message(sprintf("save to %s", f_submit))
 
@@ -261,236 +375,235 @@ gen_submit <- function(train, submit, pd, en_train=F) {
         return ("")
 
     # f_train: for the purpose of analysis
-    f_train  <- paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), "_train.csv"), collapse='')
-    train_dc <- cbind(train, pd["NesatAndHaitang"], pd["Megi"])
+    f_train  = paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), "_train.csv"), collapse='')
+    train_dc = cbind(train, pd["NesatAndHaitang"], pd["Megi"])
     write.csv(train_dc, file=f_train, row.names=FALSE, fileEncoding="UTF-8")
 }
 
 # =================================================================================================
 
-gen_pole_info <- function() {
+gen_pole_info = function() {
 
     # =============================================================================================
 
     # 加入電桿資料
     # 資料來源為政府資料開放平台(https://data.gov.tw/dataset/33305)
-    poleString <- c("北北區處pole.csv",    "嘉義區處pole.csv",     "澎湖區處pole.csv",
-                    "北南區處pole.csv",    "基隆區處pole.csv",     "花蓮區處pole.csv",
-                    "北市區處pole.csv",    "宜蘭區處pole.csv",     "苗栗區處pole.csv",
-                    "北西區處pole.csv",    "屏東區處pole.csv",     "金門區處pole.csv",
-                    "南投區處pole.csv",    "彰化區處pole.csv",     "雲林區處pole.csv",
-                    "台中區處pole.csv",    "新營區處pole.csv",     "馬祖區處pole.csv",
-                    "台南區處pole.csv",    "新竹區處pole.csv",     "高雄區處pole.csv",
-                    "台東區處pole.csv",    "桃園區處pole.csv",     "鳳山區處pole.csv")
-    
-    pole_wd <- c()
-    for(i in 1:length(poleString)) {
-        pole_wd[i] <- paste0("./data/poledata/", poleString[i])
-    }
+    pole_files = c("北北區處pole.csv",    "嘉義區處pole.csv",     "澎湖區處pole.csv",
+                   "北南區處pole.csv",    "基隆區處pole.csv",     "花蓮區處pole.csv",
+                   "北市區處pole.csv",    "宜蘭區處pole.csv",     "苗栗區處pole.csv",
+                   "北西區處pole.csv",    "屏東區處pole.csv",     "金門區處pole.csv",
+                   "南投區處pole.csv",    "彰化區處pole.csv",     "雲林區處pole.csv",
+                   "台中區處pole.csv",    "新營區處pole.csv",     "馬祖區處pole.csv",
+                   "台南區處pole.csv",    "新竹區處pole.csv",     "高雄區處pole.csv",
+                   "台東區處pole.csv",    "桃園區處pole.csv",     "鳳山區處pole.csv")
 
-    pole <- list()
+    pole_wd = c()
+    for (f_pole in pole_files)
+        pole_wd[i] = paste0("./data/poledata/", f_pole)
+
+    pole = list()
 
     for(i in 1:length(pole_wd)) {
-        pole[[i]] <- read.csv(pole_wd[i], header=T, stringsAsFactors=F, sep="\t")
-        pole[[i]] <- pole[[i]][c("縣市", "行政區", "村里", "型式")]
+        pole[[i]] = read.csv(pole_wd[i], header=T, stringsAsFactors=F, sep="\t")
+        pole[[i]] = pole[[i]][c("縣市", "行政區", "村里", "型式")]
     }
-    
-    pole <- Reduce(x=pole, f=rbind)
+
+    pole = Reduce(x=pole, f=rbind)
 
     #清理電桿資料
-    pole$縣市   <- as.factor(pole$縣市)
-    pole$行政區 <- as.factor(pole$行政區)
-    pole$村里   <- as.factor(pole$村里)
-    pole$型式   <- as.factor(pole$型式)
+    pole$縣市   = as.factor(pole$縣市)
+    pole$行政區 = as.factor(pole$行政區)
+    pole$村里   = as.factor(pole$村里)
+    pole$型式   = as.factor(pole$型式)
 
-    levels(pole$縣市)   <- gsub(x=levels(pole$縣市), pattern="臺", replacement="台")
-    levels(pole$縣市)   <- gsub(x=levels(pole$縣市), pattern="台東", replacement="臺東")
-    levels(pole$行政區) <- gsub(x=levels(pole$行政區), pattern="頭份鎮", replacement="頭份市")
-    
-    pole$key <- paste0(pole$縣市, pole$行政區, pole$村里) %>% as.factor()
+    levels(pole$縣市)   = gsub(x=levels(pole$縣市), pattern="臺", replacement="台")
+    levels(pole$縣市)   = gsub(x=levels(pole$縣市), pattern="台東", replacement="臺東")
+    levels(pole$行政區) = gsub(x=levels(pole$行政區), pattern="頭份鎮", replacement="頭份市")
+
+    pole$key = paste0(pole$縣市, pole$行政區, pole$村里) %>% as.factor()
 
     # ==== Correct village info ===================================================================
-    
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="南投縣名間鄉部下村", replacement="南投縣名間鄉廍下村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="南投縣竹山鎮回瑤里", replacement="南投縣竹山鎮硘磘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台中市北屯區部子里", replacement="台中市北屯區廍子里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台中市外埔區部子里", replacement="台中市外埔區廍子里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台中市大安區龜殼里", replacement="台中市大安區龜壳村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台中市大肚區蔗部里", replacement="台中市大肚區蔗廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台中市清水區慷榔里", replacement="台中市清水區槺榔里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台中市西區公館里", replacement="台中市西區公舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台北市萬華區糖部里", replacement="台北市萬華區糖廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市七股區慷榔里", replacement="台南市七股區槺榔里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市七股區鹽埕里", replacement="台南市七股區塩埕里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市佳里區頂部里", replacement="台南市佳里區頂廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市安南區鹽田里", replacement="台南市安南區塩田里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市官田區南部里", replacement="台南市官田區南廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市山上區玉峰里", replacement="台南市山上區玉峯里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市後壁區後部里", replacement="台南市後壁區後廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市新化區山腳里", replacement="台南市新化區山脚里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市新化區那拔里", replacement="台南市新化區𦰡拔里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市新營區舊部里", replacement="台南市新營區舊廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市永康區鹽洲里", replacement="台南市永康區塩洲里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市永康區鹽行里", replacement="台南市永康區塩行里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市西港區羨林里", replacement="台南市西港區檨林里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市麻豆區寮部里", replacement="台南市麻豆區寮廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="台南市龍崎區石曹里", replacement="台南市龍崎區石𥕢里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義市西區磚瑤里", replacement="嘉義市西區磚磘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣中埔鄉石弄村", replacement="嘉義縣中埔鄉石硦村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣中埔鄉鹽館村", replacement="嘉義縣中埔鄉塩館村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣朴子市雙溪里", replacement="嘉義縣朴子市双溪里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣梅山鄉瑞峰村", replacement="嘉義縣梅山鄉瑞峯村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣梅山鄉雙溪村", replacement="嘉義縣梅山鄉双溪村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣民雄鄉雙福村", replacement="嘉義縣民雄鄉双福村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="嘉義縣竹崎鄉文峰村", replacement="嘉義縣竹崎鄉文峯村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市中正里", replacement="宜蘭縣宜蘭市東門里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市和睦里", replacement="宜蘭縣宜蘭市神農里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市大東里", replacement="宜蘭縣宜蘭市大新里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市大道里", replacement="宜蘭縣宜蘭市南門里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市慶和里", replacement="宜蘭縣宜蘭市北門里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市新興里", replacement="宜蘭縣宜蘭市大新里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市昇平里", replacement="宜蘭縣宜蘭市新民里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市民生里", replacement="宜蘭縣宜蘭市新民里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市鄂王里", replacement="宜蘭縣宜蘭市西門里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣新園鄉瓦瑤村", replacement="屏東縣新園鄉瓦磘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣東港鎮下部里", replacement="屏東縣東港鎮下廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣林邊鄉崎峰村", replacement="屏東縣林邊鄉崎峯村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣滿州鄉響林村", replacement="屏東縣滿州鄉响林村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣瑪家鄉涼山村", replacement="屏東縣瑪家鄉凉山村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣萬丹鄉廈北村", replacement="屏東縣萬丹鄉厦北村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣萬丹鄉廈南村", replacement="屏東縣萬丹鄉厦南村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣里港鄉三部村", replacement="屏東縣里港鄉三廍村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="屏東縣霧臺鄉霧台村", replacement="屏東縣霧臺鄉霧臺村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣二水鄉上豐村", replacement="彰化縣二水鄉上豊村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣員林市大峰里", replacement="彰化縣員林市大峯里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣埔心鄉南館村", replacement="彰化縣埔心鄉南舘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣埔心鄉埤腳村", replacement="彰化縣埔心鄉埤脚村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣埔心鄉新館村", replacement="彰化縣埔心鄉新舘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣埔心鄉舊館村", replacement="彰化縣埔心鄉舊舘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣埔鹽鄉瓦瑤村", replacement="彰化縣埔鹽鄉瓦磘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣埔鹽鄉部子村", replacement="彰化縣埔鹽鄉廍子村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣彰化市下部里", replacement="彰化縣彰化市下廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣彰化市寶部里", replacement="彰化縣彰化市寶廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣彰化市磚瑤里", replacement="彰化縣彰化市磚磘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="彰化縣芳苑鄉頂部村", replacement="彰化縣芳苑鄉頂廍村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市三峽區永館里", replacement="新北市三峽區永舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市中和區灰瑤里", replacement="新北市中和區灰磘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市中和區瓦瑤里", replacement="新北市中和區瓦磘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市土城區峰廷里", replacement="新北市土城區峯廷里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市坪林區石曹里", replacement="新北市坪林區石𥕢里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市新店區五峰里", replacement="新北市新店區五峯里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市板橋區公館里", replacement="新北市板橋區公舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市樹林區槍寮里", replacement="新北市樹林區獇寮里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市永和區新部里", replacement="新北市永和區新廍里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市瑞芳區濂新里", replacement="新北市瑞芳區濓新里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市瑞芳區濂洞里", replacement="新北市瑞芳區濓洞里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市瑞芳區爪峰里", replacement="新北市瑞芳區爪峯里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新北市萬里區崁腳里", replacement="新北市萬里區崁脚里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新竹縣北埔鄉水砌村", replacement="新竹縣北埔鄉水磜村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新竹縣竹東鎮上館里", replacement="新竹縣竹東鎮上舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="新竹縣竹東鎮雞林里", replacement="新竹縣竹東鎮鷄林里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="桃園市大園區果林里", replacement="桃園市大園區菓林里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="桃園市新屋區慷榔里", replacement="桃園市新屋區槺榔里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="桃園市蘆竹區大華里", replacement="桃園市龜山區大華里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="澎湖縣湖西鄉果葉村", replacement="澎湖縣湖西鄉菓葉村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="澎湖縣馬公市時裡里", replacement="澎湖縣馬公市嵵裡里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="臺東縣綠島鄉公館村", replacement="臺東縣綠島鄉公舘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="臺東縣達仁鄉台板村", replacement="臺東縣達仁鄉台坂村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="臺東縣達仁鄉土板村", replacement="臺東縣達仁鄉土坂村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="臺東縣關山鎮里龍里", replacement="臺東縣關山鎮里壠里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="苗栗縣三義鄉雙湖村", replacement="苗栗縣三義鄉双湖村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="苗栗縣三義鄉雙潭村", replacement="苗栗縣三義鄉双潭村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="苗栗縣竹南鎮公館里", replacement="苗栗縣竹南鎮公舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="苗栗縣苑裡鎮上館里", replacement="苗栗縣苑裡鎮上舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="苗栗縣苑裡鎮山腳里", replacement="苗栗縣苑裡鎮山脚里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="連江縣北竿鄉板里村", replacement="連江縣北竿鄉坂里村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣元長鄉瓦瑤村", replacement="雲林縣元長鄉瓦磘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣北港鎮公館里", replacement="雲林縣北港鎮公舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣口湖鄉台子村", replacement="雲林縣口湖鄉臺子村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣四湖鄉柏子村", replacement="雲林縣四湖鄉萡子村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣四湖鄉柏東村", replacement="雲林縣四湖鄉萡東村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣斗六市崙峰里", replacement="雲林縣斗六市崙峯里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣水林鄉舊埔村", replacement="雲林縣水林鄉𣐤埔村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣臺西鄉台西村", replacement="雲林縣臺西鄉臺西村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣西螺鎮公館里", replacement="雲林縣西螺鎮公舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="雲林縣麥寮鄉瓦瑤村", replacement="雲林縣麥寮鄉瓦磘村")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市左營區復興里", replacement="高雄市左營區永清里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市左營區部北里", replacement="高雄市左營區廍北里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市左營區部南里", replacement="高雄市左營區廍南里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市湖內區公館里", replacement="高雄市湖內區公舘里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市阿蓮區峰山里", replacement="高雄市阿蓮區峯山里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市鳥松區帝埔里", replacement="高雄市鳥松區坔埔里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市鳳山區海風里", replacement="高雄市鳳山區海光里")
-    levels(pole$key) <- gsub(x=levels(pole$key), pattern="高雄市鳳山區誠正里", replacement="高雄市鳳山區生明里")
+
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="南投縣名間鄉部下村", replacement="南投縣名間鄉廍下村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="南投縣竹山鎮回瑤里", replacement="南投縣竹山鎮硘磘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市北屯區部子里", replacement="台中市北屯區廍子里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市外埔區部子里", replacement="台中市外埔區廍子里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市大安區龜殼里", replacement="台中市大安區龜壳村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市大肚區蔗部里", replacement="台中市大肚區蔗廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市清水區慷榔里", replacement="台中市清水區槺榔里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市西區公館里", replacement="台中市西區公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台北市萬華區糖部里", replacement="台北市萬華區糖廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市七股區慷榔里", replacement="台南市七股區槺榔里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市七股區鹽埕里", replacement="台南市七股區塩埕里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市佳里區頂部里", replacement="台南市佳里區頂廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市安南區鹽田里", replacement="台南市安南區塩田里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市官田區南部里", replacement="台南市官田區南廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市山上區玉峰里", replacement="台南市山上區玉峯里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市後壁區後部里", replacement="台南市後壁區後廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市新化區山腳里", replacement="台南市新化區山脚里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市新化區那拔里", replacement="台南市新化區𦰡拔里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市新營區舊部里", replacement="台南市新營區舊廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市永康區鹽洲里", replacement="台南市永康區塩洲里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市永康區鹽行里", replacement="台南市永康區塩行里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市西港區羨林里", replacement="台南市西港區檨林里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市麻豆區寮部里", replacement="台南市麻豆區寮廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市龍崎區石曹里", replacement="台南市龍崎區石𥕢里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義市西區磚瑤里",   replacement="嘉義市西區磚磘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣中埔鄉石弄村", replacement="嘉義縣中埔鄉石硦村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣中埔鄉鹽館村", replacement="嘉義縣中埔鄉塩館村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣朴子市雙溪里", replacement="嘉義縣朴子市双溪里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣梅山鄉瑞峰村", replacement="嘉義縣梅山鄉瑞峯村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣梅山鄉雙溪村", replacement="嘉義縣梅山鄉双溪村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣民雄鄉雙福村", replacement="嘉義縣民雄鄉双福村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="嘉義縣竹崎鄉文峰村", replacement="嘉義縣竹崎鄉文峯村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市中正里", replacement="宜蘭縣宜蘭市東門里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市和睦里", replacement="宜蘭縣宜蘭市神農里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市大東里", replacement="宜蘭縣宜蘭市大新里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市大道里", replacement="宜蘭縣宜蘭市南門里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市慶和里", replacement="宜蘭縣宜蘭市北門里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市新興里", replacement="宜蘭縣宜蘭市大新里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市昇平里", replacement="宜蘭縣宜蘭市新民里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市民生里", replacement="宜蘭縣宜蘭市新民里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="宜蘭縣宜蘭市鄂王里", replacement="宜蘭縣宜蘭市西門里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣新園鄉瓦瑤村", replacement="屏東縣新園鄉瓦磘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣東港鎮下部里", replacement="屏東縣東港鎮下廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣林邊鄉崎峰村", replacement="屏東縣林邊鄉崎峯村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣滿州鄉響林村", replacement="屏東縣滿州鄉响林村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣瑪家鄉涼山村", replacement="屏東縣瑪家鄉凉山村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣萬丹鄉廈北村", replacement="屏東縣萬丹鄉厦北村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣萬丹鄉廈南村", replacement="屏東縣萬丹鄉厦南村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣里港鄉三部村", replacement="屏東縣里港鄉三廍村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="屏東縣霧臺鄉霧台村", replacement="屏東縣霧臺鄉霧臺村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣二水鄉上豐村", replacement="彰化縣二水鄉上豊村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣員林市大峰里", replacement="彰化縣員林市大峯里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣埔心鄉南館村", replacement="彰化縣埔心鄉南舘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣埔心鄉埤腳村", replacement="彰化縣埔心鄉埤脚村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣埔心鄉新館村", replacement="彰化縣埔心鄉新舘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣埔心鄉舊館村", replacement="彰化縣埔心鄉舊舘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣埔鹽鄉瓦瑤村", replacement="彰化縣埔鹽鄉瓦磘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣埔鹽鄉部子村", replacement="彰化縣埔鹽鄉廍子村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣彰化市下部里", replacement="彰化縣彰化市下廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣彰化市寶部里", replacement="彰化縣彰化市寶廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣彰化市磚瑤里", replacement="彰化縣彰化市磚磘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="彰化縣芳苑鄉頂部村", replacement="彰化縣芳苑鄉頂廍村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市三峽區永館里", replacement="新北市三峽區永舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市中和區灰瑤里", replacement="新北市中和區灰磘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市中和區瓦瑤里", replacement="新北市中和區瓦磘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市土城區峰廷里", replacement="新北市土城區峯廷里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市坪林區石曹里", replacement="新北市坪林區石𥕢里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市新店區五峰里", replacement="新北市新店區五峯里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市板橋區公館里", replacement="新北市板橋區公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市樹林區槍寮里", replacement="新北市樹林區獇寮里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市永和區新部里", replacement="新北市永和區新廍里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市瑞芳區濂新里", replacement="新北市瑞芳區濓新里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市瑞芳區濂洞里", replacement="新北市瑞芳區濓洞里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市瑞芳區爪峰里", replacement="新北市瑞芳區爪峯里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新北市萬里區崁腳里", replacement="新北市萬里區崁脚里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新竹縣北埔鄉水砌村", replacement="新竹縣北埔鄉水磜村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新竹縣竹東鎮上館里", replacement="新竹縣竹東鎮上舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="新竹縣竹東鎮雞林里", replacement="新竹縣竹東鎮鷄林里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="桃園市大園區果林里", replacement="桃園市大園區菓林里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="桃園市新屋區慷榔里", replacement="桃園市新屋區槺榔里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="桃園市蘆竹區大華里", replacement="桃園市龜山區大華里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="澎湖縣湖西鄉果葉村", replacement="澎湖縣湖西鄉菓葉村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="澎湖縣馬公市時裡里", replacement="澎湖縣馬公市嵵裡里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="臺東縣綠島鄉公館村", replacement="臺東縣綠島鄉公舘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="臺東縣達仁鄉台板村", replacement="臺東縣達仁鄉台坂村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="臺東縣達仁鄉土板村", replacement="臺東縣達仁鄉土坂村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="臺東縣關山鎮里龍里", replacement="臺東縣關山鎮里壠里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="苗栗縣三義鄉雙湖村", replacement="苗栗縣三義鄉双湖村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="苗栗縣三義鄉雙潭村", replacement="苗栗縣三義鄉双潭村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="苗栗縣竹南鎮公館里", replacement="苗栗縣竹南鎮公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="苗栗縣苑裡鎮上館里", replacement="苗栗縣苑裡鎮上舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="苗栗縣苑裡鎮山腳里", replacement="苗栗縣苑裡鎮山脚里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="連江縣北竿鄉板里村", replacement="連江縣北竿鄉坂里村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣元長鄉瓦瑤村", replacement="雲林縣元長鄉瓦磘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣北港鎮公館里", replacement="雲林縣北港鎮公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣口湖鄉台子村", replacement="雲林縣口湖鄉臺子村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣四湖鄉柏子村", replacement="雲林縣四湖鄉萡子村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣四湖鄉柏東村", replacement="雲林縣四湖鄉萡東村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣斗六市崙峰里", replacement="雲林縣斗六市崙峯里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣水林鄉舊埔村", replacement="雲林縣水林鄉𣐤埔村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣臺西鄉台西村", replacement="雲林縣臺西鄉臺西村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣西螺鎮公館里", replacement="雲林縣西螺鎮公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣麥寮鄉瓦瑤村", replacement="雲林縣麥寮鄉瓦磘村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市左營區復興里", replacement="高雄市左營區永清里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市左營區部北里", replacement="高雄市左營區廍北里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市左營區部南里", replacement="高雄市左營區廍南里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市湖內區公館里", replacement="高雄市湖內區公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市阿蓮區峰山里", replacement="高雄市阿蓮區峯山里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市鳥松區帝埔里", replacement="高雄市鳥松區坔埔里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市鳳山區海風里", replacement="高雄市鳳山區海光里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市鳳山區誠正里", replacement="高雄市鳳山區生明里")
 
     # =============================================================================================
-        
-    pole_type <- group_by(pole, key, 型式) %>%
+
+    pole_type = group_by(pole, key, 型式) %>%
         summarise(n=n()) %>%
         ungroup()
 
-    pole_type <- pole_type[apply(pole_type, 1, function(x) grepl("縣", x) || grepl("市", x)),]
-    pole_type <- spread(pole_type, key=key, value=n, fill=0)
-    pole_type <- t(pole_type[,-1]) %>% as.data.frame()
-    
-    names(pole_type) <- c("型式", "pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
+    pole_type = pole_type[apply(pole_type, 1, function(x) grepl("縣", x) || grepl("市", x)),]
+    pole_type = spread(pole_type, key=key, value=n, fill=0)
+    pole_type = t(pole_type[,-1]) %>% as.data.frame()
+
+    names(pole_type) = c("型式", "pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
     # 後面讀取中文欄位有錯，先將電桿種類的欄位都改用英文
     # 原資料為："3T桿", "H桿", "木併桿", "木桿", "水泥併桿",
     # "水泥桿", "用戶自備桿", "鋼併桿", "鋼桿", "電塔"
 
-    pole_type$key <- rownames(pole_type)
-    pole_type <- pole_type[, -1]
+    pole_type$key = rownames(pole_type)
+    pole_type = pole_type[, -1]
     write.csv(pole_type, file="./data/pole.csv", row.names=F, fileEncoding="UTF-8")
-    
+
     # ==== checking missing recorders =============================================================
-    # 
-    # train  <- read.csv("./data/train.csv",  fileEncoding="UTF-8")
-    # train$key  <- paste0(train$CityName, train$TownName, train$VilName)
-    # 
-    # missing_r <- right_join(train, pole_type, by="key")
-    # missing_r <- missing_r[is.na(missing_r$CityName),]
+    #
+    # train  = read.csv("./data/train.csv",  fileEncoding="UTF-8")
+    # train$key  = paste0(train$CityName, train$TownName, train$VilName)
+    #
+    # missing_r = right_join(train, pole_type, by="key")
+    # missing_r = missing_r[is.na(missing_r$CityName),]
     # missing_r
 }
 
-gen_family_info <- function() {
+gen_family_info = function() {
 
     # 加入人口戶數資料
     # 資料來源為政府資料開放平臺(https://data.gov.tw/dataset/32973#r0)
 
-    family <- read.csv("./data/opendata10603M030.csv", stringsAsFactors=F, fileEncoding="UTF-8-BOM")
+    family = read.csv("./data/opendata10603M030.csv", stringsAsFactors=F, fileEncoding="UTF-8-BOM")
     # family[263,3]
-    
-    family <- family[-1, c("site_id", "village", "household_no")]
-    family$site_id <- gsub(x=family$site_id, pattern="　",           replacement="")
-    family$site_id <- gsub(x=family$site_id, pattern="臺北",         replacement="台北")
-    family$site_id <- gsub(x=family$site_id, pattern="臺中",         replacement="台中")
-    family$site_id <- gsub(x=family$site_id, pattern="臺南",         replacement="台南")
-    family$site_id <- gsub(x=family$site_id, pattern="高雄市三民一", replacement="高雄市三民區")
-    family$site_id <- gsub(x=family$site_id, pattern="高雄市三民二", replacement="高雄市三民區")
-    family$site_id <- gsub(x=family$site_id, pattern="高雄市鳳山一", replacement="高雄市鳳山區")
-    family$site_id <- gsub(x=family$site_id, pattern="高雄市鳳山二", replacement="高雄市鳳山區")
-    family$key <- paste0(family$site_id, family$village)
-    
-    family$key <- gsub(x=family$key, pattern="台北市信義區富台里",   replacement="台北市信義區富臺里")
-    family$key <- gsub(x=family$key, pattern="台南市麻豆區晋江里",   replacement="台南市麻豆區晉江里")
-    family$key <- gsub(x=family$key, pattern="新竹縣竹北市中崙里",   replacement="新竹縣竹北市斗崙里")
-    family$key <- gsub(x=family$key, pattern="彰化縣彰化市南瑶里",   replacement="彰化縣彰化市南瑤里")
-    family$key <- gsub(x=family$key, pattern="雲林縣臺西鄉台西村",   replacement="雲林縣臺西鄉臺西村")
-    family$key <- gsub(x=family$key, pattern="雲林縣口湖鄉台子村",   replacement="雲林縣口湖鄉臺子村")
-    family$key <- gsub(x=family$key, pattern="嘉義縣中埔鄉塩舘村",   replacement="嘉義縣中埔鄉塩館村")
-    family$key <- gsub(x=family$key, pattern="屏東縣霧臺鄉霧台村",   replacement="屏東縣霧臺鄉霧臺村")
-    
-    family$household_no <- as.character(family$household_no) %>% as.numeric()
-    family_grp <- group_by(family, key) %>% summarise(household=sum(household_no)) 
+
+    family = family[-1, c("site_id", "village", "household_no")]
+    family$site_id = gsub(x=family$site_id, pattern="　",           replacement="")
+    family$site_id = gsub(x=family$site_id, pattern="臺北",         replacement="台北")
+    family$site_id = gsub(x=family$site_id, pattern="臺中",         replacement="台中")
+    family$site_id = gsub(x=family$site_id, pattern="臺南",         replacement="台南")
+    family$site_id = gsub(x=family$site_id, pattern="高雄市三民一", replacement="高雄市三民區")
+    family$site_id = gsub(x=family$site_id, pattern="高雄市三民二", replacement="高雄市三民區")
+    family$site_id = gsub(x=family$site_id, pattern="高雄市鳳山一", replacement="高雄市鳳山區")
+    family$site_id = gsub(x=family$site_id, pattern="高雄市鳳山二", replacement="高雄市鳳山區")
+    family$key = paste0(family$site_id, family$village)
+
+    family$key = gsub(x=family$key, pattern="台北市信義區富台里",   replacement="台北市信義區富臺里")
+    family$key = gsub(x=family$key, pattern="台南市麻豆區晋江里",   replacement="台南市麻豆區晉江里")
+    family$key = gsub(x=family$key, pattern="新竹縣竹北市中崙里",   replacement="新竹縣竹北市斗崙里")
+    family$key = gsub(x=family$key, pattern="彰化縣彰化市南瑶里",   replacement="彰化縣彰化市南瑤里")
+    family$key = gsub(x=family$key, pattern="雲林縣臺西鄉台西村",   replacement="雲林縣臺西鄉臺西村")
+    family$key = gsub(x=family$key, pattern="雲林縣口湖鄉台子村",   replacement="雲林縣口湖鄉臺子村")
+    family$key = gsub(x=family$key, pattern="嘉義縣中埔鄉塩舘村",   replacement="嘉義縣中埔鄉塩館村")
+    family$key = gsub(x=family$key, pattern="屏東縣霧臺鄉霧台村",   replacement="屏東縣霧臺鄉霧臺村")
+
+    family$household_no = as.character(family$household_no) %>% as.numeric()
+    family_grp = group_by(family, key) %>% summarise(household=sum(household_no))
     write.csv(family_grp, file="./data/family.csv", row.names=F, fileEncoding="UTF-8")
 
-    # TODO: 17 missing recorders    
+    # TODO: 17 missing recorders
     # ==== checking missing recorders =============================================================
-    # 
-    # train  <- read.csv("./data/train.csv",  fileEncoding="UTF-8")
-    # train$key  <- paste0(train$CityName, train$TownName, train$VilName)
-    # 
-    # missing_r <- right_join(train, family, by="key")
-    # missing_r <- missing_r[is.na(missing_r$CityName),]
+    #
+    # train  = read.csv("./data/train.csv",  fileEncoding="UTF-8")
+    # train$key  = paste0(train$CityName, train$TownName, train$VilName)
+    #
+    # missing_r = right_join(train, family, by="key")
+    # missing_r = missing_r[is.na(missing_r$CityName),]
     # missing_r
 }
