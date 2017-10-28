@@ -33,21 +33,12 @@ data = md$data
 info = md$info
 
 # =================================================================================================
-# Building up random forest model
+# Build random forest model
 rf = build_rf_model(raw=data$tp, targets=info$tn_tp)
 
 # =================================================================================================
-
-# for (i in 1:length(info$tn_tp)) {
-#     tp_name = info$tn_tp[i]
-#     
-#     real = info$real[[tp_name]]
-#     pred = real
-#     pred[t] = 0
-#     
-#     score = CM(real, pred)
-#     message(sprintf("CM: %2.6f - %s", score, tp_name))
-# }
+# Build random forest model per city
+rf_city = build_rf_city_model(raw=data$tp, targets=info$tn_tp)
 
 # =================================================================================================
 # Prediction and evaluation
@@ -63,30 +54,17 @@ gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
 
 # =================================================================================================
 
-info$tn_tp
-info$ts_tp
-
-pair = NULL
-
 bs = info$tn_tp
 bs = c(info$tn_tp[5])
 tg = info$tn_tp
 tg = info$ts_tp
-for (i in 1:length(bs)) {
-    bs_name = bs[i]
-    for (j in 1:length(tg)) {
-        tg_name = tg[j]
+pair = NULL
+
+for (bs_name in bs) {
+    for (tg_name in tg) {
         pair = rbind(pair, c(bs_name, tg_name))
         message(sprintf("%-20s, %-20s", bs_name, tg_name))
     }
 }
 
-pd = power_outage_forecasting(
-    model=rf,
-    raw=data$tp,
-    real=info$real,
-    pair=pair,
-    feature=info$feature,
-    row_zero=info$row_zero,
-    row_max=info$row_max,
-    magic=info$magic)
+pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=pair)

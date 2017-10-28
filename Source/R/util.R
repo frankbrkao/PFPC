@@ -34,7 +34,7 @@ collect_info = function(train, lastpd) {
     info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
 
     # info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市", "新竹市")
-    info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市")    
+    info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市")
 
     # =============================================================================================
 
@@ -187,90 +187,68 @@ build_rf_model = function(raw, targets) {
 
 # =================================================================================================
 
-# col_real = c("n_outage")
-# col_sel  = c(info$features, col_real)
-# 
-# t = build_rf_city_model(
-#     raw=data$tp$Soudelor[, col_sel],
-#     city=info$cities,
-#     row_city=info$row_city,
-#     features=info$features)
-# 
-# for (i in 1:length(info$tn_tp)) {
-#     idx = info$tn_tp[i]
-#     message(idx)
-#     t = build_rf_city_model(
-#         raw=data$tp[[idx]][, col_sel],
-#         city=info$cities,
-#         row_city=info$row_city,
-#         features=info$features)
-# }
-# 
-# build_rf_city_model = function(raw, city, row_city, features) {
-# 
-#     # features = info$features
-#     
-#     col_real = c("n_outage")
-#     col_sel  = c(features, col_real)
-# 
-#     # raw = data$tp$Soudelor[, col_sel]
-#     # city = info$cities
-#     # row_city = info$row_city
-# 
-#     rf_city  = list()
-#     score    = NULL
-#     real     = raw[, col_real]
-#     pred     = rep(0, length(real))
-# 
-#     for (i in 1:length(city)) {
-#         idx = city[i]
-#         row_sel  = row_city[[idx]]
-# 
-#         tn = raw[row_sel, col_sel]
-#         row_zero      = which(tn$tp < 1)
-#         row_none_zero = which(tn$tp > 0)
-# 
-#         # rf_city[[idx]] = randomForest(n_outage~., raw[row_sel, col_sel])
-#         # message(length(row_none_zero))
-#         if (length(row_none_zero) > 15) {
-#             rf_city[[idx]] = randomForest(n_outage~., tn[row_none_zero,])
-#             pred[row_sel] = predict(rf_city[[idx]], newdata=tn[features])
-#         } else {
-#             pred[row_sel] = 0
-#         }
-#         # pd = predict(rf_city[[idx]], newdata=tn[features])
-#         # pd[row_zero] = 0
-#         # pred[row_sel] = pd
-#         if (sum(real[row_sel]) > 0) {
-#             cm = CM(real[row_sel], pred[row_sel])
-#         } else {
-#             cm = 1
-#         }
-#         
-#         score = c(score, cm)
-#         message(sprintf("%s: %2.6f", idx, cm))
-#         
-#         # real = raw[row_sel, col_real]
-#         # pred = predict(rf_city[[idx]], newdata=raw[row_sel, features])
-#         # pred = round(pred, 0)
-#         # pred[row_zero] = 0
-#         #
-#         # score = CM(real, pred)
-#         # message(sprintf("%s: %2.6f", idx, score))
-#     }
-#     #
-#     message(sprintf("Avg city score: %2.6f", mean(score)))
-#     
-#     pred = round(pred, 0)
-#     pred = apply(cbind(info$row_max, pred), 1, min)
-#     pred[info$row_zero] = 0
-#     cm    = CM(real, pred)
-#     score = c(score, cm)
-#     
-#     message(sprintf("Training score: %2.6f", cm))
-#     
-#     return (rf_city)
-# }
+build_rf_city_model = function(raw, targets) {
+
+    features = info$features
+    col_sel  = c(features, "n_outage")
+
+    for (tp in targets) {
+        rf[[tp]] = randomForest_city(raw=raw[[tp]][, col_sel], target=tp)
+    }
+}
+
+randomForest_city = function(raw, target) {
+
+    cities   = info$cities
+    row_city = info$row_city
+    features = info$features
+    row_zero = info$row_zero
+
+    col_real = c("n_outage")
+    col_sel  = c(features, col_real)
+
+    # target="Dujuan"
+    # raw=data$tp[[target]][, col_sel]
+
+    rf_city  = list()
+    score    = NULL
+    real     = raw[, col_real]
+    pred     = rep(0, length(real))
+
+    for (city in cities) {
+        # city = cities[1]
+        row_sel   = row_city[[city]]
+        row_none_zero = setdiff(row_sel, row_zero)
+
+        if (length(row_none_zero) > 15) {
+            # rf_city[[city]] = randomForest(n_outage~., raw[row_sel, col_sel])
+            rf_city[[city]] = randomForest(n_outage~., data=raw[row_none_zero, col_sel])
+            pred[row_sel] = predict(rf_city[[city]], newdata=raw[row_sel, features])
+        }
+
+        if (sum(real[row_sel]) > 0) {
+            cm = CM(real[row_sel], pred[row_sel])
+        } else {
+            cm = 1
+        }
+
+        score = c(score, cm)
+        # message(sprintf("%s - %s: none zero: %d, sum: %2.8f", target, city, length(row_none_zero), sum(real[row_sel])))
+        message(sprintf("%s - %s: %2.6f", target, city, cm))
+    }
+
+    message(sprintf("Avg city score: %2.6f", mean(score)))
+
+    pred = round(pred, 0)
+    pred = apply(cbind(info$row_max, pred), 1, min)
+    pred[info$row_zero] = 0
+    cm    = CM(real, pred)
+    score = c(score, cm)
+
+    message(sprintf("Training score: %2.6f", cm))
+
+    return (rf_city)
+}
 
 # =================================================================================================
 
