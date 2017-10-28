@@ -1,6 +1,6 @@
 # Working items
 * More Features
-  - Download the detail of wind / rain info from 颱風資料庫(http://rdc28.cwb.gov.tw/)  
+  - Download the detail of wind / rain info from 颱風資料庫(http://rdc28.cwb.gov.tw/)
 
 * Clean data
   - Family
@@ -9,7 +9,7 @@
   - Predict the percenatge of failed household instead of # of failed household
 
 * Train
-  - Try: Only use village records which 
+  - Merge all typhoons' data to build one model
   - Try: xgboost
   - Implement cross validation
 
@@ -18,8 +18,36 @@
 
 * Survey
   - Paper survey - features, learning method
+  - 2014-Forecasting hurricane-induced power outage durations
+    https://www.researchgate.net/publication/271920161_Forecasting_hurricane-induced_power_outage_durations
+    
+
+# Reference data
+* 颱風資料
+  颱風資料庫
+  http://rdc28.cwb.gov.tw/
+
+* 電桿資料
+  政府資料開放平台 - 台灣電力公司_電桿坐標及桿號
+  https://data.gov.tw/dataset/33305
+  ./data/poledata/*pole.csv
+
+* 人口戶數資料
+  政府資料開放平臺 - 村里戶數、單一年齡人口
+  https://data.gov.tw/dataset/32973#r0
+  ./data/opendata10603M030.csv
+
+* 用電戶數
+  台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
+  http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
+  ./data/open_sell_amt_vil.csv
+
 
 # Log
+* 1028
+  - Code restructure
+  - Add function to build random forest model per city
+
 * 1025
   - Code restructure
     data_preprocessing()
