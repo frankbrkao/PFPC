@@ -10,7 +10,8 @@ data_pre_processing = function() {
 
     info = collect_info(train=data$train, lastpd=data$lastpd)
 
-    raw_village = gen_village_info(raw=data$train)
+    # raw_village = gen_village_info(raw=data$train)
+    raw_village = read.csv("./data/village.csv", fileEncoding="UTF-8")
     data$tp     = gen_tp_raw(village=raw_village, train=data$train, lastpd=data$lastpd, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
 
     md      = list()
@@ -48,10 +49,11 @@ collect_info = function(train, lastpd) {
 
     # info$row_zero = row_zero
     info$row_zero = unique(c(row_zero, row_zero_village))
+    info$vil_sel  = data$train$VilCode[row_none_zero]
     
     message(sprintf("row_zero: %d, village_zero: %d", NROW(row_zero), NROW(row_zero_village)))
     message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(row_sum), NROW(info$row_zero), NROW(row_none_zero)))
-    
+
     # =============================================================================================
 
     col_selL = c("VilCode", info$tn_tp)
@@ -104,6 +106,8 @@ gen_village_info = function(raw=train) {
     # TODO: Correct family info
     # Set the missing value to 0
     raw[is.na(raw)] = 0
+
+    write.csv(raw, file="./data/village.csv", row.names=F, fileEncoding="UTF-8")
 
     return (raw)
 }
@@ -182,6 +186,41 @@ build_rf_model = function(raw, targets) {
         }
     }
     
+    return (rf)
+}
+
+# =================================================================================================
+
+build_rf_model_alldata = function(raw, targets) {
+
+    features = info$features
+    vil_sel  = info$vil_sel
+
+    rf = list()
+    col_real = c("n_outage")
+    col_sel  = c(features, col_real)
+
+    tn <- NULL
+
+    for (tp in targets) {
+        tp_data = raw[[tp]]
+        tn = rbind(tn, tp_data[, col_sel])
+    }
+
+    data_vil = as.data.frame(vil_sel)
+    names(data_vil) = c("VilCode")
+
+    data_sel = inner_join(tp_data, data_vil, by="VilCode")
+    rf = randomForest(n_outage~., data=data_sel[, col_sel], ntree=500)
+
+    for (tp in targets) {
+        tp_data = raw[[tp]]
+        real = tp_data[, col_real]
+        pred = gen_predict(model=rf, raw=tp_data[, features], magic_value=1)
+        cm = CM(real, pred)
+        message(sprintf("Training score: %2.6f - %s", cm, tp))
+    }
+
     return (rf)
 }
 

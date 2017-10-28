@@ -36,6 +36,9 @@ info = md$info
 # Build random forest model
 rf = build_rf_model(raw=data$tp, targets=info$tn_tp)
 
+# Using all data to build one random forest model
+rf_all = build_rf_model_alldata(raw=data$tp, targets=info$tn_tp)
+
 # =================================================================================================
 # Build random forest model per city
 rf_city = build_rf_city_model(raw=data$tp, targets=info$tn_tp)
