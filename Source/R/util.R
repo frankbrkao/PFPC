@@ -415,12 +415,14 @@ gen_pole_info = function() {
                    "台東區處pole.csv",    "桃園區處pole.csv",     "鳳山區處pole.csv")
 
     pole_wd = c()
-    for (f_pole in pole_files)
+    for (i in 1:length(pole_files)) {
+        f_pole = pole_files[i]
         pole_wd[i] = paste0("./data/poledata/", f_pole)
+    }
 
     pole = list()
 
-    for(i in 1:length(pole_wd)) {
+    for (i in 1:length(pole_wd)) {
         pole[[i]] = read.csv(pole_wd[i], header=T, stringsAsFactors=F, sep="\t")
         pole[[i]] = pole[[i]][c("縣市", "行政區", "村里", "型式")]
     }
@@ -448,7 +450,7 @@ gen_pole_info = function() {
     levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市大安區龜殼里", replacement="台中市大安區龜壳村")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市大肚區蔗部里", replacement="台中市大肚區蔗廍里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市清水區慷榔里", replacement="台中市清水區槺榔里")
-    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市西區公館里", replacement="台中市西區公舘里")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="台中市西區公館里",   replacement="台中市西區公舘里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="台北市萬華區糖部里", replacement="台北市萬華區糖廍里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市七股區慷榔里", replacement="台南市七股區槺榔里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="台南市七股區鹽埕里", replacement="台南市七股區塩埕里")
@@ -540,7 +542,7 @@ gen_pole_info = function() {
     levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣四湖鄉柏子村", replacement="雲林縣四湖鄉萡子村")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣四湖鄉柏東村", replacement="雲林縣四湖鄉萡東村")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣斗六市崙峰里", replacement="雲林縣斗六市崙峯里")
-    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣水林鄉舊埔村", replacement="雲林縣水林鄉𣐤埔村")
+    levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣水林鄉舊埔村", replacement="雲林縣水林鄉瓊埔村")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣臺西鄉台西村", replacement="雲林縣臺西鄉臺西村")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣西螺鎮公館里", replacement="雲林縣西螺鎮公舘里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="雲林縣麥寮鄉瓦瑤村", replacement="雲林縣麥寮鄉瓦磘村")
@@ -552,6 +554,19 @@ gen_pole_info = function() {
     levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市鳥松區帝埔里", replacement="高雄市鳥松區坔埔里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市鳳山區海風里", replacement="高雄市鳳山區海光里")
     levels(pole$key) = gsub(x=levels(pole$key), pattern="高雄市鳳山區誠正里", replacement="高雄市鳳山區生明里")
+
+    # =============================================================================================
+
+    lv_key = levels(pole$key)
+    row_t1 = grep(x=lv_key, pattern="雲林縣水林鄉")
+    row_t2 = grep(x=lv_key, pattern="埔村")
+    row_t3 = grep(x=lv_key, pattern="雲林縣水林鄉春埔村")
+    row_t4 = grep(x=lv_key, pattern="雲林縣水林鄉海埔村")
+    row_t5 = intersect(row_t1, row_t2)
+    row_t5 = setdiff(row_t5, row_t3)
+    row_t5 = setdiff(row_t5, row_t4)
+
+    levels(pole$key) = gsub(x=levels(pole$key), pattern=lv_key[row_t5], replacement="雲林縣水林鄉瓊埔村")
 
     # =============================================================================================
 
@@ -623,4 +638,142 @@ gen_family_info = function() {
     # missing_r = right_join(train, family, by="key")
     # missing_r = missing_r[is.na(missing_r$CityName),]
     # missing_r
+}
+
+gen_meters = function() {
+
+    # 用電戶數 台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
+    # http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
+    # ./data/open_sell_amt_vil.csv
+
+    meters = read.csv("./data/open_sell_amt_vil.csv", stringsAsFactors=T, fileEncoding="UTF-8-BOM")
+
+    colnames(meters) <- c("date", "city", "town", "village", "electric energe sale", "meters")
+    meters$"electric energe sale" = NULL
+
+    levels(meters$city)    = gsub(x=levels(meters$city),    pattern=" ", replacement="")
+    levels(meters$town)    = gsub(x=levels(meters$town),    pattern=" ", replacement="")
+    levels(meters$village) = gsub(x=levels(meters$village), pattern=" ", replacement="")
+
+    levels(meters$city)    = gsub(" ",  "", levels(meters$city))
+    levels(meters$town)    = gsub(" ",  "", levels(meters$town))
+    levels(meters$town)    = gsub("　", "", levels(meters$town))
+    levels(meters$village) = gsub(" ",  "", levels(meters$village))
+
+    lv_date = levels(meters$date)
+    lv_date = gsub("年", "", lv_date)
+    lv_date = gsub("月", "", lv_date)
+    lv_date = as.integer(lv_date)
+    levels(meters$date) = lv_date 
+
+   row_even = which(lv_date %% 2 == 0)
+
+    meters$date2 = meters$date
+    levels(meters$date2)[row_even] = lv_date[row_even] - 1
+
+    # =============================================================================================
+
+    levels(meters$city) = gsub(x=levels(meters$city), pattern="臺北",   replacement="台北")
+    levels(meters$city) = gsub(x=levels(meters$city), pattern="臺中",   replacement="台中")
+    levels(meters$city) = gsub(x=levels(meters$city), pattern="臺南",   replacement="台南")
+
+    levels(meters$town) = gsub(x=levels(meters$town), pattern="員林鎮", replacement="員林市")
+    levels(meters$town) = gsub(x=levels(meters$town), pattern="頭份鎮", replacement="頭份市")
+
+    levels(meters$village) = gsub(x=levels(meters$village), pattern="高明里　", replacement="高明里")
+
+    meters = meters[-c(grep(x=meters$village, pattern="無法分類")),]
+    meters$key = paste0(meters$city, meters$town, meters$village)
+    meters$key = as.factor(meters$key)
+
+    # =============================================================================================
+
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台中市大安區龜売里", replacement="台中市大安區龜壳村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台中市西區公館里", replacement="台中市西區公舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台北市信義區富台里",   replacement="台北市信義區富臺里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台南市新化區山腳里", replacement="台南市新化區山脚里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台南市新化區那拔里", replacement="台南市新化區𦰡拔里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台南市永康區鹽洲里", replacement="台南市永康區塩洲里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="台南市麻豆區晋江里",   replacement="台南市麻豆區晉江里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市中正里", replacement="宜蘭縣宜蘭市東門里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市和睦里", replacement="宜蘭縣宜蘭市神農里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市大東里", replacement="宜蘭縣宜蘭市大新里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市大道里", replacement="宜蘭縣宜蘭市南門里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市慶和里", replacement="宜蘭縣宜蘭市北門里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市新興里", replacement="宜蘭縣宜蘭市大新里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市昇平里", replacement="宜蘭縣宜蘭市新民里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市民生里", replacement="宜蘭縣宜蘭市新民里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣宜蘭市鄂王里", replacement="宜蘭縣宜蘭市西門里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="屏東縣瑪家鄉涼山村", replacement="屏東縣瑪家鄉凉山村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="屏東縣萬丹鄉廈北村", replacement="屏東縣萬丹鄉厦北村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="屏東縣萬丹鄉廈南村", replacement="屏東縣萬丹鄉厦南村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="屏東縣霧臺鄉霧台村", replacement="屏東縣霧臺鄉霧臺村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="彰化縣埔心鄉南館村", replacement="彰化縣埔心鄉南舘村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="彰化縣埔心鄉埤腳村", replacement="彰化縣埔心鄉埤脚村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="彰化縣埔心鄉新館村", replacement="彰化縣埔心鄉新舘村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="彰化縣埔心鄉舊館村", replacement="彰化縣埔心鄉舊舘村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="彰化縣埔鹽鄉瓦廍村", replacement="彰化縣埔鹽鄉瓦磘村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市三峽區永館里", replacement="新北市三峽區永舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市坪林區石曹里", replacement="新北市坪林區石𥕢里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市新店區五峰里", replacement="新北市新店區五峯里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市板橋區公館里", replacement="新北市板橋區公舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市樹林區猐寮里", replacement="新北市樹林區獇寮里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市永和區新部里", replacement="新北市永和區新廍里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市瑞芳區濂新里", replacement="新北市瑞芳區濓新里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市瑞芳區濂洞里", replacement="新北市瑞芳區濓洞里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新北市萬里區崁腳里", replacement="新北市萬里區崁脚里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新竹縣竹東鎮上館里", replacement="新竹縣竹東鎮上舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="新竹縣竹東鎮雞林里", replacement="新竹縣竹東鎮鷄林里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市蘆竹區大華里", replacement="桃園市龜山區大華里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="臺東縣綠島鄉公館村", replacement="臺東縣綠島鄉公舘村")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="苗栗縣竹南鎮公館里", replacement="苗栗縣竹南鎮公舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="苗栗縣苑裡鎮上館里", replacement="苗栗縣苑裡鎮上舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="苗栗縣苑裡鎮山腳里", replacement="苗栗縣苑裡鎮山脚里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="雲林縣北港鎮公館里", replacement="雲林縣北港鎮公舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="雲林縣西螺鎮公館里", replacement="雲林縣西螺鎮公舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="高雄市左營區復興里", replacement="高雄市左營區永清里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="高雄市湖內區公館里", replacement="高雄市湖內區公舘里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="高雄市鳳山區海風里", replacement="高雄市鳳山區海光里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="高雄市鳳山區誠正里", replacement="高雄市鳳山區生明里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣蘇澳鎮岳明里", replacement="宜蘭縣蘇澳鎮港邊里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區後興里", replacement="桃園市中壢區復興里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區興和里", replacement="桃園市中壢區興合里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市八德區竹圍里", replacement="桃園市八德區竹園里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市大溪區人文里", replacement="桃園市大溪區仁文里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市平鎮區振興里", replacement="桃園市平鎮區鎮興里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市平鎮區舊明里", replacement="桃園市中壢區舊明里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區中杉里", replacement="桃園市桃園區中山里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區大竹里", replacement="桃園市蘆竹區大竹里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區大竹里", replacement="桃園市蘆竹區大竹里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區廣龍里", replacement="桃園市八德區廣隆里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區楓樹里", replacement="桃園市龜山區楓樹里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區汴州里", replacement="桃園市桃園區汴洲里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區汴州里", replacement="桃園市桃園區汴洲里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市桃園區清溪里", replacement="桃園市桃園區青溪里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龍潭區仁安里", replacement="桃園市龍潭區佳安里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龍潭區仁安里", replacement="桃園市龍潭區佳安里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龍潭區大坪里", replacement="桃園市龍潭區大平里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龍潭區太平里", replacement="桃園市龍潭區大平里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龍潭區東勢里", replacement="桃園市平鎮區東勢里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龍潭區東安里", replacement="桃園市平鎮區東安里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市龜山區坑口里", replacement="桃園市蘆竹區坑口里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="金門縣金城鎮光前里", replacement="金門縣金沙鎮光前里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="金門縣金寧鄉瓊林里", replacement="金門縣金湖鎮瓊林里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="金門縣金寧鄉賢庵里", replacement="金門縣金城鎮賢庵里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區中福里", replacement="桃園市蘆竹區中福里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區南興里", replacement="桃園市大溪區南興里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區東明路", replacement="桃園市中壢區信義里")
+
+    meters_grp = group_by(meters, date2, key) %>% summarise(meters=sum(meters))
+    write.csv(meters_grp, file="./data/meters.csv", row.names=F, fileEncoding="UTF-8")
+
+    # ==== checking missing recorders =============================================================
+    #
+    train  = read.csv("./data/train.csv", fileEncoding="UTF-8")
+    train$key = paste0(train$CityName, train$TownName, train$VilName)
+    meters$key = as.character(meters$key)
+
+    missing_r = right_join(train, meters, by="key")
+    missing_r = missing_r[is.na(missing_r$CityName),]
+    levels(as.factor(missing_r$key))
 }
