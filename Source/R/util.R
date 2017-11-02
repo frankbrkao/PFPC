@@ -10,9 +10,7 @@ data_pre_processing = function() {
 
     info = collect_info(train=data$train, lastpd=data$lastpd)
 
-    # raw_village = gen_village_info(raw=data$train)
-    raw_village = read.csv("./data/village.csv", fileEncoding="UTF-8")
-    data$tp     = gen_tp_raw(village=raw_village, train=data$train, lastpd=data$lastpd, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
+    data$tp = gen_tp_raw(train=data$train, lastpd=data$lastpd, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
 
     md      = list()
     md$data = data
@@ -32,7 +30,8 @@ collect_info = function(train, lastpd) {
     # info$tn_tp = c("Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
     info$tn_tp = c("Dujuan", "Soudelor", "Matmo", "Nepartak", "MerantiAndMalakas")
     info$ts_tp = c("NesatAndHaitang", "Megi")
-    info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
+    # info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
+    info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "meters", "maxWind", "gust")
 
     # info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市", "新竹市")
     info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市")
@@ -49,7 +48,7 @@ collect_info = function(train, lastpd) {
 
     # info$row_zero = row_zero
     info$row_zero = unique(c(row_zero, row_zero_village))
-    info$vil_sel  = data$train$VilCode[row_none_zero]
+    info$vil_sel  = train$VilCode[row_none_zero]
     
     message(sprintf("row_zero: %d, village_zero: %d", NROW(row_zero), NROW(row_zero_village)))
     message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(row_sum), NROW(info$row_zero), NROW(row_none_zero)))
@@ -63,6 +62,7 @@ collect_info = function(train, lastpd) {
     tp = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
     info$real  = round(tp[tp_list], 0)
     info$magic = rep(1.57, length(tp_list))
+    # info$magic = rep(1.7, length(tp_list))
     names(info$magic) = tp_list
 
     # =============================================================================================
@@ -92,24 +92,26 @@ gen_gust_info = function() {
 
 # =================================================================================================
 
-gen_village_info = function(raw=train) {
+gen_village_info = function() {
 
+    raw    = read.csv("./data/train.csv",  fileEncoding="UTF-8", stringsAsFactors=F)
     pole   = read.csv("./data/pole.csv",   fileEncoding="UTF-8", stringsAsFactors=F)
     family = read.csv("./data/family.csv", fileEncoding="UTF-8", stringsAsFactors=F)
+    meters = read.csv("./data/meters.csv", fileEncoding="UTF-8", stringsAsFactors=F)
+    meters = meters[which(meters$date2 == "201703"), c("key", "meters")]
 
     col_sel = c("CityName", "TownName", "VilName", "VilCode", "key")
 
-    raw$key  = paste0(raw$CityName, raw$TownName, raw$VilName)
+    raw$key = paste0(raw$CityName, raw$TownName, raw$VilName)
     raw = left_join(raw[col_sel], pole, by="key")
     raw = left_join(raw, family,  by="key")
+    raw = left_join(raw, meters,  by="key")
 
     # TODO: Correct family info
     # Set the missing value to 0
     raw[is.na(raw)] = 0
 
     write.csv(raw, file="./data/village.csv", row.names=F, fileEncoding="UTF-8")
-
-    return (raw)
 }
 
 # =================================================================================================
@@ -121,9 +123,10 @@ remove_tp_prefix = function (x) {
         return( strsplit(x, "_")[[1]][2] )
 }
 
-gen_tp_raw = function(village, train, lastpd, tn_tp, ts_tp) {
+gen_tp_raw = function(train, lastpd, tn_tp, ts_tp) {
 
-    gust = read.csv("./data/gust.csv", fileEncoding="UTF-8")
+    village = read.csv("./data/village.csv", fileEncoding="UTF-8")
+    gust    = read.csv("./data/gust.csv",    fileEncoding="UTF-8")
 
     tp_list  = c(tn_tp, ts_tp)
     col_city = c("CityName")
@@ -134,6 +137,9 @@ gen_tp_raw = function(village, train, lastpd, tn_tp, ts_tp) {
     col_selL  = c("VilCode", tn_tp)
     col_selR  = c("VilCode", ts_tp)
     tp_outage = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
+
+    # merged = left_join(village, tp_outage, by="VilCode")
+    # write.csv(merged, file="./data/merge_village_tp.csv", row.names=F, fileEncoding="UTF-8")
 
     # =============================================================================================    
     
@@ -640,7 +646,7 @@ gen_family_info = function() {
     # missing_r
 }
 
-gen_meters = function() {
+gen_meters_info = function() {
 
     # 用電戶數 台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
     # http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
@@ -737,7 +743,7 @@ gen_meters = function() {
     levels(meters$key) = gsub(x=levels(meters$key), pattern="高雄市鳳山區誠正里", replacement="高雄市鳳山區生明里")
     levels(meters$key) = gsub(x=levels(meters$key), pattern="宜蘭縣蘇澳鎮岳明里", replacement="宜蘭縣蘇澳鎮港邊里")
     levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區後興里", replacement="桃園市中壢區復興里")
-    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區興和里", replacement="桃園市中壢區興合里")
+    levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市中壢區興合里", replacement="桃園市中壢區興和里")
     levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市八德區竹圍里", replacement="桃園市八德區竹園里")
     levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市大溪區人文里", replacement="桃園市大溪區仁文里")
     levels(meters$key) = gsub(x=levels(meters$key), pattern="桃園市平鎮區振興里", replacement="桃園市平鎮區鎮興里")
@@ -769,11 +775,11 @@ gen_meters = function() {
 
     # ==== checking missing recorders =============================================================
     #
-    train  = read.csv("./data/train.csv", fileEncoding="UTF-8")
-    train$key = paste0(train$CityName, train$TownName, train$VilName)
-    meters$key = as.character(meters$key)
-
-    missing_r = right_join(train, meters, by="key")
-    missing_r = missing_r[is.na(missing_r$CityName),]
-    levels(as.factor(missing_r$key))
+    # train  = read.csv("./data/train.csv", fileEncoding="UTF-8")
+    # train$key = paste0(train$CityName, train$TownName, train$VilName)
+    # meters$key = as.character(meters$key)
+    # 
+   # missing_r = right_join(train, meters, by="key")
+    # missing_r = missing_r[is.na(missing_r$CityName),]
+    # levels(as.factor(missing_r$key))
 }

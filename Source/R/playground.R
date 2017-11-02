@@ -23,6 +23,8 @@ source("./R/util.R")
 # gen_gust_info()
 # gen_pole_info()
 # gen_family_info()
+# gen_meters_info()
+# gen_village_info()
 
 # =================================================================================================
 # Data pre-processing
@@ -37,14 +39,19 @@ info = md$info
 rf = build_rf_model(raw=data$tp, targets=info$tn_tp)
 
 # Using all data to build one random forest model
-rf_all = build_rf_model_alldata(raw=data$tp, targets=info$tn_tp)
+# rf_all = build_rf_model_alldata(raw=data$tp, targets=info$tn_tp)
 
 # =================================================================================================
 # Build random forest model per city
-rf_city = build_rf_city_model(raw=data$tp, targets=info$tn_tp)
+# rf_city = build_rf_city_model(raw=data$tp, targets=info$tn_tp)
 
 # =================================================================================================
 # Prediction and evaluation
+
+# col_selL = c("VilCode", info$tn_tp)
+# col_selR = c("VilCode", info$ts_tp)
+# tp_list = c(info$tn_tp, info$ts_tp)
+# info$magic = rep(1.57, length(tp_list))
 
 tn_1 = c("Soudelor", "Soudelor")
 tn_2 = c("MerantiAndMalakas", "MerantiAndMalakas")

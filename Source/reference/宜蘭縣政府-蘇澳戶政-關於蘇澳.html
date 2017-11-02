@@ -1,0 +1,811 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="zh-tw" xmlns="http://www.w3.org/1999/xhtml"> 
+<head id="Head1"><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="govtwsimpledc.xsd" href="http://www.gov.tw/schema/dc/" title="Dublin Core"/>
+<meta name="DC.Title" content="關於蘇澳" />
+<meta name="DC.Subject" content="" />
+<meta name="DC.Creator" content="" />
+<meta name="DC.Publisher" content="" />
+<meta name="DC.Date" content="" />
+<meta name="DC.Type" content="" />
+<meta name="DC.Identifier" content="" />
+<meta name="DC.Description" content="" />
+<meta name="DC.Contributor" content="" />
+<meta name="DC.Format" content="" />
+<meta name="DC.Relation" content="" />
+<meta name="DC.Source" content="" />
+<meta name="DC.Language" content="" />
+<meta name="DC.Rights" content="" />
+<meta name="DC.CategoryTheme" content="" />
+<meta name="DC.CategoryCake" content="" />
+<meta name="DC.CategoryService" content="" />
+<meta name="DC.Keywords" content="" />
+<title>
+	宜蘭縣政府-蘇澳戶政-關於蘇澳
+</title><link href="css/index.css" rel="stylesheet" type="text/css" /><link id="likCss" href="/css/detail.css" rel="stylesheet" type="text/css" /><link id="lnkCssSysDetail" href="/css/sys_detail.css" rel="stylesheet" type="text/css" /><!-- 月曆元件載入開始 --> 
+<link href="/Css/face.css" rel="stylesheet" type="text/css" /> 
+<!-- 月曆元件載入結束 --> 
+<link href="/Scripts/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" /> 
+<link href="/Scripts/fancybox/jquery.fancybox-thumbs.css" rel="stylesheet" type="text/css" /> 
+<link href="/Scripts/air-datepicker-master/datepicker.min.css" rel="stylesheet" type="text/css" /> 
+<script type='text/javascript' src='/Scripts/jquery-1.7.2.min.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.cycle2.min.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.cycle2.carousel.min.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.cookie.js'></script> 
+<script type='text/javascript' src='/Scripts/supersized.core.3.2.1.min.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.marquee.js'></script> 
+<script type='text/javascript' src='/Scripts/flowplayer-3.2.8.min.js'></script> 
+<script type='text/javascript' src='/Scripts/flowplayer.ipad-3.2.8.min.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.blockUI.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.nav.js'></script> 
+<script type='text/javascript' src='/Scripts/fancybox/lib/jquery.mousewheel-3.0.6.pack.js'></script> 
+<script type='text/javascript' src='/Scripts/fancybox/jquery.fancybox.js'></script> 
+<script type='text/javascript' src='/Scripts/fancybox/jquery.fancybox-thumbs.js'></script> 
+<script>var CCMS_LanguageSN=1;</script> 
+<script src="/Scripts/JUtil.js" type="text/javascript"></script> 
+<script src="/Scripts/air-datepicker-master/datepicker.min.js" type="text/javascript"></script> 
+<script src="/Scripts/air-datepicker-master/i18n/datepicker.zh.js" type="text/javascript"></script> 
+<script type='text/javascript' src='/Scripts/jquery.mmenu.min.js'></script> 
+<script type='text/javascript' src='/Scripts/jquery.nav.js'></script> 
+<script type='text/javascript' src='/Scripts/oka_model.js'></script> 
+<script type='text/javascript' src='/Scripts/WWWEdit.js'></script> 
+<!-- 月曆元件載入開始 --> 
+<link href="/Scripts/JSCal2-1.9/src/css/win2k/calendar-win2k-1.css" rel="stylesheet" type="text/css" /> 
+<script src="/Scripts/JSCal2-1.9/src/js/jquery.dynDateTimeMinGo.js" type="text/javascript"></script> 
+<script src="/Scripts/JSCal2-1.9/src/js/lang/calendar-big5.js" type="text/javascript"></script> 
+<!-- 月曆元件載入結束 --> 
+<script type='text/javascript' src='/Scripts/respond.min.js'></script> 
+<script>  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');  ga('create', 'UA-77904239-1', 'auto');  ga('send', 'pageview');</script>
+ <!--[if lt IE 9]><link href="css/indexIE8.css" rel="stylesheet" type="text/css" /><![endif]-->    
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var hdSiteLanguageSN = document.getElementById("hdSiteLanguageSN").value;
+        var strHost = window.location.hostname.toString();
+
+        //自動將網頁中地址連到GoogleMap
+        $("map").each(function (i) {
+            var Map2 = document.getElementById("Map2");
+            if (this.innerText != "" && Map2 == null)
+                $(this).append("<a target=\"_blank\" href=\"http://maps.google.com/maps?q=" + encodeURIComponent(this.innerText) + "\"><img src='images/Icons/map.png' border=\"0\" alt=\"map\" title=\"map\" /></a>");
+        });
+
+        //附加連結圖示
+        $(".content_middle a").each(function () {
+            //取副檔名
+            extIndex = this.href.lastIndexOf('.');
+            var fileName = this.href;
+            if (($(this).data('icon') || '') != '') {
+                fileName = $(this).data('icon');
+            } else {
+                fileName = fileName.substr(extIndex + 1, fileName.length);
+            }
+            var url = window.location.toString();
+            var IsPic = this.innerHTML.toLowerCase().indexOf("<img ");
+            if (IsPic == -1) {
+                //相關連結模組
+                if (this.href.toLowerCase().indexOf("hitcount") != -1) {
+                    switch (fileName) {
+                        case "rar":
+                            $(this).append("<img src='images/Icons/rar.gif' alt='' border='0' />");
+                            break;
+                        case "zip":
+                            $(this).append("<img src='images/Icons/rar.gif' alt='' border='0' />");
+                            break;
+                        case "doc":
+                            $(this).append("<img src='images/Icons/doc.gif' alt='' border='0' />");
+                            break;
+                        case "docx":
+                            $(this).append("<img src='images/Icons/doc.gif' alt='' border='0' />");
+                            break;
+                        case "xls":
+                            $(this).append("<img src='images/Icons/exl.gif' alt='' border='0' />");
+                            break;
+                        case "xlsx":
+                            $(this).append("<img src='images/Icons/exl.gif' alt='' border='0' />");
+                            break;
+                        case "ppt":
+                            $(this).append("<img src='images/Icons/i_ppt.gif' alt='' border='0' />");
+                            break;
+                        case "pptx":
+                            $(this).append("<img src='images/Icons/i_pptx.gif' alt='' border='0' />");
+                            break;
+                        case "pdf":
+                            $(this).append("<img src='images/Icons/pdf.gif' alt='' border='0' />");
+                            break;
+                        case "txt":
+                            $(this).append("<img src='images/Icons/txt.gif' alt='' border='0' />");
+                            break;
+                        case "map":
+                            $(this).append("<img src='images/Icons/map.png' alt='' border='0' />");
+                            break;
+                        case "odt":
+                            $(this).append("<img src='images/Icons/odt.gif' alt='' border='0' />");
+                            break;
+                        case "ods":
+                            $(this).append("<img src='images/Icons/ods.gif' alt='' border='0' />");
+                            break;
+                        case "odf":
+                            $(this).append("<img src='images/Icons/odf.gif' alt='' border='0' />");
+                            break;
+                        case "csv":
+                            $(this).append("<img src='images/Icons/csv.gif' alt='' border='0' />");
+                            break;
+                        default:
+                            if (this.href.toLowerCase().indexOf("o=1") != -1) {
+                                //alert("out link");
+                                if (hdSiteLanguageSN == "1") {
+                                    $(this).append("<img src='images/Icons/link.gif' alt='' border='0' />");
+                                }
+                                else {
+                                    $(this).append("<img src='images/Icons/link.gif' alt='' border='0' />");
+                                }
+                            }
+                            break;
+                    }
+                }
+                //先判斷本身有沒有帶預設圖再判斷不是自己網域內且是http:開頭
+                if (this.href.indexOf("" + strHost + "") == -1 && this.href.indexOf("http:") != -1 && location.href.toLowerCase().indexOf("Video.aspx") == -1 && location.href.toLowerCase().indexOf("video.aspx") == -1 && location.href.toLowerCase().indexOf("video_content.aspx") == -1 && location.href.toLowerCase().indexOf("Video_Content.aspx") == -1 && this.href.indexOf("https:") != -1) {
+                    switch (fileName) {
+                        case "rar":
+                            $(this).append("<img src='images/Icons/rar.gif' alt='' border='0' />");
+                            break;
+                        case "zip":
+                            $(this).append("<img src='images/Icons/rar.gif' alt='' border='0' />");
+                            break;
+                        case "doc":
+                            $(this).append("<img src='images/Icons/doc.gif' alt='' border='0' />");
+                            break;
+                        case "docx":
+                            $(this).append("<img src='images/Icons/doc.gif' alt='' border='0' />");
+                            break;
+                        case "xls":
+                            $(this).append("<img src='images/Icons/exl.gif' alt='' border='0' />");
+                            break;
+                        case "xlsx":
+                            $(this).append("<img src='images/Icons/exl.gif' alt='' border='0' />");
+                            break;
+                        case "ppt":
+                            $(this).append("<img src='images/Icons/i_ppt.gif' alt='' border='0' />");
+                            break;
+                        case "pptx":
+                            $(this).append("<img src='images/Icons/i_pptx.gif' alt='' border='0' />");
+                            break;
+                        case "pdf":
+                            $(this).append("<img src='images/Icons/pdf.gif' alt='' border='0' />");
+                            break;
+                        case "txt":
+                            $(this).append("<img src='images/Icons/txt.gif' alt='' border='0' />");
+                            break;
+                        case "map":
+                            $(this).append("<img src='images/Icons/map.png' alt='' border='0' />");
+                            break;
+                        case "odt":
+                            $(this).append("<img src='images/Icons/odt.gif' alt='' border='0' />");
+                            break;
+                        case "ods":
+                            $(this).append("<img src='images/Icons/ods.gif' alt='' border='0' />");
+                            break;
+                        case "odf":
+                            $(this).append("<img src='images/Icons/odf.gif' alt='' border='0' />");
+                            break;
+                        case "csv":
+                            $(this).append("<img src='images/Icons/csv.gif' alt='' border='0' />");
+                            break;
+                        default:
+                            if (hdSiteLanguageSN == "1") {
+                                $(this).append("<img src='images/Icons/link.gif' alt='' border='0' />");
+                            }
+                            else {
+                                $(this).append("<img src='images/Icons/link.gif' alt='' border='0' />");
+                            }
+                            break;
+                    }
+                }
+                else {
+                    switch (fileName) {
+                        case "rar":
+                            $(this).append("<img src='images/Icons/rar.gif' alt='' border='0' />");
+                            break;
+                        case "zip":
+                            $(this).append("<img src='images/Icons/rar.gif' alt='' border='0' />");
+                            break;
+                        case "doc":
+                            $(this).append("<img src='images/Icons/doc.gif' alt='' border='0' />");
+                            break;
+                        case "docx":
+                            $(this).append("<img src='images/Icons/doc.gif' alt='' border='0' />");
+                            break;
+                        case "xls":
+                            $(this).append("<img src='images/Icons/exl.gif' alt='' border='0' />");
+                            break;
+                        case "xlsx":
+                            $(this).append("<img src='images/Icons/exl.gif' alt='' border='0' />");
+                            break;
+                        case "ppt":
+                            $(this).append("<img src='images/Icons/i_ppt.gif' alt='' border='0' />");
+                            break;
+                        case "pptx":
+                            $(this).append("<img src='images/Icons/i_pptx.gif' alt='' border='0' />");
+                            break;
+                        case "pdf":
+                            $(this).append("<img src='images/Icons/pdf.gif' alt='' border='0' />");
+                            break;
+                        case "txt":
+                            $(this).append("<img src='images/Icons/txt.gif' alt='' border='0' />");
+                            break;
+                        case "htm":
+                            if (this.href.toString().indexOf("eBook") != -1) {
+                                $(this).append("<img src='images/Icons/ebook.png' alt='' border='0' />");
+                            }
+                            break;
+                        case "map":
+                            $(this).append("<img src='images/Icons/map.png' alt='' border='0' />");
+                            break;
+                        case "odt":
+                            $(this).append("<img src='images/Icons/odt.gif' alt='' border='0' />");
+                            break;
+                        case "ods":
+                            $(this).append("<img src='images/Icons/ods.gif' alt='' border='0' />");
+                            break;
+                        case "odf":
+                            $(this).append("<img src='images/Icons/odf.gif' alt='' border='0' />");
+                            break;
+                        case "csv":
+                            $(this).append("<img src='images/Icons/csv.gif' alt='' border='0' />");
+                            break;
+                        default:
+                            //$(this).append("<img src='images/Icons/other.jpg' alt='' border='0' />");
+                            break;
+                    }
+                }
+            }
+        });
+    });
+</script> 
+    
+
+    <link href="css/cp.css" rel="stylesheet" type="text/css" />
+</head>
+<body data-js="false">
+    <form method="post" action="./cp.aspx?n=185851DC43DED5B5&amp;Create=1" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="ToolkitScriptManager1_HiddenField" id="ToolkitScriptManager1_HiddenField" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJNjc0NDE2NzY4D2QWAmYPZBYGAgEPFgIeBFRleHQFOTxodG1sIGxhbmc9InpoLXR3IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+IGQCAw9kFgwCAg8WAh8ABe0GPG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9dXRmLTgiIC8+PGxpbmsgcmVsPSJnb3Z0d3NpbXBsZWRjLnhzZCIgaHJlZj0iaHR0cDovL3d3dy5nb3YudHcvc2NoZW1hL2RjLyIgdGl0bGU9IkR1YmxpbiBDb3JlIi8+CjxtZXRhIG5hbWU9IkRDLlRpdGxlIiBjb250ZW50PSLpl5zmlrzomIfmvrMiIC8+CjxtZXRhIG5hbWU9IkRDLlN1YmplY3QiIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuQ3JlYXRvciIgY29udGVudD0iIiAvPgo8bWV0YSBuYW1lPSJEQy5QdWJsaXNoZXIiIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuRGF0ZSIgY29udGVudD0iIiAvPgo8bWV0YSBuYW1lPSJEQy5UeXBlIiBjb250ZW50PSIiIC8+CjxtZXRhIG5hbWU9IkRDLklkZW50aWZpZXIiIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuRGVzY3JpcHRpb24iIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuQ29udHJpYnV0b3IiIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuRm9ybWF0IiBjb250ZW50PSIiIC8+CjxtZXRhIG5hbWU9IkRDLlJlbGF0aW9uIiBjb250ZW50PSIiIC8+CjxtZXRhIG5hbWU9IkRDLlNvdXJjZSIgY29udGVudD0iIiAvPgo8bWV0YSBuYW1lPSJEQy5MYW5ndWFnZSIgY29udGVudD0iIiAvPgo8bWV0YSBuYW1lPSJEQy5SaWdodHMiIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuQ2F0ZWdvcnlUaGVtZSIgY29udGVudD0iIiAvPgo8bWV0YSBuYW1lPSJEQy5DYXRlZ29yeUNha2UiIGNvbnRlbnQ9IiIgLz4KPG1ldGEgbmFtZT0iREMuQ2F0ZWdvcnlTZXJ2aWNlIiBjb250ZW50PSIiIC8+CjxtZXRhIG5hbWU9IkRDLktleXdvcmRzIiBjb250ZW50PSIiIC8+CmQCBg8WAh4EaHJlZgUPL2Nzcy9kZXRhaWwuY3NzZAIHDxYCHwEFEy9jc3Mvc3lzX2RldGFpbC5jc3NkAggPFgIfAAWhAzwhLS0g5pyI5puG5YWD5Lu26LyJ5YWl6ZaL5aeLIC0tPiAKPGxpbmsgaHJlZj0iL0Nzcy9mYWNlLmNzcyIgcmVsPSJzdHlsZXNoZWV0IiB0eXBlPSJ0ZXh0L2NzcyIgLz4gCjwhLS0g5pyI5puG5YWD5Lu26LyJ5YWl57WQ5p2fIC0tPiAKPGxpbmsgaHJlZj0iL1NjcmlwdHMvZmFuY3lib3gvanF1ZXJ5LmZhbmN5Ym94LmNzcyIgcmVsPSJzdHlsZXNoZWV0IiB0eXBlPSJ0ZXh0L2NzcyIgLz4gCjxsaW5rIGhyZWY9Ii9TY3JpcHRzL2ZhbmN5Ym94L2pxdWVyeS5mYW5jeWJveC10aHVtYnMuY3NzIiByZWw9InN0eWxlc2hlZXQiIHR5cGU9InRleHQvY3NzIiAvPiAKPGxpbmsgaHJlZj0iL1NjcmlwdHMvYWlyLWRhdGVwaWNrZXItbWFzdGVyL2RhdGVwaWNrZXIubWluLmNzcyIgcmVsPSJzdHlsZXNoZWV0IiB0eXBlPSJ0ZXh0L2NzcyIgLz4gCmQCCQ8WAh8ABboQPHNjcmlwdCB0eXBlPSd0ZXh0L2phdmFzY3JpcHQnIHNyYz0nL1NjcmlwdHMvanF1ZXJ5LTEuNy4yLm1pbi5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9qcXVlcnkuY3ljbGUyLm1pbi5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9qcXVlcnkuY3ljbGUyLmNhcm91c2VsLm1pbi5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9qcXVlcnkuY29va2llLmpzJz48L3NjcmlwdD4gCjxzY3JpcHQgdHlwZT0ndGV4dC9qYXZhc2NyaXB0JyBzcmM9Jy9TY3JpcHRzL3N1cGVyc2l6ZWQuY29yZS4zLjIuMS5taW4uanMnPjwvc2NyaXB0PiAKPHNjcmlwdCB0eXBlPSd0ZXh0L2phdmFzY3JpcHQnIHNyYz0nL1NjcmlwdHMvanF1ZXJ5Lm1hcnF1ZWUuanMnPjwvc2NyaXB0PiAKPHNjcmlwdCB0eXBlPSd0ZXh0L2phdmFzY3JpcHQnIHNyYz0nL1NjcmlwdHMvZmxvd3BsYXllci0zLjIuOC5taW4uanMnPjwvc2NyaXB0PiAKPHNjcmlwdCB0eXBlPSd0ZXh0L2phdmFzY3JpcHQnIHNyYz0nL1NjcmlwdHMvZmxvd3BsYXllci5pcGFkLTMuMi44Lm1pbi5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9qcXVlcnkuYmxvY2tVSS5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9qcXVlcnkubmF2LmpzJz48L3NjcmlwdD4gCjxzY3JpcHQgdHlwZT0ndGV4dC9qYXZhc2NyaXB0JyBzcmM9Jy9TY3JpcHRzL2ZhbmN5Ym94L2xpYi9qcXVlcnkubW91c2V3aGVlbC0zLjAuNi5wYWNrLmpzJz48L3NjcmlwdD4gCjxzY3JpcHQgdHlwZT0ndGV4dC9qYXZhc2NyaXB0JyBzcmM9Jy9TY3JpcHRzL2ZhbmN5Ym94L2pxdWVyeS5mYW5jeWJveC5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9mYW5jeWJveC9qcXVlcnkuZmFuY3lib3gtdGh1bWJzLmpzJz48L3NjcmlwdD4gCjxzY3JpcHQ+dmFyIENDTVNfTGFuZ3VhZ2VTTj0xOzwvc2NyaXB0PiAKPHNjcmlwdCBzcmM9Ii9TY3JpcHRzL0pVdGlsLmpzIiB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiPjwvc2NyaXB0PiAKPHNjcmlwdCBzcmM9Ii9TY3JpcHRzL2Fpci1kYXRlcGlja2VyLW1hc3Rlci9kYXRlcGlja2VyLm1pbi5qcyIgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij48L3NjcmlwdD4gCjxzY3JpcHQgc3JjPSIvU2NyaXB0cy9haXItZGF0ZXBpY2tlci1tYXN0ZXIvaTE4bi9kYXRlcGlja2VyLnpoLmpzIiB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiPjwvc2NyaXB0PiAKPHNjcmlwdCB0eXBlPSd0ZXh0L2phdmFzY3JpcHQnIHNyYz0nL1NjcmlwdHMvanF1ZXJ5Lm1tZW51Lm1pbi5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9qcXVlcnkubmF2LmpzJz48L3NjcmlwdD4gCjxzY3JpcHQgdHlwZT0ndGV4dC9qYXZhc2NyaXB0JyBzcmM9Jy9TY3JpcHRzL29rYV9tb2RlbC5qcyc+PC9zY3JpcHQ+IAo8c2NyaXB0IHR5cGU9J3RleHQvamF2YXNjcmlwdCcgc3JjPScvU2NyaXB0cy9XV1dFZGl0LmpzJz48L3NjcmlwdD4gCjwhLS0g5pyI5puG5YWD5Lu26LyJ5YWl6ZaL5aeLIC0tPiAKPGxpbmsgaHJlZj0iL1NjcmlwdHMvSlNDYWwyLTEuOS9zcmMvY3NzL3dpbjJrL2NhbGVuZGFyLXdpbjJrLTEuY3NzIiByZWw9InN0eWxlc2hlZXQiIHR5cGU9InRleHQvY3NzIiAvPiAKPHNjcmlwdCBzcmM9Ii9TY3JpcHRzL0pTQ2FsMi0xLjkvc3JjL2pzL2pxdWVyeS5keW5EYXRlVGltZU1pbkdvLmpzIiB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiPjwvc2NyaXB0PiAKPHNjcmlwdCBzcmM9Ii9TY3JpcHRzL0pTQ2FsMi0xLjkvc3JjL2pzL2xhbmcvY2FsZW5kYXItYmlnNS5qcyIgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij48L3NjcmlwdD4gCjwhLS0g5pyI5puG5YWD5Lu26LyJ5YWl57WQ5p2fIC0tPiAKPHNjcmlwdCB0eXBlPSd0ZXh0L2phdmFzY3JpcHQnIHNyYz0nL1NjcmlwdHMvcmVzcG9uZC5taW4uanMnPjwvc2NyaXB0PiAKZAIKDxYCHwAF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ICAkKCIjdGFnc0tleVdvcmRzIikub24oImtleWRvd24iLCBmdW5jdGlvbiAoZXZlbnQpIHsNCiAgICAgICAgaWYgKGV2ZW50LndoaWNoID09IDEzKSB7DQogICAgICAgICAgICB2YXIgS2V5V29yZCA9ICQoJyN0YWdzS2V5V29yZHMnKS52YWwoKTsNCiAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gIkFkdmFuY2VkX1NlYXJjaC5hc3B4P3E9IiArIEtleVdvcmQ7DQogICAgICAgICAgICByZXR1cm4gZmFsc2U7DQogICAgICAgIH0NCiAgICB9KTsNCn0pOw0KPC9zY3JpcHQ+DQo8ZGl2IGNsYXNzPSJzaXRlbWFwIj4NCjxkaXYgY2xhc3M9InNoYXJlX2JveCI+DQogICAgPGEgY2xhc3M9ImEyYV9kZCIgaHJlZj0iaHR0cDovL3d3dy5hZGR0b2FueS5jb20vc2hhcmVfc2F2ZSI+DQogICAgICAgIDxpbWcgc3JjPSJpbWFnZXMvc2hhcmUucG5nIiAgYm9yZGVyPSIwIiBhbHQ9IuWIhuS6qyIgdGl0bGU9IuWIhuS6qyIvPg0KICAgICAgICA8L2E+DQoNCiAgICA8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCIgY2hhcnNldD0iYmlnNSIgc3JjPSIvU2NyaXB0cy9TaGFyZV9QYWdlLmpzIj48L3NjcmlwdD4NCjwvZGl2Pg0KDQo8L2Rpdj4NCjxub3NjcmlwdD4NCjxzdHlsZT4uc2VhcmNoIHtkaXNwbGF5Om5vbmU7fSA8L3N0eWxlPg0KPC9ub3NjcmlwdD4NCjxkaXYgY2xhc3M9InNlYXJjaCIgZGF0YS1mdW5jdGlvbj0ib2thX2tleXdvcmRfbW9kZWwiPg0KCTxzcGFuIGNsYXNzPSJzZWFyY2hidDEiPg0KPGxhYmVsIHN0eWxlPSJmb250LXNpemU6MCIgZm9yPSJ0YWdzS2V5V29yZHMiPuaQnOWwizwvbGFiZWw+DQoJCTxpbnB1dCBuYW1lPSAidGFnc0tleVdvcmRzIiB0eXBlPSJ0ZXh0IiBwbGFjZWhvbGRlcj0i6KuL6Ly45YWl6Zec6Y215a2XIiBpZD0idGFnc0tleVdvcmRzIiBhdXRvY29tcGxldGU9Im9mZiIgPg0KCQk8c3BhbiBjbGFzcz0ic2VhcmNoYnQxIj4NCgkJPGEgc3R5bGU9ImZvbnQtc2l6ZTowIiB0aXRsZT0i5pCc5bCLIiBJRD0iYnRuU2VhcmNoIiBocmVmPSIjIiAgT25DbGljaz0iZG9TZWFyY2goKSIgPuaQnOWwizwvYT4NCgkJPC9zcGFuPg0KCTwvc3Bhbj4NCjwvZGl2Pg0KDQpkAhMPFgIfAAWMiAE8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCI+ICAgICQoZnVuY3Rpb24gKCkgeyAgICAgICAgJCgnbmF2I21vYmlsZV9tZW51JykubW1lbnUoKTsgICAgfSk7PC9zY3JpcHQ+IDxkaXYgaWQ9Im1vYmlsZS1oZWFkZXIiPiAgICAgPGEgaHJlZj0iI21vYmlsZV9tZW51Ij4gICAgICA8c3Bhbj48L3NwYW4+ICAgICA8L2E+ICA8L2Rpdj48bmF2IGlkPSJtb2JpbGVfbWVudSI+PHVsPjxsaT48YSB0aXRsZT0i5pys5omA57Ch5LuLIiBocmVmPSJjcC5hc3B4P249MTg1ODUxREM0M0RFRDVCNSI+5pys5omA57Ch5LuLPC9hPjx1bD48bGk+PGEgIHRpdGxlPSLpl5zmlrzomIfmvrMiIGhyZWY9ImNwLmFzcHg/bj0xODU4NTFEQzQzREVENUI1Ij7pl5zmlrzomIfmvrM8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmnKzmiYDmsr/pnakiIGhyZWY9ImNwLmFzcHg/bj1FOERGMDk0NTMzQ0JDM0VCIj7mnKzmiYDmsr/pnak8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLlpKfkuovlubTooagiIGhyZWY9ImNwLmFzcHg/bj1GQTc0QjBCMkQ2OUYyRjg4Ij7lpKfkuovlubTooag8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLkuLvku7vnsKHku4siIGhyZWY9ImNwLmFzcHg/bj1BMTMwNjQzMEEwNTM2NjU3Ij7kuLvku7vnsKHku4s8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLntYTnuZTnt6jliLYiIGhyZWY9ImNwLmFzcHg/bj0wODAzMEVERjdGQTgyNEJDIj7ntYTnuZTnt6jliLY8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmpa3li5nogbfmjowiIGhyZWY9ImNwLmFzcHg/bj1EQjBEN0Y2RUFBMTRBNzY2Ij7mpa3li5nogbfmjow8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmnI3li5nmmYLplpMiIGhyZWY9ImNwLmFzcHg/bj1GOUE3QzhBQjQzQ0M3NTZDIj7mnI3li5nmmYLplpM8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLkuqTpgJrmjIfljZciIGhyZWY9ImNwLmFzcHg/bj0yNjQyRDU5M0YwODJCQ0JBIj7kuqTpgJrmjIfljZc8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLooYzmlL/ljYDln58iIGhyZWY9ImNwLmFzcHg/bj0yMTI0RkRFQzlENDQ3RjE0Ij7ooYzmlL/ljYDln588L2E+PC9saT48L3VsPjwvbGk+PGxpPjxhIHRpdGxlPSLkvr/msJHmnI3li5kiIGhyZWY9ImNwLmFzcHg/bj00NzZFRDNCQTIxNTRBQjI4Ij7kvr/msJHmnI3li5k8L2E+PHVsPjxsaT48YSAgdGl0bGU9IuacjeWLmeeZveearuabuCIgaHJlZj0iY3AuYXNweD9uPTQ3NkVEM0JBMjE1NEFCMjgiPuacjeWLmeeZveearuabuDwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuS+v+awkeaOquaWvSIgaHJlZj0iY3AuYXNweD9uPUY0RjQ3MTcwQkYwOEFFRjQiPuS+v+awkeaOquaWvTwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuWIsOW6nOacjeWLmSIgaHJlZj0iY3AuYXNweD9uPTQ4NkJFNTZDNUEwNzg5RTciPuWIsOW6nOacjeWLmTwvYT48L2xpPjxsaT48YSAgdGl0bGU9IumgkOe0hOWPl+eQhue1kOWpmueZu+iomCIgaHJlZj0iY3AuYXNweD9uPTM0QTA2N0YwMjc1MjkwNTkiPumgkOe0hOWPl+eQhue1kOWpmueZu+iomDwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuaItuexjeeVsOWcsOi+pueQhiIgaHJlZj0iY3AuYXNweD9uPTlBRDZDNEQyRDZDMDJFQTAiPuaItuexjeeVsOWcsOi+pueQhjwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuiLseaWh+aItuexjeishOacrCIgaHJlZj0iY3AuYXNweD9uPTQ0QTU4MDAxNUFFNEUyQzMiPuiLseaWh+aItuexjeishOacrDwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuWIsOagoeWPl+eQhuWci+awkei6q+WIhuitiSIgaHJlZj0iY3AuYXNweD9uPTZGMDJGNzgzQjdDODdDRDYiPuWIsOagoeWPl+eQhuWci+awkei6q+WIhuitiTwvYT48L2xpPjxsaT48YSAgdGl0bGU9IueUs+i+puiHqueEtuS6uuaGkeitiSIgaHJlZj0iY3AuYXNweD9uPUMxQzE3NTVGMTg5MTJDRDYiPueUs+i+puiHqueEtuS6uuaGkeitiTwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuWunOiYreWck+a7v+W8j+ioiOeVq+acjeWLmSIgaHJlZj0iY3AuYXNweD9uPTgwRjUxRjU2QjhGNEEyMTQiPuWunOiYreWck+a7v+W8j+ioiOeVq+acjeWLmTwvYT48L2xpPjxsaT48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLmiLbmlL/llY/nrZTpm4bjgIzlj6bplovmlrDoppbnqpfjgI0iICAgaHJlZj0iaHR0cDovL3d3dy5yaXMuZ292LnR3L3poX1RXLzE1ODtqc2Vzc2lvbmlkPUI0MkQ0OTM4QUExQThFMzM1OUJDMEZEMTU5OTY2RUU1Ij7miLbmlL/llY/nrZTpm4Y8L2E+PC9saT48L3VsPjwvbGk+PGxpPjxhIHRpdGxlPSLmiLbmlL/os4foqIoiIGhyZWY9Ik5ld3MuYXNweD9uPUMzMjVDRTBDNUIwNTdDQTcmc21zPTEwOTVCRDY1MzY3QjJBN0EiPuaItuaUv+izh+ioijwvYT48dWw+PGxpPjxhICB0aXRsZT0i5pyA5paw5raI5oGvIiBocmVmPSJOZXdzLmFzcHg/bj1DMzI1Q0UwQzVCMDU3Q0E3JnNtcz0xMDk1QkQ2NTM2N0IyQTdBIj7mnIDmlrDmtojmga88L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmnKzmiYDlhazlkYoiIGhyZWY9Ik5ld3MuYXNweD9uPTlEMDFCQTJBMTUyNDZGMzQmc21zPUIyNjhDQ0YyQ0ZBRjEzOEUiPuacrOaJgOWFrOWRijwvYT48L2xpPjxsaT48YSAgdGl0bGU9Iue4o+aUv+a0u+WLleWuo+WwjiIgaHJlZj0iY3AuYXNweD9uPTdGNUY5NEM3MkNERTgyNjQiPue4o+aUv+a0u+WLleWuo+WwjjwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuS4reilv+W5tOiZn+WwjeeFp+ihqCIgaHJlZj0iY3AuYXNweD9uPTc5MDVFOEQyRjlCMEIxRTMiPuS4reilv+W5tOiZn+WwjeeFp+ihqDwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuW5tOW6puW3peS9nOioiOeVqyIgaHJlZj0iTmV3cy5hc3B4P249MEI5RDRGM0ZBREExQTM2QSZzbXM9MUQ5QTA2RDM0MDgzMzBENSI+5bm05bqm5bel5L2c6KiI55WrPC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i5o+Q5Y2H5pyN5YuZ5ZOB6LOq5Z+36KGM6KiI55WrIiBocmVmPSJodHRwOi8vd3MuZS1sYW5kLmdvdi50dy8wMDEvMjAxNXlpbGFuLzIxNy93ZWJhcmNoaXZlLzQ3NTAvZjQzNWY4ZjMtNTYyMC00NjU3LThhZTMtYzE3ZDNhNWZhY2EyLnBkZiI+5o+Q5Y2H5pyN5YuZ5ZOB6LOq5Z+36KGM6KiI55WrPC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i5oCn5Yil5Li75rWB5YyW5bCI5Y2AIiBocmVmPSJjcC5hc3B4P249RDczNTBGNDJEQkFCMzVENyI+5oCn5Yil5Li75rWB5YyW5bCI5Y2APC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i6Ziy5rK75oCn6ai35pO+IiBocmVmPSJjcC5hc3B4P249RDc4ODI0REY2QjBFNzU3OCI+6Ziy5rK75oCn6ai35pO+PC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i6JGX5L2c5qyK6IGy5piOIiBocmVmPSJjcC5hc3B4P249QzI0RkEwRjNBOUE5QkNDOSI+6JGX5L2c5qyK6IGy5piOPC9hPjwvbGk+PC91bD48L2xpPjxsaT48YSB0aXRsZT0i5Lq65Y+j57Wx6KiIIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUREQ0JGNjhGQkNEN0U4NkYiPuS6uuWPo+e1seioiDwvYT48dWw+PGxpPjxhICB0aXRsZT0i5pys6Y6uIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUREQ0JGNjhGQkNEN0U4NkYiPuacrOmOrjwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuacrOe4oyIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj0wQTk2RkY2QkFBNEJCMUNEIj7mnKznuKM8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLlhajlnIsiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249NUNCOEE3N0RGRTg4QkYxOCI+5YWo5ZyLPC9hPjwvbGk+PC91bD48L2xpPjxsaT48YSB0aXRsZT0i5qWt5YuZ5p+l6KmiIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTE4NkY2NUMzMjQyRTQ2QTEiPualreWLmeafpeipojwvYT48dWw+PGxpPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuWQhOmghealreWLmeeUs+i+puOAjOWPpumWi+aWsOimlueql+OAjSIgICBocmVmPSJodHRwOi8vdnJoci5lLWxhbmQuZ292LnR3L05ld3MuYXNweD9uPUI5NkI2NUE4NzAwNDIxRkEmc21zPUU2MDE5RDZGRTc1MTMyRTgiPuWQhOmghealreWLmeeUs+i+pjwvYT48L2xpPjxsaT48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLoh6rnhLbkurrmhpHorYnjgIzlj6bplovmlrDoppbnqpfjgI0iICAgaHJlZj0iaHR0cDovL3ZyaHIuZS1sYW5kLmdvdi50dy9jcC5hc3B4P249NUU0RDQ3OUU5NDE1NjRENCI+6Ieq54S25Lq65oaR6K2JPC9hPjwvbGk+PC91bD48L2xpPjxsaT48YSB0aXRsZT0i5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUY1NEVCODRFNDM0RDU1NTciPuWwiOWNgDwvYT48dWw+PGxpPjxhICB0aXRsZT0i6ZaA54mM5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUY1NEVCODRFNDM0RDU1NTciPumWgOeJjOWwiOWNgDwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuWOn+S9j+awkeWwiOWNgCIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj03MUQ1MTRDRTZFOUJENDRDIj7ljp/kvY/msJHlsIjljYA8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmlrDkvY/msJHlsIjljYAiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249MzQ2RkZBOTBBNThFRTQ0MSI+5paw5L2P5rCR5bCI5Y2APC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i57WQ5ama5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTAxNzc1OUZBNTUzRTdEMzQiPue1kOWpmuWwiOWNgDwvYT48L2xpPjwvdWw+PC9saT48bGk+PGEgdGl0bGU9IuihqOWWruS4i+i8iSIgaHJlZj0iY3AuYXNweD9uPTEzNzg0Qzk0QjQ5QUM1NUYiPuihqOWWruS4i+i8iTwvYT48L2xpPjxsaT48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLnt5rkuIrnlLPovqZl5quD5qqv44CM5Y+m6ZaL5paw6KaW56qX44CNIiBocmVmPSJodHRwOi8vb25saW5lMjAxMi5lLWxhbmQuZ292LnR3LyI+57ea5LiK55Sz6L6mZearg+aqrzwvYT48L2xpPjxsaT48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLmiLbmlL9RJkHjgIzlj6bplovmlrDoppbnqpfjgI0iIGhyZWY9Imh0dHA6Ly93d3cucmlzLmdvdi50dy96aF9UVy8xNTgiPuaItuaUv1EmQTwvYT48L2xpPjxsaSBjbGFzcz0icndkdG9wbGluayI+PHNwYW4+PGEgaHJlZj0iRGVmYXVsdC5hc3B4InRpdGxlPSLlm57pppbpoIEiPuWbnummlumggTwvYT48L3NwYW4+PHNwYW4+PGEgaHJlZj0iU2l0ZU1hcC5hc3B4InRpdGxlPSLntrLnq5nlsI7opr0iPue2suermeWwjuimvTwvYT48L3NwYW4+PC9saT48L3VsPjwvbmF2PjxkaXYgY2xhc3M9Im1lbnViZyI+PGRpdiBjbGFzcz0id3JhcHBlciBtZW51YXJlYSI+PHVsIGlkPSJtZW51IiBkYXRhLWZ1bmN0aW9uPSJtYWluX21lbnUiID48bGk+PHNwYW4gY2xhc3M9Im1lbnUiPjxhIHRpdGxlPSLmnKzmiYDnsKHku4siICAgaHJlZj0iY3AuYXNweD9uPTE4NTg1MURDNDNERUQ1QjUiPuacrOaJgOewoeS7izwvYT48L3NwYW4+PGRpdiBjbGFzcz0ic3VibWVudWFyZWEiIHN0eWxlPSJkaXNwbGF5Om5vbmUiPjxkaXYgY2xhc3M9ImlubmVyIj48ZGl2IGNsYXNzPSJzZWMiIHN0eWxlPSJjbGVhcjogbGVmdDsiPjxoMj48c3Bhbj48YSAgdGl0bGU9IumXnOaWvOiYh+a+syIgaHJlZj0iY3AuYXNweD9uPTE4NTg1MURDNDNERUQ1QjUiPumXnOaWvOiYh+a+szwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRpdGxlPSLmnKzmiYDmsr/pnakiIGhyZWY9ImNwLmFzcHg/bj1FOERGMDk0NTMzQ0JDM0VCIj7mnKzmiYDmsr/pnak8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i5aSn5LqL5bm06KGoIiBocmVmPSJjcC5hc3B4P249RkE3NEIwQjJENjlGMkY4OCI+5aSn5LqL5bm06KGoPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuS4u+S7u+ewoeS7iyIgaHJlZj0iY3AuYXNweD9uPUExMzA2NDMwQTA1MzY2NTciPuS4u+S7u+ewoeS7izwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiIHN0eWxlPSJjbGVhcjogbGVmdDsiPjxoMj48c3Bhbj48YSAgdGl0bGU9Iue1hOe5lOe3qOWItiIgaHJlZj0iY3AuYXNweD9uPTA4MDMwRURGN0ZBODI0QkMiPue1hOe5lOe3qOWItjwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRpdGxlPSLmpa3li5nogbfmjowiIGhyZWY9ImNwLmFzcHg/bj1EQjBEN0Y2RUFBMTRBNzY2Ij7mpa3li5nogbfmjow8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i5pyN5YuZ5pmC6ZaTIiBocmVmPSJjcC5hc3B4P249RjlBN0M4QUI0M0NDNzU2QyI+5pyN5YuZ5pmC6ZaTPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuS6pOmAmuaMh+WNlyIgaHJlZj0iY3AuYXNweD9uPTI2NDJENTkzRjA4MkJDQkEiPuS6pOmAmuaMh+WNlzwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiIHN0eWxlPSJjbGVhcjogbGVmdDsiPjxoMj48c3Bhbj48YSAgdGl0bGU9IuihjOaUv+WNgOWfnyIgaHJlZj0iY3AuYXNweD9uPTIxMjRGREVDOUQ0NDdGMTQiPuihjOaUv+WNgOWfnzwvYT48L3NwYW4+PC9oMj48L2Rpdj48L2Rpdj48L2Rpdj48L2xpPjxsaT48c3BhbiBjbGFzcz0ibWVudSI+PGEgdGl0bGU9IuS+v+awkeacjeWLmSIgICBocmVmPSJjcC5hc3B4P249NDc2RUQzQkEyMTU0QUIyOCI+5L6/5rCR5pyN5YuZPC9hPjwvc3Bhbj48ZGl2IGNsYXNzPSJzdWJtZW51YXJlYSIgc3R5bGU9ImRpc3BsYXk6bm9uZSI+PGRpdiBjbGFzcz0iaW5uZXIiPjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0aXRsZT0i5pyN5YuZ55m955qu5pu4IiBocmVmPSJjcC5hc3B4P249NDc2RUQzQkEyMTU0QUIyOCI+5pyN5YuZ55m955qu5pu4PC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuS+v+awkeaOquaWvSIgaHJlZj0iY3AuYXNweD9uPUY0RjQ3MTcwQkYwOEFFRjQiPuS+v+awkeaOquaWvTwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRpdGxlPSLliLDlupzmnI3li5kiIGhyZWY9ImNwLmFzcHg/bj00ODZCRTU2QzVBMDc4OUU3Ij7liLDlupzmnI3li5k8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i6aCQ57SE5Y+X55CG57WQ5ama55m76KiYIiBocmVmPSJjcC5hc3B4P249MzRBMDY3RjAyNzUyOTA1OSI+6aCQ57SE5Y+X55CG57WQ5ama55m76KiYPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0aXRsZT0i5oi257GN55Ww5Zyw6L6m55CGIiBocmVmPSJjcC5hc3B4P249OUFENkM0RDJENkMwMkVBMCI+5oi257GN55Ww5Zyw6L6m55CGPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuiLseaWh+aItuexjeishOacrCIgaHJlZj0iY3AuYXNweD9uPTQ0QTU4MDAxNUFFNEUyQzMiPuiLseaWh+aItuexjeishOacrDwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRpdGxlPSLliLDmoKHlj5fnkIblnIvmsJHouqvliIborYkiIGhyZWY9ImNwLmFzcHg/bj02RjAyRjc4M0I3Qzg3Q0Q2Ij7liLDmoKHlj5fnkIblnIvmsJHouqvliIborYk8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i55Sz6L6m6Ieq54S25Lq65oaR6K2JIiBocmVmPSJjcC5hc3B4P249QzFDMTc1NUYxODkxMkNENiI+55Sz6L6m6Ieq54S25Lq65oaR6K2JPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0aXRsZT0i5a6c6Jit5ZyT5ru/5byP6KiI55Wr5pyN5YuZIiBocmVmPSJjcC5hc3B4P249ODBGNTFGNTZCOEY0QTIxNCI+5a6c6Jit5ZyT5ru/5byP6KiI55Wr5pyN5YuZPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLmiLbmlL/llY/nrZTpm4bjgIzlj6bplovmlrDoppbnqpfjgI0iICAgaHJlZj0iaHR0cDovL3d3dy5yaXMuZ292LnR3L3poX1RXLzE1ODtqc2Vzc2lvbmlkPUI0MkQ0OTM4QUExQThFMzM1OUJDMEZEMTU5OTY2RUU1Ij7miLbmlL/llY/nrZTpm4Y8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PC9kaXY+PC9kaXY+PC9saT48bGk+PHNwYW4gY2xhc3M9Im1lbnUiPjxhIHRpdGxlPSLmiLbmlL/os4foqIoiICAgaHJlZj0iTmV3cy5hc3B4P249QzMyNUNFMEM1QjA1N0NBNyZzbXM9MTA5NUJENjUzNjdCMkE3QSI+5oi25pS/6LOH6KiKPC9hPjwvc3Bhbj48ZGl2IGNsYXNzPSJzdWJtZW51YXJlYSIgc3R5bGU9ImRpc3BsYXk6bm9uZSI+PGRpdiBjbGFzcz0iaW5uZXIiPjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0aXRsZT0i5pyA5paw5raI5oGvIiBocmVmPSJOZXdzLmFzcHg/bj1DMzI1Q0UwQzVCMDU3Q0E3JnNtcz0xMDk1QkQ2NTM2N0IyQTdBIj7mnIDmlrDmtojmga88L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i5pys5omA5YWs5ZGKIiBocmVmPSJOZXdzLmFzcHg/bj05RDAxQkEyQTE1MjQ2RjM0JnNtcz1CMjY4Q0NGMkNGQUYxMzhFIj7mnKzmiYDlhazlkYo8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i57ij5pS/5rS75YuV5a6j5bCOIiBocmVmPSJjcC5hc3B4P249N0Y1Rjk0QzcyQ0RFODI2NCI+57ij5pS/5rS75YuV5a6j5bCOPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuS4reilv+W5tOiZn+WwjeeFp+ihqCIgaHJlZj0iY3AuYXNweD9uPTc5MDVFOEQyRjlCMEIxRTMiPuS4reilv+W5tOiZn+WwjeeFp+ihqDwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiIHN0eWxlPSJjbGVhcjogbGVmdDsiPjxoMj48c3Bhbj48YSAgdGl0bGU9IuW5tOW6puW3peS9nOioiOeVqyIgaHJlZj0iTmV3cy5hc3B4P249MEI5RDRGM0ZBREExQTM2QSZzbXM9MUQ5QTA2RDM0MDgzMzBENSI+5bm05bqm5bel5L2c6KiI55WrPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuaPkOWNh+acjeWLmeWTgeizquWft+ihjOioiOeVqyIgaHJlZj0iaHR0cDovL3dzLmUtbGFuZC5nb3YudHcvMDAxLzIwMTV5aWxhbi8yMTcvd2ViYXJjaGl2ZS80NzUwL2Y0MzVmOGYzLTU2MjAtNDY1Ny04YWUzLWMxN2QzYTVmYWNhMi5wZGYiPuaPkOWNh+acjeWLmeWTgeizquWft+ihjOioiOeVqzwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRpdGxlPSLmgKfliKXkuLvmtYHljJblsIjljYAiIGhyZWY9ImNwLmFzcHg/bj1ENzM1MEY0MkRCQUIzNUQ3Ij7mgKfliKXkuLvmtYHljJblsIjljYA8L2E+PC9zcGFuPjwvaDI+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i6Ziy5rK75oCn6ai35pO+IiBocmVmPSJjcC5hc3B4P249RDc4ODI0REY2QjBFNzU3OCI+6Ziy5rK75oCn6ai35pO+PC9hPjwvc3Bhbj48L2gyPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0aXRsZT0i6JGX5L2c5qyK6IGy5piOIiBocmVmPSJjcC5hc3B4P249QzI0RkEwRjNBOUE5QkNDOSI+6JGX5L2c5qyK6IGy5piOPC9hPjwvc3Bhbj48L2gyPjwvZGl2PjwvZGl2PjwvZGl2PjwvbGk+PGxpPjxzcGFuIGNsYXNzPSJtZW51Ij48YSB0aXRsZT0i5Lq65Y+j57Wx6KiIIiAgIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249RERDQkY2OEZCQ0Q3RTg2RiI+5Lq65Y+j57Wx6KiIPC9hPjwvc3Bhbj48ZGl2IGNsYXNzPSJzdWJtZW51YXJlYSIgc3R5bGU9ImRpc3BsYXk6bm9uZSI+PGRpdiBjbGFzcz0iaW5uZXIiPjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0aXRsZT0i5pys6Y6uIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUREQ0JGNjhGQkNEN0U4NkYiPuacrOmOrjwvYT48L3NwYW4+PC9oMj48dWw+PGxpPjxzcGFuPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9Iuavj+aciOWQhOmHjOmEsOaVuOOAgeaItuaVuOOAgeeUt+OAgeWls+S6uuWPo+aVuOe1seioiOihqOOAjOWPpumWi+aWsOimlueql+OAjSIgIGhyZWY9Imh0dHA6Ly9ocnMuZS1sYW5kLmdvdi50dy9Tb3VyY2UvSDAxL0gwMTAxUTAyLmFzcD9Gb3JtX3RpdGxlPTAzJkltZ19mbGFnPTEmU3lzdGVtX3dvcms9NCZTeXN0ZW1fbm89SDAxIj7mr4/mnIjlkITph4zphLDmlbjjgIHmiLbmlbjjgIHnlLfjgIHlpbPkurrlj6PmlbjntbHoqIjooag8L2E+PC9zcGFuPjwvbGk+PGxpPjxzcGFuPjxhICB0aXRsZT0i54++5L2P5Lq65Y+j5oyJ5oCn5Yil5Y+K5bm06b2h5YiGKDXmrbLntYTot50pIiAgaHJlZj0iTmV3cy5hc3B4P249QTlCMEEzRDRFNUM2NTE1RCZzbXM9QjUyRkYxMDQxODE4OTJGOSI+54++5L2P5Lq65Y+j5oyJ5oCn5Yil5Y+K5bm06b2h5YiGKDXmrbLntYTot50pPC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGl0bGU9IuePvuS9j+WOn+S9j+awkeS6uuWPo+aMieaAp+WIpeWPiuW5tOm9oeWIhig15q2y57WE6LedKSIgIGhyZWY9Ik5ld3MuYXNweD9uPTI4MzQxMkFFMzNBQzRENzEmc21zPTUzOEI3MTcxODI3RTVBODQiPuePvuS9j+WOn+S9j+awkeS6uuWPo+aMieaAp+WIpeWPiuW5tOm9oeWIhig15q2y57WE6LedKTwvYT48L3NwYW4+PC9saT48bGk+PHNwYW4+PGEgIHRpdGxlPSLnspflh7rnlJ/njofjgIHnspfmrbvkuqHnjofjgIHnspfntZDlqZrnjofjgIHnspfpm6LlqZrnjofntbHoqIjooagub2RzIiAgaHJlZj0iaHR0cDovL3dzLmUtbGFuZC5nb3YudHcvMDAxLzIwMTV5aWxhbi8yMTcvd2ViYXJjaGl2ZS8zODk5L2M5NzAxM2QxLTczYTktNGFlNy1iMzMyLTYyYTk2NTQxNGZhZi5vZHQiPueyl+WHuueUn+eOh+OAgeeyl+atu+S6oeeOh+OAgeeyl+e1kOWpmueOh+OAgeeyl+mbouWpmueOh+e1seioiOihqC5vZHM8L2E+PC9zcGFuPjwvbGk+PGxpPjxzcGFuPjxhICB0aXRsZT0i5Y2B5LqU5q2y5Lul5LiK54++5L2P5Lq65Y+j5pW45oyJ5oCn5Yil44CB5bm06b2h5Y+K5pWZ6IKy56iL5bqm5YiGIiAgaHJlZj0iY3AuYXNweD9uPTAyQ0FBNUEwQzcwREREMzMiPuWNgeS6lOatsuS7peS4iuePvuS9j+S6uuWPo+aVuOaMieaAp+WIpeOAgeW5tOm9oeWPiuaVmeiCsueoi+W6puWIhjwvYT48L3NwYW4+PC9saT48L3VsPjxhIGNsYXNzPSJtb3JlIiAgdGl0bGU9IuacrOmOriIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj1ERENCRjY4RkJDRDdFODZGIj7mm7TlpJo8L2E+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i5pys57ijIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTBBOTZGRjZCQUE0QkIxQ0QiPuacrOe4ozwvYT48L3NwYW4+PC9oMj48dWw+PGxpPjxzcGFuPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuWunOiYree4o+WQhOmEiemOruW4guacgOaWsOS6uuWPo+aVuOe1seioiOizh+aWmeOAjOWPpumWi+aWsOimlueql+OAjSIgIGhyZWY9Imh0dHA6Ly9ocnMuZS1sYW5kLmdvdi50dy9Tb3VyY2UvSDAyL0gwMjAxUTAyLmFzcD9JbWdfZmxhZz0xJlN5c3RlbV93b3JrPTQmU3lzdGVtX25vPUgwMiZGb3JtX3RpdGxlPTEiPuWunOiYree4o+WQhOmEiemOruW4guacgOaWsOS6uuWPo+aVuOe1seioiOizh+aWmTwvYT48L3NwYW4+PC9saT48bGk+PHNwYW4+PGEgIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i5a6c6Jit57ij5ZCE6YSJ6Y6u5biC5q235bm05Lq65Y+j5pW457Wx6KiI6LOH5paZ44CM5Y+m6ZaL5paw6KaW56qX44CNIiAgaHJlZj0iaHR0cDovL2hycy5lLWxhbmQuZ292LnR3L1NvdXJjZS9IMDIvSDAyMDNRMDIuYXNwP0ltZ19mbGFnPTEmU3lzdGVtX3dvcms9NCZTeXN0ZW1fbm89SDAyMDMmRm9ybV90aXRsZT0zIj7lrpzomK3nuKPlkITphInpjq7luILmrbflubTkurrlj6PmlbjntbHoqIjos4fmlpk8L2E+PC9zcGFuPjwvbGk+PGxpPjxzcGFuPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuWunOiYree4o+att+W5tOmBt+WHuuOAgeWFpeOAgeWHuueUn+OAgeatu+S6oeOAgee1kOOAgembouWpmueZu+iomOaVuOe1seioiOihqOOAjOWPpumWi+aWsOimlueql+OAjSIgIGhyZWY9Imh0dHA6Ly9ocnMuZS1sYW5kLmdvdi50dy9Tb3VyY2UvSDAyL0gwMjAyUTAyLmFzcD9JbWdfZmxhZz0xJlN5c3RlbV93b3JrPTQmU3lzdGVtX25vPUgwMjAyJkZvcm1fdGl0bGU9MiI+5a6c6Jit57ij5q235bm06YG35Ye644CB5YWl44CB5Ye655Sf44CB5q275Lqh44CB57WQ44CB6Zui5ama55m76KiY5pW457Wx6KiI6KGoPC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLlrpzomK3nuKPlkITmiLbmlL/kuovli5nmiYDkurrlj6PntbHoqIjos4fmlpnmn6XoqaLjgIzlj6bplovmlrDoppbnqpfjgI0iICBocmVmPSJodHRwOi8vaHJzLmUtbGFuZC5nb3YudHcvU291cmNlL0gwMS9IMDEwMlEwMi5hc3A/SW1nX2ZsYWc9MSZTeXN0ZW1fd29yaz00JlN5c3RlbV9ubz1IMDEwMiZGb3JtX3RpdGxlPTUiPuWunOiYree4o+WQhOaItuaUv+S6i+WLmeaJgOS6uuWPo+e1seioiOizh+aWmeafpeipojwvYT48L3NwYW4+PC9saT48L3VsPjwvZGl2PjxkaXYgY2xhc3M9InNlYyIgPjxoMj48c3Bhbj48YSAgdGl0bGU9IuWFqOWciyIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj01Q0I4QTc3REZFODhCRjE4Ij7lhajlnIs8L2E+PC9zcGFuPjwvaDI+PHVsPjxsaT48c3Bhbj48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLlhafmlL/pg6jmiLbmlL/lj7jlhajnkIPos4foqIrntrLkurrlj6PntbHoqIjos4fmlpnjgIzlj6bplovmlrDoppbnqpfjgI0iICBocmVmPSJodHRwOi8vd3d3LnJpcy5nb3YudHcvMzQ2Ij7lhafmlL/pg6jmiLbmlL/lj7jlhajnkIPos4foqIrntrLkurrlj6PntbHoqIjos4fmlpk8L2E+PC9zcGFuPjwvbGk+PGxpPjxzcGFuPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuihjOaUv+mZouS4u+ioiOiZleWPl+ioquiAheWwiOWNgOOAjOWPpumWi+aWsOimlueql+OAjSIgIGhyZWY9Imh0dHA6Ly93d3cuc3RhdC5nb3YudHcvY3QuYXNwP3hJdGVtPTI2MDUzJkN0Tm9kZT01MzczJm1wPTQiPuihjOaUv+mZouS4u+ioiOiZleWPl+ioquiAheWwiOWNgDwvYT48L3NwYW4+PC9saT48L3VsPjwvZGl2PjwvZGl2PjwvZGl2PjwvbGk+PGxpPjxzcGFuIGNsYXNzPSJtZW51Ij48YSB0aXRsZT0i5qWt5YuZ5p+l6KmiIiAgIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249MTg2RjY1QzMyNDJFNDZBMSI+5qWt5YuZ5p+l6KmiPC9hPjwvc3Bhbj48ZGl2IGNsYXNzPSJzdWJtZW51YXJlYSIgc3R5bGU9ImRpc3BsYXk6bm9uZSI+PGRpdiBjbGFzcz0iaW5uZXIiPjxkaXYgY2xhc3M9InNlYyIgc3R5bGU9ImNsZWFyOiBsZWZ0OyI+PGgyPjxzcGFuPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuWQhOmghealreWLmeeUs+i+puOAjOWPpumWi+aWsOimlueql+OAjSIgICBocmVmPSJodHRwOi8vdnJoci5lLWxhbmQuZ292LnR3L05ld3MuYXNweD9uPUI5NkI2NUE4NzAwNDIxRkEmc21zPUU2MDE5RDZGRTc1MTMyRTgiPuWQhOmghealreWLmeeUs+i+pjwvYT48L3NwYW4+PC9oMj48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i6Ieq54S25Lq65oaR6K2J44CM5Y+m6ZaL5paw6KaW56qX44CNIiAgIGhyZWY9Imh0dHA6Ly92cmhyLmUtbGFuZC5nb3YudHcvY3AuYXNweD9uPTVFNEQ0NzlFOTQxNTY0RDQiPuiHqueEtuS6uuaGkeitiTwvYT48L3NwYW4+PC9oMj48L2Rpdj48L2Rpdj48L2Rpdj48L2xpPjxsaT48c3BhbiBjbGFzcz0ibWVudSI+PGEgdGl0bGU9IuWwiOWNgCIgICBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUY1NEVCODRFNDM0RDU1NTciPuWwiOWNgDwvYT48L3NwYW4+PGRpdiBjbGFzcz0ic3VibWVudWFyZWEiIHN0eWxlPSJkaXNwbGF5Om5vbmUiPjxkaXYgY2xhc3M9ImlubmVyIj48ZGl2IGNsYXNzPSJzZWMiIHN0eWxlPSJjbGVhcjogbGVmdDsiPjxoMj48c3Bhbj48YSAgdGl0bGU9IumWgOeJjOWwiOWNgCIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj1GNTRFQjg0RTQzNEQ1NTU3Ij7ploDniYzlsIjljYA8L2E+PC9zcGFuPjwvaDI+PHVsPjxsaT48c3Bhbj48YSAgdGl0bGU9IumWgOeJjOeUs+iri+mgiOefpSIgIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249MTFCMEFFMDI5REE2Qjk3QiI+6ZaA54mM55Sz6KuL6aCI55+lPC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGl0bGU9IuihjOaUv+WNgOWfn+iqv+aVtOWwiOWNgCIgIGhyZWY9ImNwLmFzcHg/bj01MkU5NjY0QTdBQkQ4NEMwIj7ooYzmlL/ljYDln5/oqr/mlbTlsIjljYA8L2E+PC9zcGFuPjwvbGk+PGxpPjxzcGFuPjxhICB0aXRsZT0i6ZaA54mM57eo5pW05bCI5Y2AIiAgaHJlZj0iY3AuYXNweD9uPThGMkVENzI5REZGOTAyOTUiPumWgOeJjOe3qOaVtOWwiOWNgDwvYT48L3NwYW4+PC9saT48bGk+PHNwYW4+PGEgIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i6YGT6Lev5ZG95ZCN5Y+K6ZaA54mM57eo6YeY6Ieq5rK75qKd5L6L44CM5Y+m6ZaL5paw6KaW56qX44CNIiAgaHJlZj0iaHR0cDovL2dscnNsYXcuZS1sYW5kLmdvdi50dy9MYXdDb250ZW50LmFzcHg/aWQ9RkwwMjM2MDkmS2V5V29yZD0lZTklODElOTMlZTglYjclYWYlZTUlOTElYmQlZTUlOTAlOGQlZTUlOGYlOGElZTklOTYlODAlZTclODklOGMlZTclYjclYTglZTklODclOTglZTglODclYWElZTYlYjIlYmIlZTYlYTIlOWQlZTQlYmUlOGIiPumBk+i3r+WRveWQjeWPiumWgOeJjOe3qOmHmOiHquayu+aineS+izwvYT48L3NwYW4+PC9saT48bGk+PHNwYW4+PGEgIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i5Zyw55CG6LOH6KiK5aSa5YWD5Yqg5YC857O757Wx44CM5Y+m6ZaL5paw6KaW56qX44CNIiAgaHJlZj0iaHR0cDovL21hcC5lLWxhbmQuZ292LnR3L3lpbWFwLyI+5Zyw55CG6LOH6KiK5aSa5YWD5Yqg5YC857O757WxPC9hPjwvc3Bhbj48L2xpPjwvdWw+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i5Y6f5L2P5rCR5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTcxRDUxNENFNkU5QkQ0NEMiPuWOn+S9j+awkeWwiOWNgDwvYT48L3NwYW4+PC9oMj48dWw+PGxpPjxzcGFuPjxhICB0aXRsZT0i5Y6f5L2P5rCR6Lqr5YiG5rOVIiAgaHJlZj0iY3AuYXNweD9uPTJFRTc3NDAxNTlDOUZCMjIiPuWOn+S9j+awkei6q+WIhuazlTwvYT48L3NwYW4+PC9saT48bGk+PHNwYW4+PGEgIHRpdGxlPSLljp/kvY/msJHouqvliIboqo3lrpoiICBocmVmPSJjcC5hc3B4P249NEM3MkE3QkRDMTQ1NENDOSI+5Y6f5L2P5rCR6Lqr5YiG6KqN5a6aPC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGl0bGU9IuaXj+WIpeiqjeWumui+puazlSIgIGhyZWY9ImNwLmFzcHg/bj01QzY5MzYzMjhDRUZFOTA1Ij7ml4/liKXoqo3lrprovqbms5U8L2E+PC9zcGFuPjwvbGk+PGxpPjxzcGFuPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuiHuueBo+WOn+S9j+awkeaXj+aWh+WMluWckuWNgOOAjOWPpumWi+aWsOimlueql+OAjSIgIGhyZWY9Imh0dHA6Ly93d3cudGFjcC5nb3YudHcvaG9tZTAxLmFzcHg/SUQ9MSI+6Ie654Gj5Y6f5L2P5rCR5peP5paH5YyW5ZyS5Y2APC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLoh7rngaPljp/kvY/msJHml4/os4foqIros4fmupDntrLjgIzlj6bplovmlrDoppbnqpfjgI0iICBocmVmPSJodHRwOi8vd3d3LnRpcHAub3JnLnR3LyI+6Ie654Gj5Y6f5L2P5rCR5peP6LOH6KiK6LOH5rqQ57ayPC9hPjwvc3Bhbj48L2xpPjwvdWw+PGEgY2xhc3M9Im1vcmUiICB0aXRsZT0i5Y6f5L2P5rCR5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTcxRDUxNENFNkU5QkQ0NEMiPuabtOWkmjwvYT48L2Rpdj48ZGl2IGNsYXNzPSJzZWMiID48aDI+PHNwYW4+PGEgIHRpdGxlPSLmlrDkvY/msJHlsIjljYAiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249MzQ2RkZBOTBBNThFRTQ0MSI+5paw5L2P5rCR5bCI5Y2APC9hPjwvc3Bhbj48L2gyPjx1bD48bGk+PHNwYW4+PGEgIHRpdGxlPSLlpKfpmbjphY3lgbblsIjljYAiICBocmVmPSJjcC5hc3B4P249MTY1NzFFMDI5QUU1QkY1NSI+5aSn6Zm46YWN5YG25bCI5Y2APC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGl0bGU9IuWkluexjemFjeWBtuWwiOWNgCIgIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249NjREMENEODZFOTA0OEI3QiI+5aSW57GN6YWN5YG25bCI5Y2APC9hPjwvc3Bhbj48L2xpPjwvdWw+PC9kaXY+PGRpdiBjbGFzcz0ic2VjIiA+PGgyPjxzcGFuPjxhICB0aXRsZT0i57WQ5ama5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTAxNzc1OUZBNTUzRTdEMzQiPue1kOWpmuWwiOWNgDwvYT48L3NwYW4+PC9oMj48dWw+PGxpPjxzcGFuPjxhICB0aXRsZT0i57WQ5ama55m76KiY6KaP5a6aIiAgaHJlZj0iY3AuYXNweD9uPTY0QUNDMTc1REE1RkYyNTAiPue1kOWpmueZu+iomOimj+WumjwvYT48L3NwYW4+PC9saT48bGk+PHNwYW4+PGEgIHRpdGxlPSLntZDlqZrnlLPovqbpoIjnn6UiICBocmVmPSJjcC5hc3B4P249NTA0OEVFMDVCODBGMUUxNSI+57WQ5ama55Sz6L6m6aCI55+lPC9hPjwvc3Bhbj48L2xpPjxsaT48c3Bhbj48YSAgdGl0bGU9IumgkOe0hOe1kOWpmueZu+iomCIgIGhyZWY9ImNwLmFzcHg/bj04NEQxNTVBNEI0Q0RFQjNF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YWluZXIiICA+DQoJCQkJCTxkaXYgY2xhc3M9ImlubmVyIj4NCjxkaXYgaWQ9IkNvbnRlbnRfMV8xXzMzNjQiIGNsYXNzPSJzZWNvbmRfbWVudSI+PGg0PuacrOaJgOewoeS7izwvaDQ+PHVsPjxsaSBjbGFzcz0ic2Vjb25kX21lbnVfeWVzIj48aDU+PGEgaHJlZj0iY3AuYXNweD9uPTE4NTg1MURDNDNERUQ1QjUiPumXnOaWvOiYh+a+szwvYT48L2g1PjwvbGk+PGxpPjxoNT48YSB0aXRsZT0i5pys5omA5rK/6Z2pIiBocmVmPSJjcC5hc3B4P249RThERjA5NDUzM0NCQzNFQiI+5pys5omA5rK/6Z2pPC9hPjwvaDU+PC9saT48bGk+PGg1PjxhIHRpdGxlPSLlpKfkuovlubTooagiIGhyZWY9ImNwLmFzcHg/bj1GQTc0QjBCMkQ2OUYyRjg4Ij7lpKfkuovlubTooag8L2E+PC9oNT48L2xpPjxsaT48aDU+PGEgdGl0bGU9IuS4u+S7u+ewoeS7iyIgaHJlZj0iY3AuYXNweD9uPUExMzA2NDMwQTA1MzY2NTciPuS4u+S7u+ewoeS7izwvYT48L2g1PjwvbGk+PGxpPjxoNT48YSB0aXRsZT0i57WE57mU57eo5Yi2IiBocmVmPSJjcC5hc3B4P249MDgwMzBFREY3RkE4MjRCQyI+57WE57mU57eo5Yi2PC9hPjwvaDU+PC9saT48bGk+PGg1PjxhIHRpdGxlPSLmpa3li5nogbfmjowiIGhyZWY9ImNwLmFzcHg/bj1EQjBEN0Y2RUFBMTRBNzY2Ij7mpa3li5nogbfmjow8L2E+PC9oNT48L2xpPjxsaT48aDU+PGEgdGl0bGU9IuacjeWLmeaZgumWkyIgaHJlZj0iY3AuYXNweD9uPUY5QTdDOEFCNDNDQzc1NkMiPuacjeWLmeaZgumWkzwvYT48L2g1PjwvbGk+PGxpPjxoNT48YSB0aXRsZT0i5Lqk6YCa5oyH5Y2XIiBocmVmPSJjcC5hc3B4P249MjY0MkQ1OTNGMDgyQkNCQSI+5Lqk6YCa5oyH5Y2XPC9hPjwvaDU+PC9saT48bGk+PGg1PjxhIHRpdGxlPSLooYzmlL/ljYDln58iIGhyZWY9ImNwLmFzcHg/bj0yMTI0RkRFQzlENDQ3RjE0Ij7ooYzmlL/ljYDln588L2E+PC9oNT48L2xpPjwvdWw+PC9kaXY+DQoJCQkJCTwvZGl2Pg0KCQkJCTwvZGl2Pg0KCQkJPC9kaXY+DQoJCTwvZGl2Pg0KCTwvZGl2Pg0KPC9kaXY+DQpkAgUPFgIfAGRkAgcPZBYEAgUPFgIfAAUVPGg0PumXnOaWvOiYh+a+szwvaDQ+ZAIJDxYCHwAFhwE8bGk+PGEgaHJlZj0iY3AuYXNweD9uPTE4NTg1MURDNDNERUQ1QjUiIHRhcmdldD0iIj7mnKzmiYDnsKHku4s8L2E+PC9saT48bGk+PGEgaHJlZj0iY3AuYXNweD9uPTE4NTg1MURDNDNERUQ1QjUiID7pl5zmlrzomIfmvrM8L2E+PC9saT5kAg0PFgIfAAWQAjxkaXYgaWQ9IldXV0VkaXQiIEJFX1VybD0iaHR0cDpcXG1nci5lLWxhbmQuZ292LnR3XFN5c3RlbVxEYXRhTWFuYWdlclxDUF9EZWFsRGF0YS5hc3B4P1dXV0VkaXQ9dHJ1ZSZsaXN0bmFtZT3ntrLpoIHntq3orbcmSXNEYXRhTUc9VHJ1ZSZzdGF0ZT11cGRhdGUmbW9kZT12aWV3JnNtbHNuPTk1MTM4MTVFMUZGRkRBRDUmc2l0ZXNzbj0yMTcmbm9kZWlkPTE4NTg1MURDNDNERUQ1QjUmc249REMyRThDRjg5OUJBNzdGOCIgc3R5bGU9InRleHQtYWxpZ246IHJpZ2h0OyI+PC9kaXY+ZAIPD2QWBAIDD2QWAgIFD2QWBAIBDxYEHwAFRjxkaXYgY2xhc3M9ImNwX3RhYnMiIHN0eWxlPSJkaXNwbGF5OmJsb2NrOyB3aWR0aDo5OCU7Ij48dWw+PC91bD48L2Rpdj4fAmhkAgMPFgIfAAXUDjxkaXYgc3R5bGU9ImRpc3BsYXk6YmxvY2s7IHdpZHRoOjk4JTsiPjx0YWJsZSBib3JkZXI9IjAiIGNlbGxwYWRkaW5nPSIwIiBjZWxsc3BhY2luZz0iMCIgd2lkdGg9IjEwMCUiPg0KCTx0Ym9keT4NCgkJPHRyPg0KCQkJPHRkIHdpZHRoPSIyJSI+PGZvbnQgc2l6ZT0iMiI+Jm5ic3A7Jm5ic3A7PC9mb250PjwvdGQ+DQoJCQk8dGQgd2lkdGg9Ijk1JSI+PGJyIC8+DQoJCQk8Zm9udCBzaXplPSIyIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9mb250Pjxmb250IGNvbG9yPSIjNjY2NjY2Ij7omIfmvrPlj6TnqLHmuK/lj6PvvIzlhaflnLDnqLHmlr3lhavlnZHvvIznm7jlgrPmuIXlmInmhbblubTplpPmnInms4nlt57kurrmsI/omIflo6vlsL7ogIXnjofphInli4flm5vljYHlm5vkurroh7PmraTlor7ojZLvvIzlvozkurrngrrntIDlv7XlhYjos6LomIfmsI/pl6LlnLDli57nqY3vvIzlsIfmuK/ngaPjgIzmvrPjgI3lnLDlkb3lkI3ngrog6JiH5r6zIOOAgiDmnKzpjq7lnKjmsJHlnIvliY3lu7/kuozlubTliY3lsazmlrzliKnmvqTnsKHloKHvvIzmsJHlnIvliY3ljYHlubTmlLnngrrlrpzomK3lu7PliKnmvqTnsKHovqbli5nnvbLvvIzmsJHlnIvliY3kuIPlubTliKnmvqTnsKHovqbli5nnvbLlu6LmraLmrbjlsaznvoXmnbHmlK/lu7PvvIzoh7PmsJHlnIvkuZ3lubTmlLnngrrlj7DljJflt57omIfmvrPpg6HomIfmvrPluoTvvIzmsJHlnIvljYXkuZ3lubTljYHmnIjmnKznnIHooYzmlL/ljYDln5/ph43mlrDoqr/mlbToqK3nq4vvvIzmlLnnqLHlrpzomK3nuKPomIfmvrPpjq7ov4Tku4rvvIw8Zm9udCBjb2xvcj0iIzY2NjY2NiI+5rCR5ZyLMTAy5bm0NOaciDHml6XlsIfljp/ogZbmuZbph4zlioPliIbngrrogZbmuZblj4rogZbmhJvlhanph4zjgIHlsrPmmI7ph4zkvbXlhaXmuK/pgorph4zlkIzmmYLpgLLooYzooYzmlL/ljYDln5/oqr/mlbTvvIw8L2ZvbnQ+6KGM5pS/5Y2A5YqD5LuN57at5oyB54K65LqM5Y2B5YWt6YeMIO+8jOWMheaLrO+8muawuOWFiemHjOOAgeawuOaYpemHjOOAgeawuOamrumHjOOAgeawuOaogumHjOOAgeWtmOS7gemHjOOAgeadsea+s+mHjOOAgemV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bWVudSI+PGEgaWQ9Im9wZW4iIGhyZWY9ImphdmFzY3JpcHQ6IHJldHVybiBmYWxzZTsiIG9uY2xpY2s9Im1lbnUoJ29wZW5tZW51Jyk7IiBvbmtleXByZXNzPSJtZW51KCdvcGVubWVudScpOyIgc3R5bGU9IndpZHRoOjgwcHg7IGhlaWdodDoyNXB4OyBkaXNwbGF5OmJsb2NrOyI+b3BlbjwvYT48L3NwYW4+IDxzcGFuIGNsYXNzPSJjbG9zZWJ0biIgaWQ9ImNsb3NlbWVudSI+PGEgaWQ9ImNsb3NlIiBocmVmPSJqYXZhc2NyaXB0OiByZXR1cm4gZmFsc2U7IiBvbmNsaWNrPSJtZW51KCdjbG9zZW1lbnUnKTsiIG9ua2V5cHJlc3M9Im1lbnUoJ2Nsb3NlbWVudScpOyIgc3R5bGU9IndpZHRoOjgwcHg7IGhlaWdodDoyNXB4OyBkaXNwbGF5OmJsb2NrOyI+Y2xvc2U8L2E+PC9zcGFuPiA8ZGl2IGNsYXNzPSJhbGxtZW51IiBpZD0iZm9vdGVybWVudSI+IDxkaXYgY2xhc3M9Im9uZW1lbnUiPiA8aDM+PGEgdGl0bGU9IuacrOaJgOewoeS7iyIgaHJlZj0iY3AuYXNweD9uPTE4NTg1MURDNDNERUQ1QjUiPuacrOaJgOewoeS7izwvYT48L2gzPjx1bD48bGk+PGEgIHRpdGxlPSLpl5zmlrzomIfmvrMiIGhyZWY9ImNwLmFzcHg/bj0xODU4NTFEQzQzREVENUI1Ij7pl5zmlrzomIfmvrM8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmnKzmiYDmsr/pnakiIGhyZWY9ImNwLmFzcHg/bj1FOERGMDk0NTMzQ0JDM0VCIj7mnKzmiYDmsr/pnak8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLlpKfkuovlubTooagiIGhyZWY9ImNwLmFzcHg/bj1GQTc0QjBCMkQ2OUYyRjg4Ij7lpKfkuovlubTooag8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLkuLvku7vnsKHku4siIGhyZWY9ImNwLmFzcHg/bj1BMTMwNjQzMEEwNTM2NjU3Ij7kuLvku7vnsKHku4s8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLntYTnuZTnt6jliLYiIGhyZWY9ImNwLmFzcHg/bj0wODAzMEVERjdGQTgyNEJDIj7ntYTnuZTnt6jliLY8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmpa3li5nogbfmjowiIGhyZWY9ImNwLmFzcHg/bj1EQjBEN0Y2RUFBMTRBNzY2Ij7mpa3li5nogbfmjow8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmnI3li5nmmYLplpMiIGhyZWY9ImNwLmFzcHg/bj1GOUE3QzhBQjQzQ0M3NTZDIj7mnI3li5nmmYLplpM8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLkuqTpgJrmjIfljZciIGhyZWY9ImNwLmFzcHg/bj0yNjQyRDU5M0YwODJCQ0JBIj7kuqTpgJrmjIfljZc8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLooYzmlL/ljYDln58iIGhyZWY9ImNwLmFzcHg/bj0yMTI0RkRFQzlENDQ3RjE0Ij7ooYzmlL/ljYDln588L2E+PC9saT48L3VsPjwvZGl2PjxkaXYgY2xhc3M9Im9uZW1lbnUiPiA8aDM+PGEgdGl0bGU9IuS+v+awkeacjeWLmSIgaHJlZj0iY3AuYXNweD9uPTQ3NkVEM0JBMjE1NEFCMjgiPuS+v+awkeacjeWLmTwvYT48L2gzPjx1bD48bGk+PGEgIHRpdGxlPSLmnI3li5nnmb3nmq7mm7giIGhyZWY9ImNwLmFzcHg/bj00NzZFRDNCQTIxNTRBQjI4Ij7mnI3li5nnmb3nmq7mm7g8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLkvr/msJHmjqrmlr0iIGhyZWY9ImNwLmFzcHg/bj1GNEY0NzE3MEJGMDhBRUY0Ij7kvr/msJHmjqrmlr08L2E+PC9saT48bGk+PGEgIHRpdGxlPSLliLDlupzmnI3li5kiIGhyZWY9ImNwLmFzcHg/bj00ODZCRTU2QzVBMDc4OUU3Ij7liLDlupzmnI3li5k8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLpoJDntITlj5fnkIbntZDlqZrnmbvoqJgiIGhyZWY9ImNwLmFzcHg/bj0zNEEwNjdGMDI3NTI5MDU5Ij7poJDntITlj5fnkIbntZDlqZrnmbvoqJg8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmiLbnsY3nlbDlnLDovqbnkIYiIGhyZWY9ImNwLmFzcHg/bj05QUQ2QzREMkQ2QzAyRUEwIj7miLbnsY3nlbDlnLDovqbnkIY8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLoi7HmlofmiLbnsY3orITmnKwiIGhyZWY9ImNwLmFzcHg/bj00NEE1ODAwMTVBRTRFMkMzIj7oi7HmlofmiLbnsY3orITmnKw8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLliLDmoKHlj5fnkIblnIvmsJHouqvliIborYkiIGhyZWY9ImNwLmFzcHg/bj02RjAyRjc4M0I3Qzg3Q0Q2Ij7liLDmoKHlj5fnkIblnIvmsJHouqvliIborYk8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLnlLPovqboh6rnhLbkurrmhpHorYkiIGhyZWY9ImNwLmFzcHg/bj1DMUMxNzU1RjE4OTEyQ0Q2Ij7nlLPovqboh6rnhLbkurrmhpHorYk8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLlrpzomK3lnJPmu7/lvI/oqIjnlavmnI3li5kiIGhyZWY9ImNwLmFzcHg/bj04MEY1MUY1NkI4RjRBMjE0Ij7lrpzomK3lnJPmu7/lvI/oqIjnlavmnI3li5k8L2E+PC9saT48bGk+PGEgIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i5oi25pS/5ZWP562U6ZuG44CM5Y+m6ZaL5paw6KaW56qX44CNIiAgIGhyZWY9Imh0dHA6Ly93d3cucmlzLmdvdi50dy96aF9UVy8xNTg7anNlc3Npb25pZD1CNDJENDkzOEFBMUE4RTMzNTlCQzBGRDE1OTk2NkVFNSI+5oi25pS/5ZWP562U6ZuGPC9hPjwvbGk+PC91bD48L2Rpdj48ZGl2IGNsYXNzPSJvbmVtZW51Ij4gPGgzPjxhIHRpdGxlPSLmiLbmlL/os4foqIoiIGhyZWY9Ik5ld3MuYXNweD9uPUMzMjVDRTBDNUIwNTdDQTcmc21zPTEwOTVCRDY1MzY3QjJBN0EiPuaItuaUv+izh+ioijwvYT48L2gzPjx1bD48bGk+PGEgIHRpdGxlPSLmnIDmlrDmtojmga8iIGhyZWY9Ik5ld3MuYXNweD9uPUMzMjVDRTBDNUIwNTdDQTcmc21zPTEwOTVCRDY1MzY3QjJBN0EiPuacgOaWsOa2iOaBrzwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuacrOaJgOWFrOWRiiIgaHJlZj0iTmV3cy5hc3B4P249OUQwMUJBMkExNTI0NkYzNCZzbXM9QjI2OENDRjJDRkFGMTM4RSI+5pys5omA5YWs5ZGKPC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i57ij5pS/5rS75YuV5a6j5bCOIiBocmVmPSJjcC5hc3B4P249N0Y1Rjk0QzcyQ0RFODI2NCI+57ij5pS/5rS75YuV5a6j5bCOPC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i5Lit6KW/5bm06Jmf5bCN54Wn6KGoIiBocmVmPSJjcC5hc3B4P249NzkwNUU4RDJGOUIwQjFFMyI+5Lit6KW/5bm06Jmf5bCN54Wn6KGoPC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i5bm05bqm5bel5L2c6KiI55WrIiBocmVmPSJOZXdzLmFzcHg/bj0wQjlENEYzRkFEQTFBMzZBJnNtcz0xRDlBMDZEMzQwODMzMEQ1Ij7lubTluqblt6XkvZzoqIjnlas8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmj5DljYfmnI3li5nlk4Hos6rln7fooYzoqIjnlasiIGhyZWY9Imh0dHA6Ly93cy5lLWxhbmQuZ292LnR3LzAwMS8yMDE1eWlsYW4vMjE3L3dlYmFyY2hpdmUvNDc1MC9mNDM1ZjhmMy01NjIwLTQ2NTctOGFlMy1jMTdkM2E1ZmFjYTIucGRmIj7mj5DljYfmnI3li5nlk4Hos6rln7fooYzoqIjnlas8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLmgKfliKXkuLvmtYHljJblsIjljYAiIGhyZWY9ImNwLmFzcHg/bj1ENzM1MEY0MkRCQUIzNUQ3Ij7mgKfliKXkuLvmtYHljJblsIjljYA8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLpmLLmsrvmgKfpqLfmk74iIGhyZWY9ImNwLmFzcHg/bj1ENzg4MjRERjZCMEU3NTc4Ij7pmLLmsrvmgKfpqLfmk748L2E+PC9saT48bGk+PGEgIHRpdGxlPSLokZfkvZzmrIrogbLmmI4iIGhyZWY9ImNwLmFzcHg/bj1DMjRGQTBGM0E5QTlCQ0M5Ij7okZfkvZzmrIrogbLmmI48L2E+PC9saT48L3VsPjwvZGl2PjxkaXYgY2xhc3M9Im9uZW1lbnUiPiA8aDM+PGEgdGl0bGU9IuS6uuWPo+e1seioiCIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj1ERENCRjY4RkJDRDdFODZGIj7kurrlj6PntbHoqIg8L2E+PC9oMz48dWw+PGxpPjxhICB0aXRsZT0i5pys6Y6uIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUREQ0JGNjhGQkNEN0U4NkYiPuacrOmOrjwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuacrOe4oyIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj0wQTk2RkY2QkFBNEJCMUNEIj7mnKznuKM8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLlhajlnIsiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249NUNCOEE3N0RGRTg4QkYxOCI+5YWo5ZyLPC9hPjwvbGk+PC91bD48L2Rpdj48ZGl2IGNsYXNzPSJvbmVtZW51Ij4gPGgzPjxhIHRpdGxlPSLmpa3li5nmn6XoqaIiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249MTg2RjY1QzMyNDJFNDZBMSI+5qWt5YuZ5p+l6KmiPC9hPjwvaDM+PHVsPjxsaT48YSAgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLlkITpoIXmpa3li5nnlLPovqbjgIzlj6bplovmlrDoppbnqpfjgI0iICAgaHJlZj0iaHR0cDovL3ZyaHIuZS1sYW5kLmdvdi50dy9OZXdzLmFzcHg/bj1COTZCNjVBODcwMDQyMUZBJnNtcz1FNjAxOUQ2RkU3NTEzMkU4Ij7lkITpoIXmpa3li5nnlLPovqY8L2E+PC9saT48bGk+PGEgIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i6Ieq54S25Lq65oaR6K2J44CM5Y+m6ZaL5paw6KaW56qX44CNIiAgIGhyZWY9Imh0dHA6Ly92cmhyLmUtbGFuZC5nb3YudHcvY3AuYXNweD9uPTVFNEQ0NzlFOTQxNTY0RDQiPuiHqueEtuS6uuaGkeitiTwvYT48L2xpPjwvdWw+PC9kaXY+PGRpdiBjbGFzcz0ib25lbWVudSI+IDxoMz48YSB0aXRsZT0i5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPUY1NEVCODRFNDM0RDU1NTciPuWwiOWNgDwvYT48L2gzPjx1bD48bGk+PGEgIHRpdGxlPSLploDniYzlsIjljYAiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249RjU0RUI4NEU0MzRENTU1NyI+6ZaA54mM5bCI5Y2APC9hPjwvbGk+PGxpPjxhICB0aXRsZT0i5Y6f5L2P5rCR5bCI5Y2AIiBocmVmPSJDb250ZW50X0xpc3QuYXNweD9uPTcxRDUxNENFNkU5QkQ0NEMiPuWOn+S9j+awkeWwiOWNgDwvYT48L2xpPjxsaT48YSAgdGl0bGU9IuaWsOS9j+awkeWwiOWNgCIgaHJlZj0iQ29udGVudF9MaXN0LmFzcHg/bj0zNDZGRkE5MEE1OEVFNDQxIj7mlrDkvY/msJHlsIjljYA8L2E+PC9saT48bGk+PGEgIHRpdGxlPSLntZDlqZrlsIjljYAiIGhyZWY9IkNvbnRlbnRfTGlzdC5hc3B4P249MDE3NzU5RkE1NTNFN0QzNCI+57WQ5ama5bCI5Y2APC9hPjwvbGk+PC91bD48L2Rpdj48ZGl2IGNsYXNzPSJvbmVtZW51Ij4gPGgzPjxhIHRpdGxlPSLooajllq7kuIvovIkiIGhyZWY9ImNwLmFzcHg/bj0xMzc4NEM5NEI0OUFDNTVGIj7ooajllq7kuIvovIk8L2E+PC9oMz48dWw+PC91bD48L2Rpdj48ZGl2IGNsYXNzPSJvbmVtZW51Ij4gPGgzPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9Iue3muS4iueUs+i+pmXmq4Pmqq/jgIzlj6bplovmlrDoppbnqpfjgI0iICAgaHJlZj0iaHR0cDovL29ubGluZTIwMTIuZS1sYW5kLmdvdi50dy8iPue3muS4iueUs+i+pmXmq4Pmqq88L2E+PC9oMz48dWw+PC91bD48L2Rpdj48ZGl2IGNsYXNzPSJvbmVtZW51Ij4gPGgzPjxhICB0YXJnZXQ9Il9ibGFuayIgdGl0bGU9IuaItuaUv1EmQeOAjOWPpumWi+aWsOimlueql+OAjSIgICBocmVmPSJodHRwOi8vd3d3LnJpcy5nb3YudHcvemhfVFcvMTU4Ij7miLbmlL9RJkE8L2E+PC9oMz48dWw+PC91bD48L2Rpdj4gPC9kaXY+ICA8ZGl2IGNsYXNzPSJzaGFkb3ciIGlkPSJmb290ZXJzaGFkb3ciPjwvZGl2PjwvZGl2PjwhLS0g5LiL5pa55bGV6ZaL5byP6YG45ZauOmVuZCAgLS0+DQpkAiEPZBYIAgEPFgIfAAW7CDxhIGFjY2Vzc2tleT0iWiIgaWQ9IloiIGhyZWY9IiNaIiB0aXRsZT0i5LiL5pa56YG45Zau6YCj57WQ5Y2A77yM5q2k5Y2A5aGK5YiX5pyJW+aEj+imi+S/oeeusV3jgIFb6LOH6KiK5a6J5YWo5pS/562WXeOAgVvpmrHnp4HmrIrmlL/nrZZd562J6YCj57WQIj48c3Bhbj46Ojo8L3NwYW4+PC9hPjxkaXYgY2xhc3M9ImZvb3Rlcl9saW5rIj48dWw+PGxpPjxhIGhyZWY9Imh0dHA6Ly93d3cuZS1sYW5kLmdvdi50dy9jcC5hc3B4P249QkZEOTIxMjIxNzg1QkZBRSIgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLpmrHnp4HmrIrlj4ros4foqIrlronlhajmlL/nrZblrqPlkYrjgIzlj6bplovmlrDoppbnqpfjgI0iID7pmrHnp4HmrIrlj4ros4foqIrlronlhajmlL/nrZblrqPlkYo8L2E+PC9saT48bGk+PGEgaHJlZj0iaHR0cDovL3dzLmUtbGFuZC5nb3YudHcvRG93bmxvYWQuYXNoeD91PUx6QXdNUzh5TURFMWVXbHNZVzR2TVRjM0wzSmxiR1pwYkdVdk5qQTJPQzh4TURjd05qUXZNRFEwTW1aaVlqY3RNbU00TUMwME1XRmtMV0ppTjJFdE56TmlNRGRpWkdFMU1UZ3hMbTlrZEElM2QlM2Qmbj1NekV5TXpFMk1UZzBNelU0TG05a2RBJTNkJTNkJmljb249Li5vZHQiIHRhcmdldD0iX2JsYW5rIiB0aXRsZT0i5YCL5Lq66LOH5paZ6Zqx56eB5qyK5a6j5ZGK44CM5Y+m6ZaL5paw6KaW56qX44CNIiA+5YCL5Lq66LOH5paZ6Zqx56eB5qyK5a6j5ZGKPC9hPjwvbGk+PGxpPjxhIGhyZWY9Imh0dHA6Ly93d3cuZS1sYW5kLmdvdi50dy9jcC5hc3B4P249OUE2M0ZFODZFQjEzN0E2QyIgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLmlL/lupzntrLnq5nos4fmlpnplovmlL7lrqPlkYrjgIzlj6bplovmlrDoppbnqpfjgI0iID7mlL/lupzntrLnq5nos4fmlpnplovmlL7lrqPlkYo8L2E+PC9saT48bGk+PGEgaHJlZj0iaHR0cDovL3ZyaHIuZS1sYW5kLmdvdi50dy9jcC5hc3B4P249QTY5RUNFRTE0M0EwQURDRSIgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSLmqZ/pl5zntrLnq5nokZfkvZzmrIrogbLmmI7jgIzlj6bplovmlrDoppbnqpfjgI0iID7mqZ/pl5zntrLnq5nokZfkvZzmrIrogbLmmI48L2E+PC9saT4gPC91bD48L2Rpdj4NCmQCAw8WAh8ABd4EPGRpdiBjbGFzcz0iZm9vdGVyX2luZm8iPjxzcGFuIHN0eWxlPSJmb250LXNpemU6IDE0cHgiPkNvcHlyaWdodCZjb3B5OyDomIfmvrPpjq7miLbmlL/kuovli5nmiYDniYjmrIrmiYDmnIk8YnIgLz4NCuacjeWLmembu+ipse+8miggMDMgKSA5OTYzMDgwICZuYnNwOyAmbmJzcDvlgrPnnJ/vvJooIDAzICkgOTk3MzMxMjxiciAvPg0K5pyN5YuZ5pmC6ZaT77ya6YCx5LiA6Iez6YCx5LqUICZuYnNwOzA4OjAw772eMTc6MzAgJm5ic3A75Yas5Luk5pmC6ZaTKOiHquavj+W5tDEx5pyIMeaXpei1t+iHs+e/jOW5tDLmnIjlupXmraIp77yaMDg6MDDvvZ4xNzowMCDkuK3ljYjnhafluLjlj5fnkIYg44CCPGJyIC8+DQrmnKzmiYDlnLDlnYDvvJoyNzA0NCDlrpzomK3nuKPomIfmvrPpjq7kuK3lsbHot6/kuIDmrrUyNTTomZ8mbmJzcDsmbmJzcDsg6Zu75a2Q6YO15Lu277yaPGEgaHJlZj0ibWFpbHRvOnN1YW8tcmlzQG1haWwuZS1sYW5kLmdvdi50dyI+c3Vhby1yaXNAbWFpbC5lLWxhbmQuZ292LnR3IDwvYT48L3NwYW4+DQo8ZGl2IGNsYXNzPSJmb290ZXJfbGFzdHVwZGF0ZWQiPuabtOaWsOaXpeacn++8mjxzcGFuPjEwNi0xMC0zMTwvc3Bhbj48L2Rpdj48L2Rpdj4NCg0KZAIFDxYCHwAFsAU8IS0tLS0tLS0tLS0tLS0tLS0tLS0tLS3ngI/opr3kurrmrKEtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT4NCjxkaXYgY2xhc3M9ImZvb3Rlcl92aXNpdGNvdW50Ij4NCueAj+imveS6uuasoe+8mjxzcGFuIGlkPSJmb290ZXJfdmlzaXRjb3VudF9zcGFuIj48L3NwYW4+KOiHqjEwNeW5tDPmnIjplovlp4voqIjnrpcpDQo8U0NSSVBUIFRZUEU9InRleHQvamF2YXNjcmlwdCI+DQp2YXIgaXNJbml0X3Zpc2l0Y291bnQgPSBmYWxzZTsNCiQoZnVuY3Rpb24oKXsNCmlmKCFpc0luaXRfdmlzaXRjb3VudCl7DQogICB2YXIgc1VybD0nL0NvbW1vbi9HZXRWaXNpdGNvdW50LmFzaHg/c2l0ZXNzbj1FNjRDRTYyN0Y3MTUyNDEyJw0KICAgaWYoZ2V0UGFyYW1ldGVyQnlOYW1lKCduJykhPScnKXtzVXJsID0gc1VybCArICcmbj0nK2dldFBhcmFtZXRlckJ5TmFtZSgnbicpfQ0KICAgJC5hamF4KHsNCiAgIAl1cmw6IHNVcmwNCiAgIAksdHlwZTogJ1BPU1QnDQogICB9KQ0KICAgLnN1Y2Nlc3MoZnVuY3Rpb24oZGF0ZSkgew0KICAgCSQoJyNmb290ZXJfdmlzaXRjb3VudF9zcGFuJykuaHRtbChkYXRlKTsNCiAgIH0pDQogaXNJbml0X3Zpc2l0Y291bnQgPSB0cnVlO30NCn0pDQo8L1NDUklQVD4NCjwhLS0tLS0tLS0tLS0tLS0tLS0tLS0tLeWJjeWPsOeZu+WFpS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPg0KDQo8L2Rpdj4NCg0KZAIHDxYCHwAF3gY8ZGl2IGNsYXNzPSJmb290ZXJfaWNvbmxpbmsiPjx1bD4NCjxsaSBjbGFzcz0iZm9vdGVyX2Vnb3YiPjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJodHRwOi8vd3d3Lmdvdi50dy8iIHRpdGxlPSJF5pS/5bqc44CM5Y+m6ZaL5paw6KaW56qX44CNIj5F5pS/5bqcPC9hPjwvbGk+PGxpIGNsYXNzPSJmb290ZXJfd2NhZyI+PGEgdGFyZ2V0PSJfYmxhbmsiIGhyZWY9Imh0dHA6Ly93d3cuaGFuZGljYXAtZnJlZS5uYXQuZ292LnR3L0FwcGxpY2F0aW9ucy9EZXRhaWw/Y2F0ZWdvcnk9MjAxNjEyMjMxNjU0MjUiIHRpdGxlPSLnhKHpmpznpJkyLjDmqJnnq6DnrYnntJpbQV3jgIzlj6bplovmlrDoppbnqpfjgI0iPueEoemanOekmTIuMOaomeeroOetiee0mltBXTwvYT48L2xpPg0KPG5vU2NyaXB0Pg0KICAgIDxzdHlsZT4NCiNGb290ZXJfd2NhZzFfUVJDb2Rle2Rpc3BsYXk6bm9uZTt9DQogICAgPC9zdHlsZT4gDQogICAgPC9ub1NjcmlwdD4NCjxpbWcgaWQ9IkZvb3Rlcl93Y2FnMV9RUkNvZGUiICBhbHQ9IlFSQ29kZSIgdGl0bGU9IlFSQ29kZSI+DQo8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCI+DQokKGZ1bmN0aW9uKCl7DQogICAgJC5hamF4KHsNCiAgICAgICAgdXJsOiAnUVJDb2RlLmFzcHg/c2k9NjknLA0KICAgICAgICB0eXBlOiAnUG9zdCcsICAgDQogICAgICAgIGRhdGE6IHt1OndpbmRvdy5sb2NhdGlvbi5ocmVmfQ0KICAgIH0pDQogICAgLnN1Y2Nlc3MoZnVuY3Rpb24oaW1nKSB7DQogICAgICAgICAgJCgnI0Zvb3Rlcl93Y2FnMV9RUkNvZGUnKS5hdHRyKCdzcmMnLCJkYXRhOmltYWdlL3BuZztiYXNlNjQsIiArIGltZyk7DQogICAgfSkNCn0pDQo8L3NjcmlwdD4NCjwvbGk+PC91bD48L2Rpdj4NCg0KZGSq2nXjbHZ8OPkBXL7u17sPnxjp/Q==" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=krLraqFWIyQB8IAyYlbGjMumcKTsWvVYIqWS0mTu1HHPmcnGPaN_N4nG3mXThnSOCnDLFskI3-ioBuFwBRzQLJt2Jak1&amp;t=636355194046607314" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+   document.domain = 'e-land.gov.tw';var __cultureInfo = {"name":"zh-TW","numberFormat":{"CurrencyDecimalDigits":2,"CurrencyDecimalSeparator":".","IsReadOnly":false,"CurrencyGroupSizes":[3],"NumberGroupSizes":[3],"PercentGroupSizes":[3],"CurrencyGroupSeparator":",","CurrencySymbol":"NT$","NaNSymbol":"不是一個數字","CurrencyNegativePattern":1,"NumberNegativePattern":1,"PercentPositivePattern":1,"PercentNegativePattern":1,"NegativeInfinitySymbol":"負無窮大","NegativeSign":"-","NumberDecimalDigits":2,"NumberDecimalSeparator":".","NumberGroupSeparator":",","CurrencyPositivePattern":0,"PositiveInfinitySymbol":"正無窮大","PositiveSign":"+","PercentDecimalDigits":2,"PercentDecimalSeparator":".","PercentGroupSeparator":",","PercentSymbol":"%","PerMilleSymbol":"‰","NativeDigits":["0","1","2","3","4","5","6","7","8","9"],"DigitSubstitution":1},"dateTimeFormat":{"AMDesignator":"上午","Calendar":{"MinSupportedDateTime":"\/Date(-1830412800000)\/","MaxSupportedDateTime":"\/Date(253402271999999)\/","AlgorithmType":1,"Eras":[1],"TwoDigitYearMax":99,"IsReadOnly":false},"DateSeparator":"/","FirstDayOfWeek":0,"CalendarWeekRule":0,"FullDateTimePattern":"yyyy\u0027年\u0027M\u0027月\u0027d\u0027日\u0027 tt hh:mm:ss","LongDatePattern":"yyyy\u0027年\u0027M\u0027月\u0027d\u0027日\u0027","LongTimePattern":"tt hh:mm:ss","MonthDayPattern":"M\u0027月\u0027d\u0027日\u0027","PMDesignator":"下午","RFC1123Pattern":"ddd, dd MMM yyyy HH\u0027:\u0027mm\u0027:\u0027ss \u0027GMT\u0027","ShortDatePattern":"yyy/M/d","ShortTimePattern":"tt hh:mm","SortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss","TimeSeparator":":","UniversalSortableDateTimePattern":"yyyy\u0027-\u0027MM\u0027-\u0027dd HH\u0027:\u0027mm\u0027:\u0027ss\u0027Z\u0027","YearMonthPattern":"ggyyy\u0027年\u0027M\u0027月\u0027","AbbreviatedDayNames":["週日","週一","週二","週三","週四","週五","週六"],"ShortestDayNames":["日","一","二","三","四","五","六"],"DayNames":["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],"AbbreviatedMonthNames":["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月",""],"MonthNames":["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月",""],"IsReadOnly":false,"NativeCalendarName":"中華民國曆","AbbreviatedMonthGenitiveNames":["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月",""],"MonthGenitiveNames":["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月",""]},"eras":[1,"中華民國",null,1911]};//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=XPGA1GJ4QZzLD8ZaZd-EMhbsyM4OJ9RRFo-OWrsDDH0t_gp6TFVqcQfSq1XbM-c1vd8mfE5wK509I-NRHwJiyV2OQ4nyK4n_wly9vbEH-9XTKQL_4w26r58D4F7WEcf0PEW40A2&amp;t=7f16157c" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax 用戶端架構無法載入。');
+//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=Rf_85h2YpWf-MPXvNM3ObGYTUiUjgG1VnMXvJZ8yneWqHeRRYOV2MubldsDko1vGF23kvQhOTMx82smt5UYs145PBa02PxqhwAY8jfSTZTsqCR_2j7tbjwapWlNRbsQ7KEhRfpNMP-zWMBB6s__r19ayv3o1&amp;t=7f16157c" type="text/javascript"></script>
+
+   
+    <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ToolkitScriptManager1', 'form1', [], [], [], 90, 'ctl00');
+//]]>
+</script>
+
+<div id="ValidationSummary1" style="display:none;">
+
+</div>
+    
+    <input type="hidden" name="ctl00$hdSiteLanguageSN" id="hdSiteLanguageSN" value="1" />
+    <input type="hidden" name="ctl00$hdManagerURL" id="hdManagerURL" value="mgr.e-land.gov.tw" />
+    <!--無障礙2.0 8.1 有機制得以跳過在多頁中重複出現的內容區塊-->
+        <div class="for_accessibility">
+            <style>
+                .for_accessibility a {
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    z-index: 99;
+                    width: 1px;
+                    height: 1px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    color: #000;
+                }
+
+                    .for_accessibility a:focus {
+                        width: auto;
+                        height: auto;
+                        padding: 6px;
+                        background-color: #fff;
+                    }
+            </style>
+            <a href="#content_middle" class="" title="跳到主要內容區塊">跳到主要內容區塊</a>
+            <script>
+                var $a = $('.for_accessibility a');
+
+                $a.on('click', function (evt) {
+                    var $href = $($(this).attr('href')),
+                     $target = $href.find('a').eq(0).get(0);
+
+                    setTimeout(function () { try { $target.focus(); } catch (e) { } }, 0);
+                });
+            </script>
+        </div>
+
+  <!--------------------------- 上  方  區  塊  ------------------------->
+<div class="topbg">
+<div class="wrapper toplog">
+<!--------------------上方LOGO---------------------->
+    <!--------------------上方banner(含LOGO)---------------------->
+<div class="toplog">
+<h1><a href="Default.aspx">
+宜蘭縣政府-蘇澳戶政</a></h1>
+<h2 style="display: none;">宜蘭縣政府-蘇澳戶政</h2>
+<h3 style="display: none;">宜蘭縣政府-蘇澳戶政</h3>
+</div>
+
+
+<!--------------------上方連結 toplink---------------------->
+    <div class="toplink"><ul><li><a accesskey="U" id="U" href="#U" title="上方選單連結區，此區塊列有本網站的主要連結"><span>:::</span></a></li><li><a href="Default.aspx" title="回首頁" >回首頁</a></li><li><a href="SiteMap.aspx" title="網站導覽" >網站導覽</a></li> </ul></div>
+
+
+<!--------------------字級 fontlevel---------------------->
+<!--------------------字級 fontlevel---------------------->
+<div class="fontlevel">
+<span>字級:</span>
+    <ul>
+        <li>
+        <a href="#" title="小"  data-font-size="s" >
+小
+        </a>
+        </li>
+        <li>
+        <a href="#" title="中" data-font-size="m" >
+中
+        </a>
+        </li>
+        <li>
+        <a href="#" title="大" data-font-size="l" >
+大
+        </a>
+        </li>
+    </ul>
+</div>
+
+
+
+<!--------------------搜尋---------------------->
+    <!--------------------搜尋---------------------->
+<script language="javascript" type="text/javascript">
+    function doSearch() {
+        var KeyWord = $('#tagsKeyWords').val();
+        window.location.href = "Advanced_Search.aspx?q=" + KeyWord;
+    }
+$(function () {
+    $("#tagsKeyWords").on("keydown", function (event) {
+        if (event.which == 13) {
+            var KeyWord = $('#tagsKeyWords').val();
+            window.location.href = "Advanced_Search.aspx?q=" + KeyWord;
+            return false;
+        }
+    });
+});
+</script>
+<div class="sitemap">
+<div class="share_box">
+    <a class="a2a_dd" href="http://www.addtoany.com/share_save">
+        <img src="images/share.png"  border="0" alt="分享" title="分享"/>
+        </a>
+
+    <script type="text/javascript" charset="big5" src="/Scripts/Share_Page.js"></script>
+</div>
+
+</div>
+<noscript>
+<style>.search {display:none;} </style>
+</noscript>
+<div class="search" data-function="oka_keyword_model">
+	<span class="searchbt1">
+<label style="font-size:0" for="tagsKeyWords">搜尋</label>
+		<input name= "tagsKeyWords" type="text" placeholder="請輸入關鍵字" id="tagsKeyWords" autocomplete="off" >
+		<span class="searchbt1">
+		<a style="font-size:0" title="搜尋" ID="btnSearch" href="#"  OnClick="doSearch()" >搜尋</a>
+		</span>
+	</span>
+</div>
+
+
+    
+
+
+    
+
+    
+
+
+    </div>
+</div>
+<!--------------------------- 上  方  區  塊  結束-------------------------> 
+
+
+<!--------------------主選單---------------------->
+     <script type="text/javascript">    $(function () {        $('nav#mobile_menu').mmenu();    });</script> <div id="mobile-header">     <a href="#mobile_menu">      <span></span>     </a>  </div><nav id="mobile_menu"><ul><li><a title="本所簡介" href="cp.aspx?n=185851DC43DED5B5">本所簡介</a><ul><li><a  title="關於蘇澳" href="cp.aspx?n=185851DC43DED5B5">關於蘇澳</a></li><li><a  title="本所沿革" href="cp.aspx?n=E8DF094533CBC3EB">本所沿革</a></li><li><a  title="大事年表" href="cp.aspx?n=FA74B0B2D69F2F88">大事年表</a></li><li><a  title="主任簡介" href="cp.aspx?n=A1306430A0536657">主任簡介</a></li><li><a  title="組織編制" href="cp.aspx?n=08030EDF7FA824BC">組織編制</a></li><li><a  title="業務職掌" href="cp.aspx?n=DB0D7F6EAA14A766">業務職掌</a></li><li><a  title="服務時間" href="cp.aspx?n=F9A7C8AB43CC756C">服務時間</a></li><li><a  title="交通指南" href="cp.aspx?n=2642D593F082BCBA">交通指南</a></li><li><a  title="行政區域" href="cp.aspx?n=2124FDEC9D447F14">行政區域</a></li></ul></li><li><a title="便民服務" href="cp.aspx?n=476ED3BA2154AB28">便民服務</a><ul><li><a  title="服務白皮書" href="cp.aspx?n=476ED3BA2154AB28">服務白皮書</a></li><li><a  title="便民措施" href="cp.aspx?n=F4F47170BF08AEF4">便民措施</a></li><li><a  title="到府服務" href="cp.aspx?n=486BE56C5A0789E7">到府服務</a></li><li><a  title="預約受理結婚登記" href="cp.aspx?n=34A067F027529059">預約受理結婚登記</a></li><li><a  title="戶籍異地辦理" href="cp.aspx?n=9AD6C4D2D6C02EA0">戶籍異地辦理</a></li><li><a  title="英文戶籍謄本" href="cp.aspx?n=44A580015AE4E2C3">英文戶籍謄本</a></li><li><a  title="到校受理國民身分證" href="cp.aspx?n=6F02F783B7C87CD6">到校受理國民身分證</a></li><li><a  title="申辦自然人憑證" href="cp.aspx?n=C1C1755F18912CD6">申辦自然人憑證</a></li><li><a  title="宜蘭圓滿式計畫服務" href="cp.aspx?n=80F51F56B8F4A214">宜蘭圓滿式計畫服務</a></li><li><a  target="_blank" title="戶政問答集「另開新視窗」"   href="http://www.ris.gov.tw/zh_TW/158;jsessionid=B42D4938AA1A8E3359BC0FD159966EE5">戶政問答集</a></li></ul></li><li><a title="戶政資訊" href="News.aspx?n=C325CE0C5B057CA7&sms=1095BD65367B2A7A">戶政資訊</a><ul><li><a  title="最新消息" href="News.aspx?n=C325CE0C5B057CA7&sms=1095BD65367B2A7A">最新消息</a></li><li><a  title="本所公告" href="News.aspx?n=9D01BA2A15246F34&sms=B268CCF2CFAF138E">本所公告</a></li><li><a  title="縣政活動宣導" href="cp.aspx?n=7F5F94C72CDE8264">縣政活動宣導</a></li><li><a  title="中西年號對照表" href="cp.aspx?n=7905E8D2F9B0B1E3">中西年號對照表</a></li><li><a  title="年度工作計畫" href="News.aspx?n=0B9D4F3FADA1A36A&sms=1D9A06D3408330D5">年度工作計畫</a></li><li><a  title="提升服務品質執行計畫" href="http://ws.e-land.gov.tw/001/2015yilan/217/webarchive/4750/f435f8f3-5620-4657-8ae3-c17d3a5faca2.pdf">提升服務品質執行計畫</a></li><li><a  title="性別主流化專區" href="cp.aspx?n=D7350F42DBAB35D7">性別主流化專區</a></li><li><a  title="防治性騷擾" href="cp.aspx?n=D78824DF6B0E7578">防治性騷擾</a></li><li><a  title="著作權聲明" href="cp.aspx?n=C24FA0F3A9A9BCC9">著作權聲明</a></li></ul></li><li><a title="人口統計" href="Content_List.aspx?n=DDCBF68FBCD7E86F">人口統計</a><ul><li><a  title="本鎮" href="Content_List.aspx?n=DDCBF68FBCD7E86F">本鎮</a></li><li><a  title="本縣" href="Content_List.aspx?n=0A96FF6BAA4BB1CD">本縣</a></li><li><a  title="全國" href="Content_List.aspx?n=5CB8A77DFE88BF18">全國</a></li></ul></li><li><a title="業務查詢" href="Content_List.aspx?n=186F65C3242E46A1">業務查詢</a><ul><li><a  target="_blank" title="各項業務申辦「另開新視窗」"   href="http://vrhr.e-land.gov.tw/News.aspx?n=B96B65A8700421FA&sms=E6019D6FE75132E8">各項業務申辦</a></li><li><a  target="_blank" title="自然人憑證「另開新視窗」"   href="http://vrhr.e-land.gov.tw/cp.aspx?n=5E4D479E941564D4">自然人憑證</a></li></ul></li><li><a title="專區" href="Content_List.aspx?n=F54EB84E434D5557">專區</a><ul><li><a  title="門牌專區" href="Content_List.aspx?n=F54EB84E434D5557">門牌專區</a></li><li><a  title="原住民專區" href="Content_List.aspx?n=71D514CE6E9BD44C">原住民專區</a></li><li><a  title="新住民專區" href="Content_List.aspx?n=346FFA90A58EE441">新住民專區</a></li><li><a  title="結婚專區" href="Content_List.aspx?n=017759FA553E7D34">結婚專區</a></li></ul></li><li><a title="表單下載" href="cp.aspx?n=13784C94B49AC55F">表單下載</a></li><li><a  target="_blank" title="線上申辦e櫃檯「另開新視窗」" href="http://online2012.e-land.gov.tw/">線上申辦e櫃檯</a></li><li><a  target="_blank" title="戶政Q&A「另開新視窗」" href="http://www.ris.gov.tw/zh_TW/158">戶政Q&A</a></li><li class="rwdtoplink"><span><a href="Default.aspx"title="回首頁">回首頁</a></span><span><a href="SiteMap.aspx"title="網站導覽">網站導覽</a></span></li></ul></nav><div class="menubg"><div class="wrapper menuarea"><ul id="menu" data-function="main_menu" ><li><span class="menu"><a title="本所簡介"   href="cp.aspx?n=185851DC43DED5B5">本所簡介</a></span><div class="submenuarea" style="display:none"><div class="inner"><div class="sec" style="clear: left;"><h2><span><a  title="關於蘇澳" href="cp.aspx?n=185851DC43DED5B5">關於蘇澳</a></span></h2></div><div class="sec" ><h2><span><a  title="本所沿革" href="cp.aspx?n=E8DF094533CBC3EB">本所沿革</a></span></h2></div><div class="sec" ><h2><span><a  title="大事年表" href="cp.aspx?n=FA74B0B2D69F2F88">大事年表</a></span></h2></div><div class="sec" ><h2><span><a  title="主任簡介" href="cp.aspx?n=A1306430A0536657">主任簡介</a></span></h2></div><div class="sec" style="clear: left;"><h2><span><a  title="組織編制" href="cp.aspx?n=08030EDF7FA824BC">組織編制</a></span></h2></div><div class="sec" ><h2><span><a  title="業務職掌" href="cp.aspx?n=DB0D7F6EAA14A766">業務職掌</a></span></h2></div><div class="sec" ><h2><span><a  title="服務時間" href="cp.aspx?n=F9A7C8AB43CC756C">服務時間</a></span></h2></div><div class="sec" ><h2><span><a  title="交通指南" href="cp.aspx?n=2642D593F082BCBA">交通指南</a></span></h2></div><div class="sec" style="clear: left;"><h2><span><a  title="行政區域" href="cp.aspx?n=2124FDEC9D447F14">行政區域</a></span></h2></div></div></div></li><li><span class="menu"><a title="便民服務"   href="cp.aspx?n=476ED3BA2154AB28">便民服務</a></span><div class="submenuarea" style="display:none"><div class="inner"><div class="sec" style="clear: left;"><h2><span><a  title="服務白皮書" href="cp.aspx?n=476ED3BA2154AB28">服務白皮書</a></span></h2></div><div class="sec" ><h2><span><a  title="便民措施" href="cp.aspx?n=F4F47170BF08AEF4">便民措施</a></span></h2></div><div class="sec" ><h2><span><a  title="到府服務" href="cp.aspx?n=486BE56C5A0789E7">到府服務</a></span></h2></div><div class="sec" ><h2><span><a  title="預約受理結婚登記" href="cp.aspx?n=34A067F027529059">預約受理結婚登記</a></span></h2></div><div class="sec" style="clear: left;"><h2><span><a  title="戶籍異地辦理" href="cp.aspx?n=9AD6C4D2D6C02EA0">戶籍異地辦理</a></span></h2></div><div class="sec" ><h2><span><a  title="英文戶籍謄本" href="cp.aspx?n=44A580015AE4E2C3">英文戶籍謄本</a></span></h2></div><div class="sec" ><h2><span><a  title="到校受理國民身分證" href="cp.aspx?n=6F02F783B7C87CD6">到校受理國民身分證</a></span></h2></div><div class="sec" ><h2><span><a  title="申辦自然人憑證" href="cp.aspx?n=C1C1755F18912CD6">申辦自然人憑證</a></span></h2></div><div class="sec" style="clear: left;"><h2><span><a  title="宜蘭圓滿式計畫服務" href="cp.aspx?n=80F51F56B8F4A214">宜蘭圓滿式計畫服務</a></span></h2></div><div class="sec" ><h2><span><a  target="_blank" title="戶政問答集「另開新視窗」"   href="http://www.ris.gov.tw/zh_TW/158;jsessionid=B42D4938AA1A8E3359BC0FD159966EE5">戶政問答集</a></span></h2></div></div></div></li><li><span class="menu"><a title="戶政資訊"   href="News.aspx?n=C325CE0C5B057CA7&sms=1095BD65367B2A7A">戶政資訊</a></span><div class="submenuarea" style="display:none"><div class="inner"><div class="sec" style="clear: left;"><h2><span><a  title="最新消息" href="News.aspx?n=C325CE0C5B057CA7&sms=1095BD65367B2A7A">最新消息</a></span></h2></div><div class="sec" ><h2><span><a  title="本所公告" href="News.aspx?n=9D01BA2A15246F34&sms=B268CCF2CFAF138E">本所公告</a></span></h2></div><div class="sec" ><h2><span><a  title="縣政活動宣導" href="cp.aspx?n=7F5F94C72CDE8264">縣政活動宣導</a></span></h2></div><div class="sec" ><h2><span><a  title="中西年號對照表" href="cp.aspx?n=7905E8D2F9B0B1E3">中西年號對照表</a></span></h2></div><div class="sec" style="clear: left;"><h2><span><a  title="年度工作計畫" href="News.aspx?n=0B9D4F3FADA1A36A&sms=1D9A06D3408330D5">年度工作計畫</a></span></h2></div><div class="sec" ><h2><span><a  title="提升服務品質執行計畫" href="http://ws.e-land.gov.tw/001/2015yilan/217/webarchive/4750/f435f8f3-5620-4657-8ae3-c17d3a5faca2.pdf">提升服務品質執行計畫</a></span></h2></div><div class="sec" ><h2><span><a  title="性別主流化專區" href="cp.aspx?n=D7350F42DBAB35D7">性別主流化專區</a></span></h2></div><div class="sec" ><h2><span><a  title="防治性騷擾" href="cp.aspx?n=D78824DF6B0E7578">防治性騷擾</a></span></h2></div><div class="sec" style="clear: left;"><h2><span><a  title="著作權聲明" href="cp.aspx?n=C24FA0F3A9A9BCC9">著作權聲明</a></span></h2></div></div></div></li><li><span class="menu"><a title="人口統計"   href="Content_List.aspx?n=DDCBF68FBCD7E86F">人口統計</a></span><div class="submenuarea" style="display:none"><div class="inner"><div class="sec" style="clear: left;"><h2><span><a  title="本鎮" href="Content_List.aspx?n=DDCBF68FBCD7E86F">本鎮</a></span></h2><ul><li><span><a  target="_blank" title="每月各里鄰數、戶數、男、女人口數統計表「另開新視窗」"  href="http://hrs.e-land.gov.tw/Source/H01/H0101Q02.asp?Form_title=03&Img_flag=1&System_work=4&System_no=H01">每月各里鄰數、戶數、男、女人口數統計表</a></span></li><li><span><a  title="現住人口按性別及年齡分(5歲組距)"  href="News.aspx?n=A9B0A3D4E5C6515D&sms=B52FF104181892F9">現住人口按性別及年齡分(5歲組距)</a></span></li><li><span><a  title="現住原住民人口按性別及年齡分(5歲組距)"  href="News.aspx?n=283412AE33AC4D71&sms=538B7171827E5A84">現住原住民人口按性別及年齡分(5歲組距)</a></span></li><li><span><a  title="粗出生率、粗死亡率、粗結婚率、粗離婚率統計表.ods"  href="http://ws.e-land.gov.tw/001/2015yilan/217/webarchive/3899/c97013d1-73a9-4ae7-b332-62a965414faf.odt">粗出生率、粗死亡率、粗結婚率、粗離婚率統計表.ods</a></span></li><li><span><a  title="十五歲以上現住人口數按性別、年齡及教育程度分"  href="cp.aspx?n=02CAA5A0C70DDD33">十五歲以上現住人口數按性別、年齡及教育程度分</a></span></li></ul><a class="more"  title="本鎮" href="Content_List.aspx?n=DDCBF68FBCD7E86F">更多</a></div><div class="sec" ><h2><span><a  title="本縣" href="Content_List.aspx?n=0A96FF6BAA4BB1CD">本縣</a></span></h2><ul><li><span><a  target="_blank" title="宜蘭縣各鄉鎮市最新人口數統計資料「另開新視窗」"  href="http://hrs.e-land.gov.tw/Source/H02/H0201Q02.asp?Img_flag=1&System_work=4&System_no=H02&Form_title=1">宜蘭縣各鄉鎮市最新人口數統計資料</a></span></li><li><span><a  target="_blank" title="宜蘭縣各鄉鎮市歷年人口數統計資料「另開新視窗」"  href="http://hrs.e-land.gov.tw/Source/H02/H0203Q02.asp?Img_flag=1&System_work=4&System_no=H0203&Form_title=3">宜蘭縣各鄉鎮市歷年人口數統計資料</a></span></li><li><span><a  target="_blank" title="宜蘭縣歷年遷出、入、出生、死亡、結、離婚登記數統計表「另開新視窗」"  href="http://hrs.e-land.gov.tw/Source/H02/H0202Q02.asp?Img_flag=1&System_work=4&System_no=H0202&Form_title=2">宜蘭縣歷年遷出、入、出生、死亡、結、離婚登記數統計表</a></span></li><li><span><a  target="_blank" title="宜蘭縣各戶政事務所人口統計資料查詢「另開新視窗」"  href="http://hrs.e-land.gov.tw/Source/H01/H0102Q02.asp?Img_flag=1&System_work=4&System_no=H0102&Form_title=5">宜蘭縣各戶政事務所人口統計資料查詢</a></span></li></ul></div><div class="sec" ><h2><span><a  title="全國" href="Content_List.aspx?n=5CB8A77DFE88BF18">全國</a></span></h2><ul><li><span><a  target="_blank" title="內政部戶政司全球資訊網人口統計資料「另開新視窗」"  href="http://www.ris.gov.tw/346">內政部戶政司全球資訊網人口統計資料</a></span></li><li><span><a  target="_blank" title="行政院主計處受訪者專區「另開新視窗」"  href="http://www.stat.gov.tw/ct.asp?xItem=26053&CtNode=5373&mp=4">行政院主計處受訪者專區</a></span></li></ul></div></div></div></li><li><span class="menu"><a title="業務查詢"   href="Content_List.aspx?n=186F65C3242E46A1">業務查詢</a></span><div class="submenuarea" style="display:none"><div class="inner"><div class="sec" style="clear: left;"><h2><span><a  target="_blank" title="各項業務申辦「另開新視窗」"   href="http://vrhr.e-land.gov.tw/News.aspx?n=B96B65A8700421FA&sms=E6019D6FE75132E8">各項業務申辦</a></span></h2></div><div class="sec" ><h2><span><a  target="_blank" title="自然人憑證「另開新視窗」"   href="http://vrhr.e-land.gov.tw/cp.aspx?n=5E4D479E941564D4">自然人憑證</a></span></h2></div></div></div></li><li><span class="menu"><a title="專區"   href="Content_List.aspx?n=F54EB84E434D5557">專區</a></span><div class="submenuarea" style="display:none"><div class="inner"><div class="sec" style="clear: left;"><h2><span><a  title="門牌專區" href="Content_List.aspx?n=F54EB84E434D5557">門牌專區</a></span></h2><ul><li><span><a  title="門牌申請須知"  href="Content_List.aspx?n=11B0AE029DA6B97B">門牌申請須知</a></span></li><li><span><a  title="行政區域調整專區"  href="cp.aspx?n=52E9664A7ABD84C0">行政區域調整專區</a></span></li><li><span><a  title="門牌編整專區"  href="cp.aspx?n=8F2ED729DFF90295">門牌編整專區</a></span></li><li><span><a  target="_blank" title="道路命名及門牌編釘自治條例「另開新視窗」"  href="http://glrslaw.e-land.gov.tw/LawContent.aspx?id=FL023609&KeyWord=%e9%81%93%e8%b7%af%e5%91%bd%e5%90%8d%e5%8f%8a%e9%96%80%e7%89%8c%e7%b7%a8%e9%87%98%e8%87%aa%e6%b2%bb%e6%a2%9d%e4%be%8b">道路命名及門牌編釘自治條例</a></span></li><li><span><a  target="_blank" title="地理資訊多元加值系統「另開新視窗」"  href="http://map.e-land.gov.tw/yimap/">地理資訊多元加值系統</a></span></li></ul></div><div class="sec" ><h2><span><a  title="原住民專區" href="Content_List.aspx?n=71D514CE6E9BD44C">原住民專區</a></span></h2><ul><li><span><a  title="原住民身分法"  href="cp.aspx?n=2EE7740159C9FB22">原住民身分法</a></span></li><li><span><a  title="原住民身分認定"  href="cp.aspx?n=4C72A7BDC1454CC9">原住民身分認定</a></span></li><li><span><a  title="族別認定辦法"  href="cp.aspx?n=5C6936328CEFE905">族別認定辦法</a></span></li><li><span><a  target="_blank" title="臺灣原住民族文化園區「另開新視窗」"  href="http://www.tacp.gov.tw/home01.aspx?ID=1">臺灣原住民族文化園區</a></span></li><li><span><a  target="_blank" title="臺灣原住民族資訊資源網「另開新視窗」"  href="http://www.tipp.org.tw/">臺灣原住民族資訊資源網</a></span></li></ul><a class="more"  title="原住民專區" href="Content_List.aspx?n=71D514CE6E9BD44C">更多</a></div><div class="sec" ><h2><span><a  title="新住民專區" href="Content_List.aspx?n=346FFA90A58EE441">新住民專區</a></span></h2><ul><li><span><a  title="大陸配偶專區"  href="cp.aspx?n=16571E029AE5BF55">大陸配偶專區</a></span></li><li><span><a  title="外籍配偶專區"  href="Content_List.aspx?n=64D0CD86E9048B7B">外籍配偶專區</a></span></li></ul></div><div class="sec" ><h2><span><a  title="結婚專區" href="Content_List.aspx?n=017759FA553E7D34">結婚專區</a></span></h2><ul><li><span><a  title="結婚登記規定"  href="cp.aspx?n=64ACC175DA5FF250">結婚登記規定</a></span></li><li><span><a  title="結婚申辦須知"  href="cp.aspx?n=5048EE05B80F1E15">結婚申辦須知</a></span></li><li><span><a  title="預約結婚登記"  href="cp.aspx?n=84D155A4B4CDEB3E">預約結婚登記</a></span></li></ul></div></div></div></li><li><span class="menu"><a title="表單下載"   href="cp.aspx?n=13784C94B49AC55F">表單下載</a></span></li><li><span class="menu"><a  target="_blank" title="線上申辦e櫃檯「另開新視窗」"   href="http://online2012.e-land.gov.tw/">線上申辦e櫃檯</a></span></li><li><span class="menu"><a  target="_blank" title="戶政Q&A「另開新視窗」"   href="http://www.ris.gov.tw/zh_TW/158">戶政Q&A</a></span></li></ul></div></div>
+
+<!--------------------主選單 結束---------------------->
+<!--------------------上方banner---------------------->
+    <!--------------------上方banner---------------------->
+<div class="wrapper banner">
+</div>
+
+
+<!---------------------內頁banner---------------------->
+<div class="mainbanner">
+    
+     
+</div>
+
+    <noscript><div class="NoscriptTip">您的瀏覽器似乎不支援JavaScript語法，但沒關係，這裡的JavaScript語法並不會影響到內容的陳述， 如需要選擇字級大小，IE6請利用鍵盤按住ALT鍵+ V → X → (G)最大(L)較大(M)中(S)較小(A)小，來選擇適合您的文字大小， 而IE7或Firefox瀏覽器則可利用鍵盤 Ctrl + (+)放大(-)縮小來改變字型大小，如需要回到上一頁可使用瀏覽器提供的 Alt+左方向鍵(←) 快速鍵功能，列印可使用瀏覽器提供的(Ctrl+P)功能；如需觀看新聞內容或是申請表單下載，建議您由more頁進入並選取符合您之相關資訊內容。若要點選子選單內容，可點選下方選單列表。</div></noscript>
+</>
+<!---------------------內頁banner 結束---------------------->
+<div class="wrapper">
+<!---------------------------  內  容  區  塊  --------------------->
+    <div id="content" class="content">
+        <!--------------------上  方  區  塊-------------------->
+        <div id="content_top"  class="content_top content_top_cp" >            
+            
+        </div>
+        <!--------------------上  方  區  塊  結 束-------------------->
+
+        <!--------------------左  方  區  塊-------------------->
+        <div class="content_left" >
+            <!--左邊導盲磚-->
+            <div class="accesskey_l"><a accesskey="L" id="L" href="#L" title="左方選單連結區，此區塊列有本網站的次要選單連結"><span>:::</span></a></div>
+                         
+            <div id="Group_1472" class="group" data-index="0" data-child="0"     style="" data-GroupSN="1472" data-TabType="3" data-bgColor="" data-bgClass="" data-anchor=""   >
+	<div class="container"  >
+		<div class="inner">
+			<div id="Group_2093" class="group" data-index="1" data-child="0"     style="" data-GroupSN="2093" data-TabType="0" data-bgColor="" data-bgClass="" data-anchor=""   >
+				<div class="container"  >
+					<div class="inner">
+<div id="Content_1_1_3364" class="second_menu"><h4>本所簡介</h4><ul><li class="second_menu_yes"><h5><a href="cp.aspx?n=185851DC43DED5B5">關於蘇澳</a></h5></li><li><h5><a title="本所沿革" href="cp.aspx?n=E8DF094533CBC3EB">本所沿革</a></h5></li><li><h5><a title="大事年表" href="cp.aspx?n=FA74B0B2D69F2F88">大事年表</a></h5></li><li><h5><a title="主任簡介" href="cp.aspx?n=A1306430A0536657">主任簡介</a></h5></li><li><h5><a title="組織編制" href="cp.aspx?n=08030EDF7FA824BC">組織編制</a></h5></li><li><h5><a title="業務職掌" href="cp.aspx?n=DB0D7F6EAA14A766">業務職掌</a></h5></li><li><h5><a title="服務時間" href="cp.aspx?n=F9A7C8AB43CC756C">服務時間</a></h5></li><li><h5><a title="交通指南" href="cp.aspx?n=2642D593F082BCBA">交通指南</a></h5></li><li><h5><a title="行政區域" href="cp.aspx?n=2124FDEC9D447F14">行政區域</a></h5></li></ul></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+            
+             <div class="left_ad">
+                
+            </div>
+             
+        </div>
+        <!--------------------左  方  區  塊  結 束-------------------->
+  
+        <!--------------------中  間  區  塊-------------------->
+<div id="content_middle" class="content_middle">
+    
+    <!-----------------導覽列------------------>
+    
+
+        
+<script type="text/javascript">
+    function PrintContent() {
+        var o = document.getElementById("uscSiteMap1_hdNodeID");
+        var str = location.pathname.toString();
+        if (str.indexOf("Member_Info") != -1) {
+            window.open("PrintContent.aspx?n=" + o.value);
+        }
+        else {
+            window.open("PrintContent.aspx?n=" + o.value + "&t=FB01D469347C76A7");
+        }
+        //document.location.href = "PrintContent.aspx?n=" + o.value;
+    }
+    //function MailtoFriend() {
+    //    var o = document.getElementById("uscSiteMap1_hdNodeID");
+    //    document.location.href = "MailtoFriend.aspx?n=" + o.value;
+    //}
+</script>
+
+<input type="hidden" name="ctl00$uscSiteMap1$hdNodeID" id="uscSiteMap1_hdNodeID" value="185851DC43DED5B5" />
+
+
+
+<!------------------標題------------------>
+<div class="title">
+     <span class="accesskey_c"><a accesskey="C" id="C" href="#C" title="中間主要內容區，此區塊呈現網頁的網頁內容"><span>:::</span></a>
+    </span>
+    <h4>關於蘇澳</h4>
+    <a href="#" onclick="javascript:PrintContent();" onkeypress="this.onclick();" id="print_link"  title="列印[另開新視窗]"><img border="0" src="images/p_print.png" width="18" height="18" alt="列印[另開新視窗]"/></a>
+</div>
+
+<div class="sitemap_left">
+    <!--中間導盲磚-->
+   
+    <ul>
+        <li><a href="Default.aspx">
+            首頁</a></li>
+        <li><a href="cp.aspx?n=185851DC43DED5B5" target="">本所簡介</a></li><li><a href="cp.aspx?n=185851DC43DED5B5" >關於蘇澳</a></li>
+    </ul>
+    
+</div>
+<div class="ContentTools">
+    
+</div>
+
+
+    <!--------------------DATA 上  方  區  塊-------------------->
+    <div id="data_top" class="data_top data_top_cp">
+        
+    </div>
+    <!--------------------DATA 上  方  區  塊-結 束-------------------->
+    <div class="main">
+        <!--------------------DATA 左  方  區  塊-------------------->
+        <div id="data_left" class="data_left data_left_cp">
+            
+        </div>        
+        <!--------------------DATA 左  方  區  塊-結 束-------------------->
+        <!--------------------前端維護按鈕-------------------->
+            <div id="WWWEdit" BE_Url="http:\\mgr.e-land.gov.tw\System\DataManager\CP_DealData.aspx?WWWEdit=true&listname=網頁維護&IsDataMG=True&state=update&mode=view&smlsn=9513815E1FFFDAD5&sitessn=217&nodeid=185851DC43DED5B5&sn=DC2E8CF899BA77F8" style="text-align: right;"></div>
+        <!--------------------前端維護按鈕-結 束-------------------->
+        <!--------------------DATA 中  間  區  塊-------------------->
+        <div id="data_midlle" class="data_midlle">
+            
+            
+
+
+
+<div id="ContentPlaceHolder1_data_midlle_cp" style="margin:0px auto;" class="data_midlle_cp">
+    <table class="cp_table" style="margin:0px auto;" width="100%">
+    <tr>
+        <td>
+        
+        </td>
+    </tr>
+    <tr>
+        <td>
+        <div style="display:block; width:98%;"><table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tbody>
+		<tr>
+			<td width="2%"><font size="2">&nbsp;&nbsp;</font></td>
+			<td width="95%"><br />
+			<font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font><font color="#666666">蘇澳古稱港口，內地稱施八坑，相傳清嘉慶年間有泉州人氏蘇士尾者率鄉勇四十四人至此墾荒，後人為紀念先賢蘇氏闢地勞積，將港灣「澳」地命名為 蘇澳 。 本鎮在民國前廿二年前屬於利澤簡堡，民國前十年改為宜蘭廳利澤簡辦務署，民國前七年利澤簡辦務署廢止歸屬羅東支廳，至民國九年改為台北州蘇澳郡蘇澳庄，民國卅九年十月本省行政區域重新調整設立，改稱宜蘭縣蘇澳鎮迄今，<font color="#666666">民國102年4月1日將原聖湖里劃分為聖湖及聖愛兩里、岳明里併入港邊里同時進行行政區域調整，</font>行政區劃仍維持為二十六里 ，包括：永光里、永春里、永榮里、永樂里、存仁里、東澳里、長安里、南正里、南安里、南成里、南建里、南強里、南寧里、南興里、頂寮里、朝陽里、港邊里、新城里、聖湖里、隘丁里、龍德里、蘇北里、蘇西里、蘇東里、蘇南里 、聖愛里。 </font>
+			<p><font color="#666666">地理位置：<br />
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font size="4">本鎮位於台灣東北部宜蘭縣蘭陽平原之南端，東經 122&deg; 、北緯 24.8&deg; ，東臨太平洋、西北與冬山、五結兩鄉接壤，西南與南澳鄉毗鄰全鎮面積89.02平方公里 ，於104年底人口數為 40,726人。</font></font><font size="4"> </font></p>
+			<!--mstheme--></td>
+			<td width="3%"><font size="2">&nbsp;&nbsp;</font></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+        </td>
+    </tr>
+    </table>
+</div>
+
+
+            <!--------------------相關檔案  區  塊-------------------->
+            
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".fancybox-buttons").fancybox({
+                helpers: {
+                    thumbs: true
+                }
+            });
+        });
+	</script>
+            <!--------------------相關檔案  區  塊-結 束-------------------->
+        </div>
+        <!--------------------DATA 中  間  區  塊-結 束-------------------->
+        <!--------------------DATA 右  方  區  塊-------------------->
+        <div id="data_right" class="data_right data_right_cp">
+            
+        </div>
+        <!--------------------DATA 右  方  區  塊-結 束-------------------->
+        <!--------------------DATA 下  方  區  塊-------------------->
+        <div id="data_bottom" class="data_bottom data_bottom_cp"> 
+            
+   
+            
+            <noscript>
+                <style type="text/css">
+                    .ButtonStyle_back {display: none!important;}
+                </style>
+            </noscript>   
+            <div class="content_bottom content_bottom_cp" >
+                <ul>
+                    <li class="ButtonStyle_back">                   
+                        <a href="#" onkeypress="this.onclick();" onclick="history.go( -1 );return false;">
+                            回上一頁
+                        </a>
+                    </li>
+                    <li class="ButtonStyle_top">
+                        <a href="#">
+                            回最上面     
+                        </a>
+                        </li>
+                        <li class="ButtonStyle_home">
+                            <a href="Default.aspx"> HOME</a>
+                        </li>
+                </ul>
+            </div>
+        </div>
+        <!--------------------DATA 下  方  區  塊-結 束-------------------->
+    </div>
+</div>
+        <!--------------------中  間  區  塊  結 束-------------------->
+
+        <!--------------------右  方  區  塊-------------------->
+        <div class="content_right">
+            <!-- 右邊導盲磚 -->
+            <div class="accesskey_r"><a accesskey="R" id="R" href="#R" title="右方相關內容區，此區塊列有本網站的相關資訊與相關連結"><span>:::</span></a>
+            </div>
+                        
+            <div class="right_ad">
+                
+            </div>
+        </div>
+        <!--------------------右  方  區  塊  -結 束-------------------->
+    </div>
+<!-----------------------  內  容  區  塊  結 束-------------------->
+</div>
+<!--------------------------- 下  方  區  塊  ------------------------->
+<!--//---- 下方選單  --//-->
+<!-- 下方展開式選單  --><script type="text/javascript"><!-- 開合進階搜尋 -->$(document).ready(function(){$('#openmenu').hide();})$(function(){       $('#openmenu').click(function(){         $('#footermenu').slideDown(500);		 $('#footershadow').slideDown(500);         $('#closemenu').show();         $(this).hide();       })     $('#closemenu').click(function(){         $('#footermenu').slideUp(500);		 $('#footershadow').slideUp(500);         $('#openmenu').show();         $(this).hide();       })})function menu(id) {    id.trigger('click');}<!-- 開合進階搜尋:end --></script><div class="opnemenu_area" id="opnemenu_area" > <span class="openbtn" id="openmenu"><a id="open" href="javascript: return false;" onclick="menu('openmenu');" onkeypress="menu('openmenu');" style="width:80px; height:25px; display:block;">open</a></span> <span class="closebtn" id="closemenu"><a id="close" href="javascript: return false;" onclick="menu('closemenu');" onkeypress="menu('closemenu');" style="width:80px; height:25px; display:block;">close</a></span> <div class="allmenu" id="footermenu"> <div class="onemenu"> <h3><a title="本所簡介" href="cp.aspx?n=185851DC43DED5B5">本所簡介</a></h3><ul><li><a  title="關於蘇澳" href="cp.aspx?n=185851DC43DED5B5">關於蘇澳</a></li><li><a  title="本所沿革" href="cp.aspx?n=E8DF094533CBC3EB">本所沿革</a></li><li><a  title="大事年表" href="cp.aspx?n=FA74B0B2D69F2F88">大事年表</a></li><li><a  title="主任簡介" href="cp.aspx?n=A1306430A0536657">主任簡介</a></li><li><a  title="組織編制" href="cp.aspx?n=08030EDF7FA824BC">組織編制</a></li><li><a  title="業務職掌" href="cp.aspx?n=DB0D7F6EAA14A766">業務職掌</a></li><li><a  title="服務時間" href="cp.aspx?n=F9A7C8AB43CC756C">服務時間</a></li><li><a  title="交通指南" href="cp.aspx?n=2642D593F082BCBA">交通指南</a></li><li><a  title="行政區域" href="cp.aspx?n=2124FDEC9D447F14">行政區域</a></li></ul></div><div class="onemenu"> <h3><a title="便民服務" href="cp.aspx?n=476ED3BA2154AB28">便民服務</a></h3><ul><li><a  title="服務白皮書" href="cp.aspx?n=476ED3BA2154AB28">服務白皮書</a></li><li><a  title="便民措施" href="cp.aspx?n=F4F47170BF08AEF4">便民措施</a></li><li><a  title="到府服務" href="cp.aspx?n=486BE56C5A0789E7">到府服務</a></li><li><a  title="預約受理結婚登記" href="cp.aspx?n=34A067F027529059">預約受理結婚登記</a></li><li><a  title="戶籍異地辦理" href="cp.aspx?n=9AD6C4D2D6C02EA0">戶籍異地辦理</a></li><li><a  title="英文戶籍謄本" href="cp.aspx?n=44A580015AE4E2C3">英文戶籍謄本</a></li><li><a  title="到校受理國民身分證" href="cp.aspx?n=6F02F783B7C87CD6">到校受理國民身分證</a></li><li><a  title="申辦自然人憑證" href="cp.aspx?n=C1C1755F18912CD6">申辦自然人憑證</a></li><li><a  title="宜蘭圓滿式計畫服務" href="cp.aspx?n=80F51F56B8F4A214">宜蘭圓滿式計畫服務</a></li><li><a  target="_blank" title="戶政問答集「另開新視窗」"   href="http://www.ris.gov.tw/zh_TW/158;jsessionid=B42D4938AA1A8E3359BC0FD159966EE5">戶政問答集</a></li></ul></div><div class="onemenu"> <h3><a title="戶政資訊" href="News.aspx?n=C325CE0C5B057CA7&sms=1095BD65367B2A7A">戶政資訊</a></h3><ul><li><a  title="最新消息" href="News.aspx?n=C325CE0C5B057CA7&sms=1095BD65367B2A7A">最新消息</a></li><li><a  title="本所公告" href="News.aspx?n=9D01BA2A15246F34&sms=B268CCF2CFAF138E">本所公告</a></li><li><a  title="縣政活動宣導" href="cp.aspx?n=7F5F94C72CDE8264">縣政活動宣導</a></li><li><a  title="中西年號對照表" href="cp.aspx?n=7905E8D2F9B0B1E3">中西年號對照表</a></li><li><a  title="年度工作計畫" href="News.aspx?n=0B9D4F3FADA1A36A&sms=1D9A06D3408330D5">年度工作計畫</a></li><li><a  title="提升服務品質執行計畫" href="http://ws.e-land.gov.tw/001/2015yilan/217/webarchive/4750/f435f8f3-5620-4657-8ae3-c17d3a5faca2.pdf">提升服務品質執行計畫</a></li><li><a  title="性別主流化專區" href="cp.aspx?n=D7350F42DBAB35D7">性別主流化專區</a></li><li><a  title="防治性騷擾" href="cp.aspx?n=D78824DF6B0E7578">防治性騷擾</a></li><li><a  title="著作權聲明" href="cp.aspx?n=C24FA0F3A9A9BCC9">著作權聲明</a></li></ul></div><div class="onemenu"> <h3><a title="人口統計" href="Content_List.aspx?n=DDCBF68FBCD7E86F">人口統計</a></h3><ul><li><a  title="本鎮" href="Content_List.aspx?n=DDCBF68FBCD7E86F">本鎮</a></li><li><a  title="本縣" href="Content_List.aspx?n=0A96FF6BAA4BB1CD">本縣</a></li><li><a  title="全國" href="Content_List.aspx?n=5CB8A77DFE88BF18">全國</a></li></ul></div><div class="onemenu"> <h3><a title="業務查詢" href="Content_List.aspx?n=186F65C3242E46A1">業務查詢</a></h3><ul><li><a  target="_blank" title="各項業務申辦「另開新視窗」"   href="http://vrhr.e-land.gov.tw/News.aspx?n=B96B65A8700421FA&sms=E6019D6FE75132E8">各項業務申辦</a></li><li><a  target="_blank" title="自然人憑證「另開新視窗」"   href="http://vrhr.e-land.gov.tw/cp.aspx?n=5E4D479E941564D4">自然人憑證</a></li></ul></div><div class="onemenu"> <h3><a title="專區" href="Content_List.aspx?n=F54EB84E434D5557">專區</a></h3><ul><li><a  title="門牌專區" href="Content_List.aspx?n=F54EB84E434D5557">門牌專區</a></li><li><a  title="原住民專區" href="Content_List.aspx?n=71D514CE6E9BD44C">原住民專區</a></li><li><a  title="新住民專區" href="Content_List.aspx?n=346FFA90A58EE441">新住民專區</a></li><li><a  title="結婚專區" href="Content_List.aspx?n=017759FA553E7D34">結婚專區</a></li></ul></div><div class="onemenu"> <h3><a title="表單下載" href="cp.aspx?n=13784C94B49AC55F">表單下載</a></h3><ul></ul></div><div class="onemenu"> <h3><a  target="_blank" title="線上申辦e櫃檯「另開新視窗」"   href="http://online2012.e-land.gov.tw/">線上申辦e櫃檯</a></h3><ul></ul></div><div class="onemenu"> <h3><a  target="_blank" title="戶政Q&A「另開新視窗」"   href="http://www.ris.gov.tw/zh_TW/158">戶政Q&A</a></h3><ul></ul></div> </div>  <div class="shadow" id="footershadow"></div></div><!-- 下方展開式選單:end  -->
+
+<div id="footer_bg" class="footer_bg">
+<div class="wrapper footer">
+<!----------------------下方連結----------------------->
+    <a accesskey="Z" id="Z" href="#Z" title="下方選單連結區，此區塊列有[意見信箱]、[資訊安全政策]、[隱私權政策]等連結"><span>:::</span></a><div class="footer_link"><ul><li><a href="http://www.e-land.gov.tw/cp.aspx?n=BFD921221785BFAE" target="_blank" title="隱私權及資訊安全政策宣告「另開新視窗」" >隱私權及資訊安全政策宣告</a></li><li><a href="http://ws.e-land.gov.tw/Download.ashx?u=LzAwMS8yMDE1eWlsYW4vMTc3L3JlbGZpbGUvNjA2OC8xMDcwNjQvMDQ0MmZiYjctMmM4MC00MWFkLWJiN2EtNzNiMDdiZGE1MTgxLm9kdA%3d%3d&n=MzEyMzE2MTg0MzU4Lm9kdA%3d%3d&icon=..odt" target="_blank" title="個人資料隱私權宣告「另開新視窗」" >個人資料隱私權宣告</a></li><li><a href="http://www.e-land.gov.tw/cp.aspx?n=9A63FE86EB137A6C" target="_blank" title="政府網站資料開放宣告「另開新視窗」" >政府網站資料開放宣告</a></li><li><a href="http://vrhr.e-land.gov.tw/cp.aspx?n=A69ECEE143A0ADCE" target="_blank" title="機關網站著作權聲明「另開新視窗」" >機關網站著作權聲明</a></li> </ul></div>
+  
+
+<!----------------------下方資訊----------------------->
+    <div class="footer_info"><span style="font-size: 14px">Copyright&copy; 蘇澳鎮戶政事務所版權所有<br />
+服務電話：( 03 ) 9963080 &nbsp; &nbsp;傳真：( 03 ) 9973312<br />
+服務時間：週一至週五 &nbsp;08:00～17:30 &nbsp;冬令時間(自每年11月1日起至翌年2月底止)：08:00～17:00 中午照常受理 。<br />
+本所地址：27044 宜蘭縣蘇澳鎮中山路一段254號&nbsp;&nbsp; 電子郵件：<a href="mailto:suao-ris@mail.e-land.gov.tw">suao-ris@mail.e-land.gov.tw </a></span>
+<div class="footer_lastupdated">更新日期：<span>106-10-31</span></div></div>
+
+
+ <!----------------------瀏覽人次----------------------->
+    <!----------------------瀏覽人次----------------------->
+<div class="footer_visitcount">
+瀏覽人次：<span id="footer_visitcount_span"></span>(自105年3月開始計算)
+<SCRIPT TYPE="text/javascript">
+var isInit_visitcount = false;
+$(function(){
+if(!isInit_visitcount){
+   var sUrl='/Common/GetVisitcount.ashx?sitessn=E64CE627F7152412'
+   if(getParameterByName('n')!=''){sUrl = sUrl + '&n='+getParameterByName('n')}
+   $.ajax({
+   	url: sUrl
+   	,type: 'POST'
+   })
+   .success(function(date) {
+   	$('#footer_visitcount_span').html(date);
+   })
+ isInit_visitcount = true;}
+})
+</SCRIPT>
+<!----------------------前台登入----------------------->
+
+</div>
+
+    
+<!----------------------無障礙標章----------------------->    
+    <div class="footer_iconlink"><ul>
+<li class="footer_egov"><a target="_blank" href="http://www.gov.tw/" title="E政府「另開新視窗」">E政府</a></li><li class="footer_wcag"><a target="_blank" href="http://www.handicap-free.nat.gov.tw/Applications/Detail?category=20161223165425" title="無障礙2.0標章等級[A]「另開新視窗」">無障礙2.0標章等級[A]</a></li>
+<noScript>
+    <style>
+#Footer_wcag1_QRCode{display:none;}
+    </style> 
+    </noScript>
+<img id="Footer_wcag1_QRCode"  alt="QRCode" title="QRCode">
+<script type="text/javascript">
+$(function(){
+    $.ajax({
+        url: 'QRCode.aspx?si=69',
+        type: 'Post',   
+        data: {u:window.location.href}
+    })
+    .success(function(img) {
+          $('#Footer_wcag1_QRCode').attr('src',"data:image/png;base64," + img);
+    })
+})
+</script>
+</li></ul></div>
+
+
+    
+    </div>
+</div>
+<!--------------------------- 下  方  區  塊  結束------------------------->
+<script>
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+    //Jason 設定選單
+    $(function () {
+        $('.second_menu_yes').removeClass('second_menu_yes');
+        $('.second_menu a').each(function () {
+            if ($(this).attr('href').indexOf('n='+getParameterByName('n')) > -1) {
+                $(this).parent().parent().addClass('second_menu_yes');
+            }
+        });
+    })
+</script>
+
+<script type='text/javascript' src='/Scripts/jHandicapFree.js'></script>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+var Page_ValidationSummaries =  new Array(document.getElementById("ValidationSummary1"));
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+var ValidationSummary1 = document.all ? document.all["ValidationSummary1"] : document.getElementById("ValidationSummary1");
+ValidationSummary1.showsummary = "False";
+//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="B0CBEB2A" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAARNZ1bqqysbbVXyDXxJqidVfkynijDKHn/duRCsw6KUbc8Sr5JESfQq4/ZXdak2Qu555IkGKqNF+rKmxv62nZ27ukjWe+XxLQ4vy+kUCzMffBXksLE=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+
+(function(id) {
+    var e = document.getElementById(id);
+    if (e) {
+        e.dispose = function() {
+            Array.remove(Page_ValidationSummaries, document.getElementById(id));
+        }
+        e = null;
+    }
+})('ValidationSummary1');
+//]]>
+</script>
+</form>
+</body>
+</html>
+<div id="JLog" style="display:none" ><table border="1" style="border:3px #FFAC55 double;padding:5px;" rules="all" cellpadding='5' >
+<tr><th id="totle"></th><td headers="totle" colspan="2">Totle :</td><td headers="totle">0.0021</td></tr>
+</table></div>
