@@ -48,8 +48,9 @@ collect_info = function(train, lastpd) {
 
     # info$row_zero = row_zero
     info$row_zero = unique(c(row_zero, row_zero_village))
+    info$row_none_zero = setdiff(row_none_zero, info$row_zero)
     info$vil_sel  = train$VilCode[row_none_zero]
-    
+
     message(sprintf("row_zero: %d, village_zero: %d", NROW(row_zero), NROW(row_zero_village)))
     message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(row_sum), NROW(info$row_zero), NROW(row_none_zero)))
 
@@ -62,7 +63,6 @@ collect_info = function(train, lastpd) {
     tp = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
     info$real  = round(tp[tp_list], 0)
     info$magic = rep(1.57, length(tp_list))
-    # info$magic = rep(1.7, length(tp_list))
     names(info$magic) = tp_list
 
     # =============================================================================================
@@ -173,6 +173,7 @@ gen_tp_raw = function(train, lastpd, tn_tp, ts_tp) {
 build_rf_model = function(raw, targets) {
 
     features = info$features
+    row_sel  = info$row_none_zero
     
     rf = list()
     col_real = c("n_outage")
@@ -184,7 +185,8 @@ build_rf_model = function(raw, targets) {
         if ( is.null(tp_data) ) {
             rf[[tp]] = NULL
         } else {
-            rf[[tp]] = randomForest(n_outage~., data=tp_data[, col_sel], ntree=500)
+            
+            rf[[tp]] = randomForest(n_outage~., data=tp_data[row_sel, col_sel], ntree=500)
             real = tp_data[, col_real]
             pred = gen_predict(model=rf[[tp]], raw=tp_data[, features], magic_value=1)
             cm = CM(real, pred)

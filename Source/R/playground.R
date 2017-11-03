@@ -48,11 +48,6 @@ rf = build_rf_model(raw=data$tp, targets=info$tn_tp)
 # =================================================================================================
 # Prediction and evaluation
 
-# col_selL = c("VilCode", info$tn_tp)
-# col_selR = c("VilCode", info$ts_tp)
-# tp_list = c(info$tn_tp, info$ts_tp)
-# info$magic = rep(1.57, length(tp_list))
-
 tn_1 = c("Soudelor", "Soudelor")
 tn_2 = c("MerantiAndMalakas", "MerantiAndMalakas")
 pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(tn_1, tn_2))
@@ -60,7 +55,7 @@ pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(
 ts_1 = c("Soudelor", "Megi")
 ts_2 = c("MerantiAndMalakas", "NesatAndHaitang")
 pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(ts_1, ts_2))
-gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
+# gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
 
 # =================================================================================================
 
