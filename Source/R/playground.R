@@ -55,7 +55,7 @@ pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(
 ts_1 = c("Soudelor", "Megi")
 ts_2 = c("MerantiAndMalakas", "NesatAndHaitang")
 pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(ts_1, ts_2))
-# gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
+gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
 
 # =================================================================================================
 

@@ -44,6 +44,10 @@
 
 
 # Log
+* 1103
+  - Integate meters info
+  - Only use villages which had power outage before to trian rf model
+
 * 1028
   - Code restructure
   - Add function to build random forest model per city
@@ -73,6 +77,10 @@
   - Create a github project and upload the source, and then share this project to Louis (DONE: 1017)
 
 # Submit history
+* 58.14500_submit_dc_1103_213554.csv
+  - Replace meters with household
+  - Only use villages which had power outage before to trian rf model
+
 * 57.60200_submit_dc_1026_032611.csv
   - set the prediction of a village to zero if this village is in 澎湖縣, 連江縣, 金門縣 (remove unrepresentative data)
 

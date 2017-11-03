@@ -6,7 +6,7 @@ data_pre_processing = function() {
     data = list()
     data$train  = read.csv("./data/train.csv",  fileEncoding="UTF-8")
     data$submit = read.csv("./data/submit.csv", fileEncoding="UTF-8")
-    data$lastpd = read.csv("./submit/57.60200_submit_dc_1026_032611.csv", fileEncoding="UTF-8")
+    data$lastpd = read.csv("./submit/58.14500_submit_dc_1103_213554.csv", fileEncoding="UTF-8")
 
     info = collect_info(train=data$train, lastpd=data$lastpd)
 
