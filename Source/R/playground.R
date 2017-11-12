@@ -5,6 +5,7 @@
 # install.packages("xlsx")
 # install.packages("randomForest")
 # install.packages("rJava")
+# install.packages("reshape")
 
 # clean all objects from workspace
 rm(list=ls())
@@ -16,7 +17,9 @@ setwd("~/Work/git/Power_Failure_Prediction/Source")
 library(tidyverse)
 library(rJava)
 library(randomForest)
+library(reshape)
 source("./R/util.R")
+source("./R/data.R")
 
 # =================================================================================================
 
@@ -25,6 +28,7 @@ source("./R/util.R")
 # gen_family_info()
 # gen_meters_info()
 # gen_village_info()
+# gen_station_observation()
 
 # =================================================================================================
 # Data pre-processing
