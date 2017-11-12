@@ -24,23 +24,23 @@
 
 # Reference data
 * 颱風資料
-  颱風資料庫
-  http://rdc28.cwb.gov.tw/
+  - 颱風資料庫
+    http://rdc28.cwb.gov.tw/
 
 * 電桿資料
-  政府資料開放平台 - 台灣電力公司_電桿坐標及桿號
-  https://data.gov.tw/dataset/33305
-  ./data/poledata/*pole.csv
+  - 政府資料開放平台 - 台灣電力公司_電桿坐標及桿號
+    https://data.gov.tw/dataset/33305
+    ./data/poledata/*pole.csv
 
 * 人口戶數資料
-  政府資料開放平臺 - 村里戶數、單一年齡人口
-  https://data.gov.tw/dataset/32973#r0
-  ./data/opendata10603M030.csv
+  - 政府資料開放平臺 - 村里戶數、單一年齡人口
+    https://data.gov.tw/dataset/32973#r0
+    ./data/opendata10603M030.csv
 
 * 用電戶數
-  台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
-  http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
-  ./data/open_sell_amt_vil.csv
+  - 台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
+    http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
+    ./data/open_sell_amt_vil.csv
 
 
 # Log
@@ -77,6 +77,9 @@
   - Create a github project and upload the source, and then share this project to Louis (DONE: 1017)
 
 # Submit history
+* 59.01400_submit_dc_1112_233124.csv
+  - Add CWB observation data (town-level)
+
 * 58.14500_submit_dc_1103_213554.csv
   - Replace meters with household
   - Only use villages which had power outage before to trian rf model
