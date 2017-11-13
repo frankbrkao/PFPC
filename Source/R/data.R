@@ -203,28 +203,33 @@ gen_family_info = function() {
     # 加入人口戶數資料
     # 資料來源為政府資料開放平臺(https://data.gov.tw/dataset/32973#r0)
 
-    family = read.csv("./data/opendata10603M030.csv", stringsAsFactors=F, fileEncoding="UTF-8-BOM")
+    family = read.csv("./data/opendata10603M030.csv", fileEncoding="UTF-8")
     # family[263,3]
 
     family = family[-1, c("site_id", "village", "household_no")]
-    family$site_id = gsub(x=family$site_id, pattern="　",           replacement="")
-    family$site_id = gsub(x=family$site_id, pattern="臺北",         replacement="台北")
-    family$site_id = gsub(x=family$site_id, pattern="臺中",         replacement="台中")
-    family$site_id = gsub(x=family$site_id, pattern="臺南",         replacement="台南")
-    family$site_id = gsub(x=family$site_id, pattern="高雄市三民一", replacement="高雄市三民區")
-    family$site_id = gsub(x=family$site_id, pattern="高雄市三民二", replacement="高雄市三民區")
-    family$site_id = gsub(x=family$site_id, pattern="高雄市鳳山一", replacement="高雄市鳳山區")
-    family$site_id = gsub(x=family$site_id, pattern="高雄市鳳山二", replacement="高雄市鳳山區")
-    family$key = paste0(family$site_id, family$village)
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="　",           replacement="")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern=" ",            replacement="")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="臺北",         replacement="台北")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="臺中",         replacement="台中")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="臺南",         replacement="台南")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="高雄市三民一", replacement="高雄市三民區")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="高雄市三民二", replacement="高雄市三民區")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="高雄市鳳山一", replacement="高雄市鳳山區")
+    levels(family$site_id) = gsub(x=levels(family$site_id), pattern="高雄市鳳山二", replacement="高雄市鳳山區")
 
-    family$key = gsub(x=family$key, pattern="台北市信義區富台里",   replacement="台北市信義區富臺里")
-    family$key = gsub(x=family$key, pattern="台南市麻豆區晋江里",   replacement="台南市麻豆區晉江里")
-    family$key = gsub(x=family$key, pattern="新竹縣竹北市中崙里",   replacement="新竹縣竹北市斗崙里")
-    family$key = gsub(x=family$key, pattern="彰化縣彰化市南瑶里",   replacement="彰化縣彰化市南瑤里")
-    family$key = gsub(x=family$key, pattern="雲林縣臺西鄉台西村",   replacement="雲林縣臺西鄉臺西村")
-    family$key = gsub(x=family$key, pattern="雲林縣口湖鄉台子村",   replacement="雲林縣口湖鄉臺子村")
-    family$key = gsub(x=family$key, pattern="嘉義縣中埔鄉塩舘村",   replacement="嘉義縣中埔鄉塩館村")
-    family$key = gsub(x=family$key, pattern="屏東縣霧臺鄉霧台村",   replacement="屏東縣霧臺鄉霧臺村")
+    levels(family$village) = gsub(x=levels(family$village), pattern="高雄市鳳山二", replacement="高雄市鳳山區")
+
+    family$key = as.factor(paste0(family$site_id, family$village))
+
+    levels(family$key) = gsub(x=levels(family$key), pattern="台北市信義區富台里",   replacement="台北市信義區富臺里")
+    levels(family$key) = gsub(x=levels(family$key), pattern="台南市麻豆區晋江里",   replacement="台南市麻豆區晉江里")
+    levels(family$key) = gsub(x=levels(family$key), pattern="新竹縣竹北市中崙里",   replacement="新竹縣竹北市斗崙里")
+    levels(family$key) = gsub(x=levels(family$key), pattern="彰化縣彰化市南瑶里",   replacement="彰化縣彰化市南瑤里")
+    levels(family$key) = gsub(x=levels(family$key), pattern="雲林縣臺西鄉台西村",   replacement="雲林縣臺西鄉臺西村")
+    levels(family$key) = gsub(x=levels(family$key), pattern="雲林縣口湖鄉台子村",   replacement="雲林縣口湖鄉臺子村")
+    levels(family$key) = gsub(x=levels(family$key), pattern="嘉義縣中埔鄉塩舘村",   replacement="嘉義縣中埔鄉塩館村")
+    levels(family$key) = gsub(x=levels(family$key), pattern="屏東縣霧臺鄉霧台村",   replacement="屏東縣霧臺鄉霧臺村")
+    levels(family$key) = gsub(x=levels(family$key), pattern="屏東縣霧臺鄉霧台村",   replacement="屏東縣霧臺鄉霧臺村")
 
     family$household_no = as.character(family$household_no) %>% as.numeric()
     family_grp = group_by(family, key) %>% summarise(household=sum(household_no))
@@ -238,7 +243,7 @@ gen_family_info = function() {
     #
     # missing_r = right_join(train, family, by="key")
     # missing_r = missing_r[is.na(missing_r$CityName),]
-    # missing_r
+    # levels(as.factor(missing_r$key))
 }
 
 gen_meters_info = function() {
@@ -247,7 +252,7 @@ gen_meters_info = function() {
     # http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
     # ./data/open_sell_amt_vil.csv
 
-    meters = read.csv("./data/open_sell_amt_vil.csv", stringsAsFactors=T, fileEncoding="UTF-8-BOM")
+    meters = read.csv("./data/open_sell_amt_vil.csv", fileEncoding="UTF-8")
 
     colnames(meters) <- c("date", "city", "town", "village", "electric energe sale", "meters")
     meters$"electric energe sale" = NULL
@@ -406,24 +411,24 @@ gen_village_info = function() {
 # =================================================================================================
 
 gen_station_observation = function() {
- 
+
     st_locations = read.csv("./data/station_locaion.csv", stringsAsFactors=T, fileEncoding="UTF-8")
     station_observation = read.csv("./data/station_observation.csv", fileEncoding="UTF-8")
     village = read.csv("./data/village.csv", fileEncoding="UTF-8")
-    
+
     levels(st_locations$city) = gsub(x=levels(st_locations$city), pattern="臺",   replacement="台")
     levels(st_locations$city) = gsub(x=levels(st_locations$city), pattern="台東",   replacement="臺東")
-    
+
     levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="台西鄉",   replacement="臺西鄉")
     levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="溪洲鄉",   replacement="溪州鄉")
     levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="霧台鄉",   replacement="霧臺鄉")
-    
+
     # ==== checking missing recorders =============================================================
     #
     # missing_r = right_join(village, st_locations, by=c("CityName" = "city"))
     # missing_r = missing_r[is.na(missing_r$TownName),]
     # levels(as.factor(missing_r$CityName))
-    
+
     # missing_r = right_join(village, st_locations, by=c("TownName" = "town"))
     # missing_r = missing_r[is.na(missing_r$VilName),]
     # levels(as.factor(missing_r$TownName))
@@ -433,14 +438,14 @@ gen_station_observation = function() {
     # levels(as.factor(missing_r$st_no))
 
     # =============================================================================================
-    
+
     levels(station_observation$tp_eng) = gsub(x=levels(station_observation$tp_eng), pattern="meranti", replacement="merantiandmalakas")
     levels(station_observation$tp_eng) = gsub(x=levels(station_observation$tp_eng), pattern="nesat",   replacement="nesatandhaitang")
 
     st_obs = right_join(st_locations, station_observation, by=c("st_no" = "st_code"))
-    
+
     # =============================================================================================
-    
+
     grp_obs_city = group_by(st_obs, city, tp_code, tp_cht, tp_eng) %>% 
         summarise(
             c_precp_total = mean(precp_total), 
@@ -464,14 +469,14 @@ gen_station_observation = function() {
             t_precp_1h    = max(precp_1h),
             t_wind        = max(wind),
             t_gust        = max(gust))
-    
+
     # =============================================================================================
 
-        tp_list = data.frame(tp = levels(st_obs$tp_eng))
+    tp_list = data.frame(tp = levels(st_obs$tp_eng))
     vil_tp  = merge(village, tp_list, all=TRUE)
     vil_st  = left_join(vil_tp, grp_obs_city, by=c("CityName" = "city", "tp" = "tp_eng"))
     vil_st  = left_join(vil_st, grp_obs_town, by=c("TownName" = "town", "tp" = "tp_eng"))
-    
+
     vil_st$precp_total = vil_st$t_precp_total
     vil_st$precp_day   = vil_st$t_precp_day
     vil_st$precp_24h   = vil_st$t_precp_24h
@@ -490,25 +495,25 @@ gen_station_observation = function() {
 
     null_rows = is.na(vil_st$precp_24h)
     vil_st$precp_24h[null_rows] = vil_st$c_precp_24h[null_rows]
-    
+
     null_rows = is.na(vil_st$precp_12h)
     vil_st$precp_12h[null_rows] = vil_st$c_precp_12h[null_rows]
-    
+
     null_rows = is.na(vil_st$precp_6h)
     vil_st$precp_6h[null_rows] = vil_st$c_precp_6h[null_rows]
-    
+
     null_rows = is.na(vil_st$precp_3h)
     vil_st$precp_3h[null_rows] = vil_st$c_precp_3h[null_rows]
-    
+
     null_rows = is.na(vil_st$precp_1h)
     vil_st$precp_1h[null_rows] = vil_st$c_precp_1h[null_rows]
-    
+
     null_rows = is.na(vil_st$wind)
     vil_st$wind[null_rows] = vil_st$c_wind[null_rows]
-    
+
     null_rows = is.na(vil_st$gust)
     vil_st$gust[null_rows] = vil_st$c_gust[null_rows]
-    
+
     write.csv(vil_st, file="./data/station_obs.csv", row.names=F, fileEncoding="UTF-8")
 }    
 
@@ -516,7 +521,9 @@ gen_station_observation = function() {
 
 merge_all_info = function(f_last_submit) {
 
-    lastpd      = read.csv(paste0("./submit/", f_last_submit), fileEncoding="UTF-8")
+    f_last_submit="59.01400_submit_dc_1112_233124.csv"
+    
+lastpd      = read.csv(paste0("./submit/", f_last_submit), fileEncoding="UTF-8")
     train       = read.csv("./data/train.csv",  fileEncoding="UTF-8")
     station_obs = read.csv("./data/station_obs.csv", fileEncoding="UTF-8")
 
@@ -526,12 +533,33 @@ merge_all_info = function(f_last_submit) {
     col_selL = c("VilCode", tn_tp)
     col_selR = c("VilCode", ts_tp)
     
-    tp_outage = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
+tp_outage = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
     tp_outage = melt(tp_outage, id=c("VilCode"))
-    
     colnames(tp_outage) = c("VilCode", "tp", "outage")
-    levels(tp_outage$tp) = tolower(levels(tp_outage$tp))
+    levels(tp_outage$tp) = levels(tp_outage$tp)
+
+    # =============================================================================================
     
-    merged = left_join(station_obs, tp_outage, by=c("VilCode", "tp"))
-    write.csv(merged, file="./data/merged.csv", row.names=F, fileEncoding="UTF-8")    
+vil_max_outage = filter(tp_outage, tp %in% tn_tp) %>%
+        group_by(VilCode) %>% 
+        summarise(outage=max(outage))
+    
+colnames(vil_max_outage)[2] = c("max_outage")
+    
+# =============================================================================================    
+     merged = left_join(station_obs, tp_outage, by=c("VilCode", "tp"))
+    merged = left_join(merged, vil_max_outage, by=c("VilCode"))
+    
+merged$max_hh = apply(merged[,c("household", "meters", "max_outage")], 1, max)
+    merged$outage_pct = (merged$outage / merged$max_hh) * 100
+    
+# =============================================================================================
+    
+sel_cols = c("CityName", "TownName", "VilName", "VilCode", "key", "tp", "tp_code.x")
+    sel_cols = c(sel_cols, "pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
+    sel_cols = c(sel_cols, "precp_total", "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
+    sel_cols = c(sel_cols, "household", "meters", "max_outage", "max_hh", "outage", "outage_pct")
+    
+write.csv(merged[,sel_cols], file="./data/merged.csv", row.names=F, fileEncoding="UTF-8")
 }
+

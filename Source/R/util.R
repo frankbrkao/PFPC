@@ -26,6 +26,8 @@ data_pre_processing = function() {
 
 collect_info = function(train, lastpd) {
 
+    train = data$train
+
     info = list()
 
     info$tn_tp = c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
@@ -314,7 +316,7 @@ power_outage_forecasting = function(model, raw, real, pair) {
 
 # =================================================================================================
 
-gen_submit = function(train, submit, pd, en_train=F) {
+gen_submit = function(submit, pd) {
 
     submit = data$submit
     col_submit = c("CityName", "TownName", "VilCode", "VilName")
@@ -325,15 +327,8 @@ gen_submit = function(train, submit, pd, en_train=F) {
     }
 
     f_submit = paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
-    submit_dc = cbind(submit[col_submit], pd["NesatAndHaitang"], pd["Megi"])
+    submit_dc = cbind(submit[col_submit], pd[,"NesatAndHaitang"], pd[,"Megi"])
+    colnames(submit_dc) = colnames(submit)
     write.csv(submit_dc, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
     message(sprintf("save to %s", f_submit))
-
-    if (!en_train)
-        return ("")
-
-    # f_train: for the purpose of analysis
-    f_train  = paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), "_train.csv"), collapse='')
-    train_dc = cbind(train, pd["NesatAndHaitang"], pd["Megi"])
-    write.csv(train_dc, file=f_train, row.names=FALSE, fileEncoding="UTF-8")
 }

@@ -29,51 +29,94 @@ source("./R/data.R")
 # gen_meters_info()
 # gen_village_info()
 # gen_station_observation()
+# merge_all_info()
 
 # =================================================================================================
 # Data pre-processing
 
-md = data_pre_processing()
+# =================================================================================================
 
-data = md$data
-info = md$info
+# md = data_pre_processing()
+# 
+# data = md$data
+# info = md$info
 
 # =================================================================================================
-# Build random forest model
-rf = build_rf_model(raw=data$tp, targets=info$tn_tp)
+info = list()
+info$tn_tp = c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
+info$ts_tp = c("NesatAndHaitang", "Megi")
+info$tp = c(info$tn_tp, info$ts_tp)
 
-# Using all data to build one random forest model
-# rf_all = build_rf_model_alldata(raw=data$tp, targets=info$tn_tp)
+features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
+features = c(features, "precp_total", "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
+features = c(features, "max_hh")
+info$features = features
 
-# =================================================================================================
-# Build random forest model per city
-# rf_city = build_rf_city_model(raw=data$tp, targets=info$tn_tp)
-
-# =================================================================================================
-# Prediction and evaluation
-
-tn_1 = c("Soudelor", "Soudelor")
-tn_2 = c("MerantiAndMalakas", "MerantiAndMalakas")
-pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(tn_1, tn_2))
-
-ts_1 = c("Soudelor", "Megi")
-ts_2 = c("MerantiAndMalakas", "NesatAndHaitang")
-pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=rbind(ts_1, ts_2))
-gen_submit(train=data$train, submit=data$submit, pd=pd, en_train=T)
+info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市")
 
 # =================================================================================================
 
-bs = info$tn_tp
-bs = c(info$tn_tp[5])
-tg = info$tn_tp
-tg = info$ts_tp
-pair = NULL
+data = list()
+data$train  = read.csv("./data/train.csv",  fileEncoding="UTF-8")
+data$submit = read.csv("./data/submit.csv", fileEncoding="UTF-8")
+data$all    = read.csv("./data/merged.csv", fileEncoding="UTF-8")
 
-for (bs_name in bs) {
-    for (tg_name in tg) {
-        pair = rbind(pair, c(bs_name, tg_name))
-        message(sprintf("%-20s, %-20s", bs_name, tg_name))
-    }
+# =============================================================================================
+
+info$row_max = apply(data$train[, info$tn_tp], 1, max)
+
+row_sum  = rowSums(data$train[, info$tn_tp])
+row_zero = which(row_sum == 0)
+row_none_zero = which(row_sum > 0)
+
+row_zero_village = which(data$train$CityName %in% info$city_ig)
+
+# info$row_zero = row_zero
+info$row_zero = unique(c(row_zero, row_zero_village))
+info$row_none_zero = setdiff(row_none_zero, info$row_zero)
+info$vil_sel  = data$train$VilCode[row_none_zero]
+
+# =============================================================================================
+
+colnames(data$all)
+
+sel_cols = c(info$features, "outage")
+
+raw_train = filter(data$all, tp == "Soudelor")
+raw_train = raw_train[, sel_cols]
+raw_all   = data$all[, sel_cols]
+
+rf_tp = randomForest(outage~., data=raw_train, ntree=500)
+
+real = raw_train$outage
+pred = predict(rf_tp, newdata=raw_train[, info$features])
+cm = CM(real, pred)
+cm
+
+rf_all = randomForest(outage~., data=raw_all, ntree=500)
+
+real = raw_train$outage
+pred = predict(rf_all, newdata=raw_train[, info$features])
+cm = CM(real, pred)
+cm
+
+pred = list()
+real = list()
+
+for (tp_name in info$tp) {
+    raw  = filter(data$all, tp == tp_name)
+    raw  = raw[, sel_cols]
+    real[[tp_name]] = raw$outage
+    pred[[tp_name]] = predict(rf_all, newdata=raw[, info$features])
+    cm   = CM(real[[tp_name]], pred[[tp_name]])
+    message(sprintf("%20s: %2.6f", tp_name, cm))
 }
 
-pd = power_outage_forecasting(model=rf, raw=data$tp, real=info$real, pair=pair)
+save(rf_all, file="./rf_all.model")
+
+pd = round(cbind(pred$NesatAndHaitang, pred$Megi))
+head(pd)
+colnames(pd) = info$ts_tp
+colnames(data$submit)
+
+gen_submit(submit=data$submit, pd=pd)
