@@ -84,14 +84,92 @@ collect_info = function(train, lastpd) {
 
 # =================================================================================================
 
-gen_gust_info = function() {
+randomForest_city = function(save_model=T) {
 
-    # 各颱風風力資料
-    # 資料來源為颱風資料庫(http://rdc28.cwb.gov.tw/)
-    library(xlsx)
-    gust = xlsx::read.xlsx("./data/gust.xlsx", 1)
-    names(gust)[1] = "CityName"
-    write.csv(gust, file="./data/gust.csv", row.names=F, fileEncoding="UTF-8")
+    st = Sys.time()
+
+    md = list()
+    md$real = data$all$outage
+    md$pred = rep(0, length(md$real))
+
+    for (city in info$cities) {
+
+        build_md_st = Sys.time()
+
+        # city = info$cities[1]
+        raw = filter(data$tn, CityName == city)
+        rf  = randomForest(outage~., data=raw[, info$col_tn], ntree=500)
+
+        row_city = which(data$all$CityName == city)
+        md$pred[row_city] = round(predict(rf, newdata=data$all[row_city, info$features]))
+
+        sel_row = intersect(info$row_tn, row_city)
+        cm = CM(md$real[sel_row], md$pred[sel_row])
+
+        md[[city]] = rf
+
+        duration = Sys.time() - build_md_st
+        message(sprintf("%8s - rows: %5d, cm: %2.6f, duration: %6.2fs", city, length(row_city), cm, duration))
+    }
+
+    cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
+    duration = Sys.time() - st
+    message(sprintf(" total - rows: %5d, cm: %2.6f, duration: %6.2fs", length(info$row_tn), cm, duration))
+
+    save_submit(md$real, md$pred, diff=T)
+    save_model(f_prefix="rf_city_", model=md)
+}
+
+# =================================================================================================
+
+save_submit = function(real, pred, diff=F) {
+
+    submit   = data$submit
+    sel_cols = colnames(submit)
+
+    for (tp in info$ts_tp) {
+        row_tp = which(data$all$tp == tp)
+        submit[,tp] = pred[row_tp]
+        submit[,paste0(tp,"_last")] = real[row_tp]
+
+        cm = CM(real[row_tp], pred[row_tp])
+        message(sprintf("%20s: %6.2f", tp, cm))
+    }
+
+    pd_path = paste(c(getwd(), "/prediction/"), collapse='')
+    if ( !dir.exists(pd_path) ) {
+        dir.create(pd_path)
+    }
+
+    f_submit = paste(c(pd_path, "submit_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
+    write.csv(submit[, sel_cols], file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+    message(sprintf("save to %s", f_submit))
+
+    if (!diff) {
+        return (0)
+    }
+
+    f_submit = paste(c(pd_path, "submit_", format(Sys.time(), "%m%d_%H%M%S"), "_diff", ".csv"), collapse='')
+    write.csv(submit, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+    message(sprintf("save diff to %s", f_submit))
+}
+
+# =================================================================================================
+
+save_model = function(f_prefix, model) {
+
+    st = Sys.time()
+    md_path = paste(c(getwd(), "/model/"), collapse='')
+    if ( !dir.exists(md_path) ) {
+        dir.create(md_path)
+    }
+
+    f_md = paste(c(md_path, f_prefix, format(Sys.time(), "%m%d_%H%M%S"), ".md"), collapse='')
+    save(model, file=f_md)
+
+    duration = Sys.time() - st
+    message(sprintf("save model: %s", f_md))
+    message(sprintf("duration: %2.2fs", duration))
 }
 
 # =================================================================================================
@@ -179,7 +257,7 @@ build_rf_city_model = function(raw, targets) {
     }
 }
 
-randomForest_city = function(raw, target) {
+randomForest_city_old = function(raw, target) {
 
     cities   = info$cities
     row_city = info$row_city
@@ -315,20 +393,3 @@ power_outage_forecasting = function(model, raw, real, pair) {
 }
 
 # =================================================================================================
-
-gen_submit = function(submit, pd) {
-
-    submit = data$submit
-    col_submit = c("CityName", "TownName", "VilCode", "VilName")
-
-    pd_path = paste(c(getwd(), "/prediction/"), collapse='')
-    if ( !dir.exists(pd_path) ) {
-        dir.create(pd_path)
-    }
-
-    f_submit = paste(c(pd_path, "submit_dc_", format(Sys.time(), "%m%d_%H%M%S"), ".csv"), collapse='')
-    submit_dc = cbind(submit[col_submit], pd[,"NesatAndHaitang"], pd[,"Megi"])
-    colnames(submit_dc) = colnames(submit)
-    write.csv(submit_dc, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
-    message(sprintf("save to %s", f_submit))
-}

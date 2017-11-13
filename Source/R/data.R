@@ -522,8 +522,8 @@ gen_station_observation = function() {
 merge_all_info = function(f_last_submit) {
 
     f_last_submit="59.01400_submit_dc_1112_233124.csv"
-    
-lastpd      = read.csv(paste0("./submit/", f_last_submit), fileEncoding="UTF-8")
+
+    lastpd      = read.csv(paste0("./submit/", f_last_submit), fileEncoding="UTF-8")
     train       = read.csv("./data/train.csv",  fileEncoding="UTF-8")
     station_obs = read.csv("./data/station_obs.csv", fileEncoding="UTF-8")
 
@@ -532,34 +532,34 @@ lastpd      = read.csv(paste0("./submit/", f_last_submit), fileEncoding="UTF-8")
 
     col_selL = c("VilCode", tn_tp)
     col_selR = c("VilCode", ts_tp)
-    
-tp_outage = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
+
+    tp_outage = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
     tp_outage = melt(tp_outage, id=c("VilCode"))
     colnames(tp_outage) = c("VilCode", "tp", "outage")
     levels(tp_outage$tp) = levels(tp_outage$tp)
 
     # =============================================================================================
-    
-vil_max_outage = filter(tp_outage, tp %in% tn_tp) %>%
+
+    vil_max_outage = filter(tp_outage, tp %in% tn_tp) %>%
         group_by(VilCode) %>% 
         summarise(outage=max(outage))
     
-colnames(vil_max_outage)[2] = c("max_outage")
-    
-# =============================================================================================    
-     merged = left_join(station_obs, tp_outage, by=c("VilCode", "tp"))
+    colnames(vil_max_outage)[2] = c("max_outage")
+
+    # =============================================================================================
+    merged = left_join(station_obs, tp_outage, by=c("VilCode", "tp"))
     merged = left_join(merged, vil_max_outage, by=c("VilCode"))
     
-merged$max_hh = apply(merged[,c("household", "meters", "max_outage")], 1, max)
+    merged$max_hh = apply(merged[,c("household", "meters", "max_outage")], 1, max)
     merged$outage_pct = (merged$outage / merged$max_hh) * 100
     
-# =============================================================================================
+    # =============================================================================================
     
-sel_cols = c("CityName", "TownName", "VilName", "VilCode", "key", "tp", "tp_code.x")
+    sel_cols = c("CityName", "TownName", "VilName", "VilCode", "key", "tp", "tp_code.x")
     sel_cols = c(sel_cols, "pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
     sel_cols = c(sel_cols, "precp_total", "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
     sel_cols = c(sel_cols, "household", "meters", "max_outage", "max_hh", "outage", "outage_pct")
     
-write.csv(merged[,sel_cols], file="./data/merged.csv", row.names=F, fileEncoding="UTF-8")
+    write.csv(merged[,sel_cols], file="./data/merged.csv", row.names=F, fileEncoding="UTF-8")
 }
 
