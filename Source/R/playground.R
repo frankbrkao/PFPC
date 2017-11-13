@@ -72,6 +72,26 @@ info$row_ts = which(data$all$tp %in% info$ts_tp)
 data$tn = data$all[info$row_tn,]
 
 # =================================================================================================
+# Build randomforest via all data
+
+st = Sys.time()
+
+md = list()
+md$real = data$all$outage
+md$pred = rep(0, length(md$real))
+
+# city = info$cities[1]
+md$model = randomForest(outage~., data=data$all[info$row_tn, info$col_tn], ntree=500)
+md$pred  = round(predict(md$model, newdata=data$all[, info$features]))
+
+cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
+duration = Sys.time() - st
+message(sprintf(" total - rows: %5d, cm: %2.6f, duration: %6.2fs", length(info$row_tn), cm, duration))
+
+save_submit(md$real, md$pred, diff=T)
+save_model(f_prefix="rf_all_", model=md$model)
+
+# =================================================================================================
 
 randomForest_city()
 
