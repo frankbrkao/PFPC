@@ -417,17 +417,19 @@ gen_station_observation = function() {
     village = read.csv("./data/village.csv", fileEncoding="UTF-8")
 
     levels(st_locations$city) = gsub(x=levels(st_locations$city), pattern="臺",   replacement="台")
-    levels(st_locations$city) = gsub(x=levels(st_locations$city), pattern="台東",   replacement="臺東")
+    levels(st_locations$city) = gsub(x=levels(st_locations$city), pattern="台東", replacement="臺東")
 
-    levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="台西鄉",   replacement="臺西鄉")
-    levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="溪洲鄉",   replacement="溪州鄉")
-    levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="霧台鄉",   replacement="霧臺鄉")
+    levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="台西鄉", replacement="臺西鄉")
+    levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="溪洲鄉", replacement="溪州鄉")
+    levels(st_locations$town) = gsub(x=levels(st_locations$town), pattern="霧台鄉", replacement="霧臺鄉")
 
     # ==== checking missing recorders =============================================================
     #
     # missing_r = right_join(village, st_locations, by=c("CityName" = "city"))
     # missing_r = missing_r[is.na(missing_r$TownName),]
-    # levels(as.factor(missing_r$CityName))
+    # levels(as.factor(missing_r$key))
+    # nrow(missing_r)
+    # head(missing_r)
 
     # missing_r = right_join(village, st_locations, by=c("TownName" = "town"))
     # missing_r = missing_r[is.na(missing_r$VilName),]
@@ -444,6 +446,8 @@ gen_station_observation = function() {
 
     st_obs = right_join(st_locations, station_observation, by=c("st_no" = "st_code"))
 
+    st_obs$town_key = paste0(st_obs$city, st_obs$town) %>% as.factor
+
     # =============================================================================================
 
     grp_obs_city = group_by(st_obs, city, tp_code, tp_cht, tp_eng) %>% 
@@ -458,7 +462,7 @@ gen_station_observation = function() {
             c_wind        = max(wind),
             c_gust        = max(gust))
 
-    grp_obs_town = group_by(st_obs, town, tp_code, tp_cht, tp_eng) %>% 
+    grp_obs_town = group_by(st_obs, town_key, tp_code, tp_cht, tp_eng) %>%
         summarise(
             t_precp_total = mean(precp_total), 
             t_precp_day   = max(precp_day),
@@ -472,10 +476,12 @@ gen_station_observation = function() {
 
     # =============================================================================================
 
+    village$town_key = paste0(village$CityName, village$TownName) %>% as.factor
+
     tp_list = data.frame(tp = levels(st_obs$tp_eng))
     vil_tp  = merge(village, tp_list, all=TRUE)
-    vil_st  = left_join(vil_tp, grp_obs_city, by=c("CityName" = "city", "tp" = "tp_eng"))
-    vil_st  = left_join(vil_st, grp_obs_town, by=c("TownName" = "town", "tp" = "tp_eng"))
+    vil_st  = left_join(vil_tp, grp_obs_city, by=c("CityName" = "city",     "tp" = "tp_eng"))
+    vil_st  = left_join(vil_st, grp_obs_town, by=c("town_key" = "town_key", "tp" = "tp_eng"))
 
     vil_st$precp_total = vil_st$t_precp_total
     vil_st$precp_day   = vil_st$t_precp_day
@@ -511,6 +517,9 @@ gen_station_observation = function() {
     null_rows = is.na(vil_st$wind)
     vil_st$wind[null_rows] = vil_st$c_wind[null_rows]
 
+    zero_rows = which(vil_st$gust == 0)
+    vil_st$gust[zero_rows] = vil_st$c_gust[zero_rows]
+
     null_rows = is.na(vil_st$gust)
     vil_st$gust[null_rows] = vil_st$c_gust[null_rows]
 
@@ -520,8 +529,6 @@ gen_station_observation = function() {
 # =================================================================================================
 
 merge_all_info = function(f_last_submit) {
-
-    f_last_submit="59.01400_submit_dc_1112_233124.csv"
 
     lastpd      = read.csv(paste0("./submit/", f_last_submit), fileEncoding="UTF-8")
     train       = read.csv("./data/train.csv",  fileEncoding="UTF-8")
