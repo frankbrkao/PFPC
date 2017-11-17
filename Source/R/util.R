@@ -25,7 +25,8 @@ gen_info = function() {
     features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
     features = c(features, "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
     # features = c(features, "precp_day", "wind", "gust")
-    features = c(features, "max_hh")
+    # features = c(features, "precp_day", "gust")
+    # features = c(features, "max_hh")
     info$features = features
 
     info$cities   = levels(data$train$CityName)
@@ -228,27 +229,93 @@ randomForest_HL = function(save_model=T) {
 randomForest_all = function(save_model=T) {
 
     st = Sys.time()
+
+    md = list()
+    md$real = data$all$outage
+    md$pred = rep(0, length(md$real))
+
+    # city = info$cities[1]
+
+    # sel_row = which(data$all$outage < info$limit_outage)
+    # sel_row = intersect(sel_row, info$row_tn)
+    # md$model = randomForest(outage~., data=data$all[sel_row, info$col_tn], ntree=500)
+
+    md$model = randomForest(outage~., data=data$all[info$row_tn, info$col_tn], ntree=500)    
+    md$pred  = round(predict(md$model, newdata=data$all[, info$features]))
+
+    cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
+    duration = difftime(Sys.time(), st, units="sec")
+    message(sprintf(" total - rows: %5d, cm: %2.6f, duration: %6.2fs", length(info$row_tn), cm, duration))
+
+    save_submit(md$real, md$pred, diff=T)
+    save_performance(model=md)
+    save_model(f_prefix="rf_all_", model=md$model)
+}
+
+# =================================================================================================
+# Build randomforest model per tp
+
+randomForest_tp = function() {
+    
+    st = Sys.time()
     
     md = list()
     md$real = data$all$outage
     md$pred = rep(0, length(md$real))
+
+    info$tn_tp = c("Soudelor", "MerantiAndMalakas")    
+    for (tp in info$tn_tp) {
     
-    # city = info$cities[1]
+        # tp = info$tn_tp[1]
+        build_md_st = Sys.time()
+        
+        raw = filter(data$all[info$row_tn,], tp == tp)
+        
+        row_tp = which(data$all$tp == tp)
+        row_raw = intersect(row_tp, info$row_tn)
+        raw_len = nrow(raw)
+        row_tn  = row_tp
+            
+        # tn_len   = as.integer(info$tn_ratio * raw_len)
+        tn_len = raw_len
+        # sampling_idx = sample(1:raw_len, replace=F)
+        # row_tn = row_raw[sampling_idx[1:tn_len]]
+        # row_vd = row_raw[sampling_idx[(tn_len+1):raw_len]]
+        
+        rf  = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
+        md$pred[row_tp] = round(predict(rf, newdata=data$all[row_tp, info$features]))
+        
+        tn_cm = CM(md$real[row_tn], md$pred[row_tn]) * 100
+        vd_cm = 0
+        # vd_cm = CM(md$real[row_vd], md$pred[row_vd]) * 100
+        
+        md[[tp]] = rf
+        
+        duration = difftime(Sys.time(), build_md_st, units="sec")
+        message(sprintf("%20s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", tp, tn_len, raw_len, tn_cm, vd_cm, duration))
+    }
     
-    # sel_row = which(data$all$outage < info$limit_outage)
-    # sel_row = intersect(sel_row, info$row_tn)
-    # md$model = randomForest(outage~., data=data$all[sel_row, info$col_tn], ntree=500)
+    # =================================================================================================
     
-    md$model = randomForest(outage~., data=data$all[info$row_tn, info$col_tn], ntree=500)    
-    md$pred  = round(predict(md$model, newdata=data$all[, info$features]))
+    row_tp = which(data$all$tp == "Megi")
+    md$pred[row_tp] = round(predict(md[["Soudelor"]], newdata=data$all[row_tp, info$features]))
+
+    row_tp = which(data$all$tp == "NesatAndHaitang")
+    md$pred[row_tp] = round(predict(md[["MerantiAndMalakas"]], newdata=data$all[row_tp, info$features]))
+    
+    # =================================================================================================
     
     cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
     duration = difftime(Sys.time(), st, units="sec")
-    message(sprintf(" total - rows: %5d, cm: %2.6f, duration: %6.2fs", length(info$row_tn), cm, duration))
+    message(sprintf(" total - rows: %5d, duration: %6.2fs", length(info$row_tn), duration))
+    
+    info$time_stamp = format(Sys.time(), "%m%d_%H%M%S")
     
     save_submit(md$real, md$pred, diff=T)
     save_performance(model=md)
-    save_model(f_prefix="rf_all_", model=md$model)
+    save_model(f_prefix="rf_tp_", model=md)
+    
+    return(md)
 }
 
 # =================================================================================================
