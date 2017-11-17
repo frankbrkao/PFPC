@@ -44,10 +44,4 @@ info = gen_info()
 # randomForest_city()
 
 # =================================================================================================
-md = list()
-
-for (i in c(1:20)) {
-    md[[i]] = randomForest_tp()
-}
-
-
+md = randomForest_tp()
