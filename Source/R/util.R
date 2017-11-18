@@ -8,24 +8,9 @@ gen_data = function() {
     data$ref    = read.csv("./data/ref.csv",    fileEncoding="UTF-8")
     data$all    = read.csv("./data/merged.csv", fileEncoding="UTF-8")
 
-    data$all$Towns = paste0(data$all$CityName, data$all$TownName) %>% as.factor()
-    data$all$Vils  = paste0(data$all$CityName, data$all$TownName, data$all$VilName) %>% as.factor()
-    
-    data$all$grp_city = data$all$CityName
-    
-    row_sel = which(data$all$CityName == "嘉義市")
-    data$all$grp_city[row_sel] = "嘉義縣"
-    
-    row_sel = which(data$all$CityName == "新竹市")
-    data$all$grp_city[row_sel] = "新竹縣"
-    
-    row_sel = which(data$all$CityName == "連江縣")
-    data$all$grp_city[row_sel] = "澎湖縣"
-    
-    row_sel = which(data$all$CityName == "金門縣")
-    data$all$grp_city[row_sel] = "澎湖縣"
-    
-    data$all <- droplevels(data$all)
+    # data$all$Towns = paste0(data$all$CityName, data$all$TownName) %>% as.factor()
+    # data$all$Vils  = paste0(data$all$CityName, data$all$TownName, data$all$VilName) %>% as.factor()
+    # data$all <- droplevels(data$all)
     
     return (data)
 }
@@ -299,6 +284,10 @@ randomForest_type = function(
     md$real = data$all$outage
     md$pred = rep(0, length(md$real))
     
+    if (type_name == "tp") {
+        type_set = c("Soudelor", "MerantiAndMalakas")
+    }
+    
     for (type in type_set) {
         # print(type)
         # type = "台中市中區"
@@ -366,13 +355,9 @@ randomForest_type = function(
     
     info$time_stamp = format(Sys.time(), "%m%d_%H%M%S")
     
-    md$pred = apply(cbind(md$pred, data$all$max_outage), 1, FUN=min)
-    
-    f_prefix = paste0("rf_", type_name, "city", "_")
-    
     save_submit(md$real, md$pred)
     save_performance(model=md)
-    save_model(f_prefix=f_prefix, model=md)
+    save_model(f_prefix=paste0("rf_", type_name, "_"), model=md)
     
     return (md)
 }
@@ -388,13 +373,17 @@ save_submit = function(real, pred) {
     sel_cols = colnames(submit)
     ref      = data$ref
 
+    maxbd    = apply(cbind(pred, data$all$max_outage), 1, FUN=min)
+    
     for (tp in info$ts_tp) {
         row_tp = which(data$all$tp == tp)
         submit[,tp] = pred[row_tp]
         submit[,paste0(tp,"_last")] = real[row_tp]
+        submit[,paste0(tp,"_bd")]   = maxbd[row_tp]
 
-        cm = CM(real[row_tp], pred[row_tp])
-        message(sprintf("%20s: %6.6f", tp, cm))
+        cm    = CM(real[row_tp], pred[row_tp])
+        cm_bd = CM(real[row_tp], maxbd[row_tp])
+        message(sprintf("%20s: cm: %6.6f, maxbd: %6.6f", tp, cm, cm_bd))
     }
 
     # =============================================================================================    
@@ -415,17 +404,20 @@ save_submit = function(real, pred) {
 save_comparison = function(f_submit) {
     
     # f_submit = 'submit_1117_194831.csv'
+    # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/submit/59.01400_submit_dc_1112_233124.csv'
+    # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/prediction/submit_1117_194831.csv'
+    # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/prediction/submit_1118_204313_diff.csv'
     submit = read.csv(f_submit, fileEncoding="UTF-8")
     ref    = data$ref
     log    = NULL
     
     grp = group_by(submit, CityName) %>% 
-        summarise(NesatAndHaitang = sum(NesatAndHaitang), Megi = sum(Megi))
+        summarise(NandH_pd = sum(NesatAndHaitang), Megi_pd = sum(Megi), NandH_bd = sum(NesatAndHaitang_bd), Megi_bd = sum(Megi_bd))
     
     result = left_join(ref, grp, by=c("City" = "CityName"))
-    colnames(result) = c("City", "NandH", "Megi", "NandH_pd", "Megi_pd")
+    colnames(result) = c("City", "NandH", "Megi", "NandH_pd", "Megi_pd", "NandH_bd", "Megi_bd")
     
-    row_total = data_frame("Total", as.integer(672000), as.integer(4206000), sum(result[,"NandH_pd"]), sum(result[,"Megi_pd"]))
+    row_total = data_frame("Total", as.integer(672000), as.integer(4206000), sum(result$NandH_pd), sum(result$Megi_pd), sum(result$NandH_bd), sum(result$Megi_bd))
     colnames(row_total) = colnames(result)
     result = rbind(row_total, result)
 
@@ -438,33 +430,54 @@ save_comparison = function(f_submit) {
     
     result = transform(result, NandH_pd=as.integer(NandH_pd))
     result = transform(result, Megi_pd=as.integer(Megi_pd))
+    result = transform(result, NandH_bd=as.integer(NandH_bd))
+    result = transform(result, Megi_bd=as.integer(Megi_bd))
     
     for (tp in info$ts_tp) {
         if (tp == "NesatAndHaitang") {
             tpname = "NandH"
         } else {
-            tpname = tp            
+            tpname = tp
         }
         
         tp_pd    = paste0(tpname, "_pd")
         tp_df    = paste0(tpname, "_df")
         tp_ratio = paste0(tpname, "_ratio")
         
+        tp_bd    = paste0(tpname, "_bd")
+        tp_bddf  = paste0(tpname, "_bddf")
+        tp_bdro  = paste0(tpname, "_bdro")
+        
         result[, tp_df]    = result[, tp_pd] - result[, tpname]
         result[, tp_ratio] = (result[, tp_df] / result[, tpname]) * 100
+
+        result[, tp_bddf]  = result[, tp_bd] - result[, tpname]
+        result[, tp_bdro]  = (result[, tp_bddf] / result[, tpname]) * 100
         
-        cm = CM(result[row_city, tpname], result[row_city, tp_pd])
+        cm    = CM(result[row_city, tpname], result[row_city, tp_pd])
+        cm_bd = CM(result[row_city, tpname], result[row_city, tp_bd])
         
         tl_real  = result[1, tpname]
         tl_pred  = result[1, tp_pd]
         tl_df    = tl_pred - tl_real
         tl_ratio = tl_df / tl_real
+
+        tl_bd    = result[1, tp_bd]
+        tl_bddf  = tl_bd - tl_real
+        tl_bdro  = tl_bddf / tl_real
         
-        message(sprintf("%20s - cm: %6.6f, total: %7d / %7d, diff: %d, ratio: %2.4f", tp, cm, tl_real, tl_pred, tl_df, tl_ratio))
+        message(sprintf("%20s -    cm: %6.6f, total: %7d / %7d, diff: %d, ratio: %2.4f", tp,    cm, tl_real, tl_pred, tl_df,   tl_ratio))
+        message(sprintf("%20s - bd_cm: %6.6f, total: %7d / %7d, diff: %d, ratio: %2.4f", tp, cm_bd, tl_real, tl_bd,   tl_bddf, tl_bdro))
         log = rbind(log, sprintf("%20s - cm: %6.6f, total: %7d / %7d, diff: %8d, ratio: %2.4f", tp, cm, tl_real, tl_pred, tl_df, tl_ratio))
-        
+        log = rbind(log, sprintf("%20s - bd_cm: %6.6f, total: %7d / %7d, diff: %d, ratio: %2.4f", tp, cm_bd, tl_real, tl_bd,   tl_bddf, tl_bdro))
+
         sel_col = c("City", tpname, tp_pd, tp_df, tp_ratio)
-        print(result[order(-result[,tpname]), sel_col])
+        raw_pd = result[order(-abs(result[,tp_df])), sel_col]
+        
+        sel_col = c("City", tpname, tp_bd, tp_bddf, tp_bdro)
+        raw_bd = result[order(-abs(result[,tp_bddf])), sel_col]
+
+        print(cbind(raw_pd, raw_bd))
     }    
     
     # print(result[order(-result$Megi, -result$NandH), sel_col])
