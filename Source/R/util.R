@@ -10,7 +10,23 @@ gen_data = function() {
 
     data$all$Towns = paste0(data$all$CityName, data$all$TownName) %>% as.factor()
     data$all$Vils  = paste0(data$all$CityName, data$all$TownName, data$all$VilName) %>% as.factor()
-
+    
+    data$all$grp_city = data$all$CityName
+    
+    row_sel = which(data$all$CityName == "嘉義市")
+    data$all$grp_city[row_sel] = "嘉義縣"
+    
+    row_sel = which(data$all$CityName == "新竹市")
+    data$all$grp_city[row_sel] = "新竹縣"
+    
+    row_sel = which(data$all$CityName == "連江縣")
+    data$all$grp_city[row_sel] = "澎湖縣"
+    
+    row_sel = which(data$all$CityName == "金門縣")
+    data$all$grp_city[row_sel] = "澎湖縣"
+    
+    data$all <- droplevels(data$all)
+    
     return (data)
 }
 
@@ -29,7 +45,7 @@ gen_info = function() {
     # features = c(features, "max_hh")
     info$features = features
 
-    info$cities   = levels(data$train$CityName)
+    info$cities   = levels(data$all$grp_city)
     info$towns    = levels(data$all$Towns)
     info$villages = levels(data$all$Vils)
 
@@ -321,9 +337,17 @@ randomForest_tp = function() {
 }
 
 # =================================================================================================
-# Build randomforest model per city
+# Build randomforest model per type
 
-randomForest_type = function(type="tp") {
+# result = rbind(result, evaluate_per_type(model=model, type_name="typhoon", type_idx="tp",       type_set=info$tn_tp))    
+
+randomForest_type = function(type_name, type_idx, type_set, outage_lv=0, tn_ratio=0.8) {
+
+    # type_name="city"
+    # type_idx="grp_city"
+    # type_set=info$cities
+    # outage_lv=0
+    # tn_ratio=0.8
     
     st = Sys.time()
     
@@ -331,35 +355,49 @@ randomForest_type = function(type="tp") {
     md$real = data$all$outage
     md$pred = rep(0, length(md$real))
     
-    for (city in info$cities) {
-        
+    for (type in type_set) {
+        # type = "新竹縣"
         build_md_st = Sys.time()
         
-        # city = info$cities[1]
-        raw = filter(data$all[info$row_tn,], CityName == city)
-        
-        row_city = which(data$all$CityName == city)
-        row_raw  = intersect(row_city, info$row_tn)
+        # type = info$cities[1]
+        # raw = filter(data$all[info$row_tn, ], type_idx == type)
+
+        row_outage = which(data$all$outage >= outage_lv)        
+        row_type = which(data$all[, type_idx] == type)
+        row_raw  = intersect(row_type, info$row_tn)
+        row_raw  = intersect(row_raw, row_outage)
+        raw      = data$all[row_raw,]
         raw_len  = nrow(raw)
         
-        tn_len   = as.integer(info$tn_ratio * raw_len)
+        tn_len   = as.integer(tn_ratio * raw_len)
         sampling_idx = sample(1:raw_len, replace=F)
         
         row_tn = row_raw[sampling_idx[1:tn_len]]
         row_vd = row_raw[sampling_idx[(tn_len+1):raw_len]]
         
         rf  = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
-        md$pred[row_city] = round(predict(rf, newdata=data$all[row_city, info$features]))
+        md$pred[row_type] = round(predict(rf, newdata=data$all[row_type, info$features]))
         
         tn_cm = CM(md$real[row_tn], md$pred[row_tn]) * 100
         vd_cm = CM(md$real[row_vd], md$pred[row_vd]) * 100
         
-        md[[city]] = rf
+        md[[type]] = rf
         
         duration = difftime(Sys.time(), build_md_st, units="sec")
-        message(sprintf("%8s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", city, tn_len, raw_len, tn_cm, vd_cm, duration))
-        # message(sprintf("%8s - rows: %5d, duration: %6.2fs", city, length(row_city), duration))
+        message(sprintf("%20s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", type, tn_len, raw_len, tn_cm, vd_cm, duration))
     }
+    
+    # =================================================================================================
+    
+    if (type_name == "tp") {
+        row_tp = which(data$all$tp == "Megi")
+        md$pred[row_tp] = round(predict(md[["Soudelor"]], newdata=data$all[row_tp, info$features]))
+        
+        row_tp = which(data$all$tp == "NesatAndHaitang")
+        md$pred[row_tp] = round(predict(md[["MerantiAndMalakas"]], newdata=data$all[row_tp, info$features]))
+    }
+    
+    # =================================================================================================
     
     cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
     duration = difftime(Sys.time(), st, units="sec")
@@ -369,9 +407,11 @@ randomForest_type = function(type="tp") {
     
     md$pred = apply(cbind(md$pred, data$all$max_outage), 1, FUN=min)
     
+    f_prefix = paste0("rf_", type_name, "city", "_")
+    
     save_submit(md$real, md$pred)
     save_performance(model=md)
-    save_model(f_prefix="rf_city_", model=md)
+    save_model(f_prefix=f_prefix, model=md)
     
     return (md)
 }
@@ -494,8 +534,6 @@ save_comparison = function(f_submit) {
     result = transform(result, NandH_pd=as.integer(NandH_pd))
     result = transform(result, Megi_pd=as.integer(Megi_pd))
     
-    sel_col = c("City")
-    
     for (tp in info$ts_tp) {
         if (tp == "NesatAndHaitang") {
             tpname = "NandH"
@@ -520,10 +558,11 @@ save_comparison = function(f_submit) {
         message(sprintf("%20s - cm: %6.6f, total: %7d / %7d, diff: %d, ratio: %2.4f", tp, cm, tl_real, tl_pred, tl_df, tl_ratio))
         log = rbind(log, sprintf("%20s - cm: %6.6f, total: %7d / %7d, diff: %8d, ratio: %2.4f", tp, cm, tl_real, tl_pred, tl_df, tl_ratio))
         
-        sel_col = cbind(sel_col, tpname, tp_pd, tp_df, tp_ratio)
+        sel_col = c("City", tpname, tp_pd, tp_df, tp_ratio)
+        print(result[order(-result[,tpname]), sel_col])
     }    
     
-    print(result[order(-result$Megi, -result$NandH), sel_col])
+    # print(result[order(-result$Megi, -result$NandH), sel_col])
 
     f_submit = paste0(info$pd_path, "submit_", info$time_stamp, "_score.csv")
     write.csv(result, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
@@ -573,23 +612,22 @@ save_performance = function(model) {
     st = Sys.time()
     
     result = NULL
-    # result = rbind(result, "=====================================================")
+    result = rbind(result, "=====================================================")
     result = rbind(result, evaluate_per_type(model=model, type_name="typhoon", type_idx="tp",       type_set=info$tn_tp))
-    # result = rbind(result, "=====================================================")
+    result = rbind(result, "=====================================================")
     result = rbind(result, evaluate_per_type(model=model, type_name="city",    type_idx="CityName", type_set=info$cities))
-    # result = rbind(result, "=====================================================")
+    result = rbind(result, "=====================================================")
     result = rbind(result, evaluate_per_type(model=model, type_name="town",    type_idx="Towns",    type_set=info$towns))
-    # result = rbind(result, "=====================================================")
+    result = rbind(result, "=====================================================")
     result = rbind(result, evaluate_per_type(model=model, type_name="village", type_idx="Vils",     type_set=info$villages))
-    # result = rbind(result, "=====================================================")
+    result = rbind(result, "=====================================================")
     
     cm = CM(model$real[info$row_tn], model$pred[info$row_tn])
     result = rbind(result, sprintf("total: %2.6f", cm))
-    
-    duration = Sys.time() - st
-    message(sprintf(" total - rows: %5d, cm: %2.6f, duration: %6.2fs", length(info$row_tn), cm, duration))
-    
     result = rbind(result, "=====================================================")
+    
+    # duration = Sys.time() - st
+    # message(sprintf(" total - rows: %5d, cm: %2.6f, duration: %6.2fs", length(info$row_tn), cm, duration))
     
     # =================================================================================================
     
