@@ -45,7 +45,7 @@ info = gen_info()
 # result = rbind(result, evaluate_per_type(model=model, type_name="typhoon", type_idx="tp",       type_set=info$tn_tp))    
 
 md = randomForest_type(type_name="city", type_idx="grp_city", type_set=info$cities, outage_lv=0)
-md = randomForest_type(type_name="town", type_idx="Towns",    type_set=info$towns,  outage_lv=0, en_vd=F)
+md = randomForest_type(type_name="town", type_idx="Towns",    type_set=info$towns,  outage_lv=1, en_vd=F)
 md = randomForest_type(type_name="tp",   type_idx="tp",       type_set=info$tn_tp,  outage_lv=0, en_vd=F)
 
 # =================================================================================================

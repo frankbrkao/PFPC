@@ -284,6 +284,14 @@ randomForest_type = function(
     # type_set=info$cities
     # outage_lv=0
     # tn_ratio=0.8
+    # en_vd=F
+
+    # type_name="town"
+    # type_idx="Towns"
+    # type_set=info$towns
+    # outage_lv=1
+    # tn_ratio=0.8
+    # en_vd=F
     
     st = Sys.time()
     
@@ -292,13 +300,21 @@ randomForest_type = function(
     md$pred = rep(0, length(md$real))
     
     for (type in type_set) {
-        # type = "新竹縣"
+        # print(type)
+        # type = "台中市中區"
         build_md_st = Sys.time()
         
-        row_outage = which(data$all$outage >= outage_lv)        
-        row_type = which(data$all[, type_idx] == type)
+        row_outage = which(data$all$outage >= outage_lv)
+        row_type   = which(data$all[, type_idx] == type)
         row_raw  = intersect(row_type, info$row_tn)
-        row_raw  = intersect(row_raw, row_outage)
+
+        if (length(which(data$all$outage[row_raw] >= outage_lv)) > 0) {
+            row_raw  = intersect(row_raw, row_outage)
+        } else {
+            row_outage = which(data$all$outage >= 0)
+            row_raw  = intersect(row_raw, row_outage)
+        }
+        
         raw      = data$all[row_raw,]
         raw_len  = nrow(raw)
         
@@ -315,6 +331,8 @@ randomForest_type = function(
             row_tn = row_raw
             row_vd = NULL
         }
+        
+        # print(tn_len)
         
         # =========================================================================================
         
