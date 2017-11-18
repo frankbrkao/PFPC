@@ -447,21 +447,73 @@ gen_station_observation = function() {
     st_obs = right_join(st_locations, station_observation, by=c("st_no" = "st_code"))
 
     st_obs$town_key = paste0(st_obs$city, st_obs$town) %>% as.factor
+        
+    st_obs$city_grp = st_obs$city
+    sel_rows = which(st_obs$city_grp == "新竹市")
+    st_obs$city_grp[sel_rows] = "新竹縣"
+    sel_rows = which(st_obs$city_grp == "嘉義市")
+    st_obs$city_grp[sel_rows] = "嘉義縣"
+
+    # sel_rows = which(st_obs$city %in% c("新竹縣", "台中市", "南投縣", "嘉義縣"))
+    # st_obs_gust = st_obs[sel_rows,]
 
     # =============================================================================================
 
-    grp_obs_city = group_by(st_obs, city, tp_code, tp_cht, tp_eng) %>% 
-        summarise(
-            c_precp_total = mean(precp_total), 
-            c_precp_day   = max(precp_day),
-            c_precp_24h   = max(precp_24h),
-            c_precp_12h   = max(precp_12h),
-            c_precp_6h    = max(precp_6h),
-            c_precp_3h    = max(precp_3h),
-            c_precp_1h    = max(precp_1h),
-            c_wind        = max(wind),
-            c_gust        = max(gust))
+    village$town_key = paste0(village$CityName, village$TownName) %>% as.factor
+    
+    village$city_grp = village$CityName
+    sel_rows = which(village$city_grp == "新竹市")
+    village$city_grp[sel_rows] = "新竹縣"
+    sel_rows = which(village$city_grp == "嘉義市")
+    village$city_grp[sel_rows] = "嘉義縣"
 
+    # =============================================================================================
+
+    grp_obs_city = group_by(st_obs, city_grp, tp_code, tp_cht, tp_eng) %>% 
+        summarise(
+            c_precp_total   = mean(precp_total), 
+            c_precp_day     = max(precp_day),
+            c_precp_24h     = max(precp_24h),
+            c_precp_12h     = max(precp_12h),
+            c_precp_6h      = max(precp_6h),
+            c_precp_3h      = max(precp_3h),
+            c_precp_1h      = max(precp_1h),
+            c_wind          = max(wind),
+            c_gust          = max(gust),
+            c_avg_precp_day = mean(precp_day),
+            c_avg_precp_24h = mean(precp_24h),
+            c_avg_precp_12h = mean(precp_12h),
+            c_avg_precp_6h  = mean(precp_6h),
+            c_avg_precp_3h  = mean(precp_3h),
+            c_avg_precp_1h  = mean(precp_1h),
+            c_avg_wind      = mean(wind)
+            )
+
+    # =============================================================================================
+
+    obs_gust = filter(obs_gust, (city %in% c("新竹縣", "台中市")) & (gust > 0))
+
+    grp_obs_gust = group_by(obs_gust, tp_code, tp_cht, tp_eng) %>% 
+        summarise(c_gust = mean(gust))
+
+    sel_rows = which(grp_obs_city$city_grp == "苗栗縣")
+    grp_obs_city$c_gust[sel_rows] = grp_obs_gust$c_gust
+
+    # =============================================================================================
+
+    obs_gust = filter(obs_gust, (city %in% c("台中市", "南投縣", "嘉義縣")) & (gust > 0))
+
+    grp_obs_gust = group_by(obs_gust, tp_code, tp_cht, tp_eng) %>% 
+        summarise(c_gust = mean(gust))
+
+    sel_rows = which(grp_obs_city$city_grp == "雲林縣")
+    grp_obs_city$c_gust[sel_rows] = grp_obs_gust$c_gust
+
+    sel_rows = which(grp_obs_city$city_grp == "彰化縣")
+    grp_obs_city$c_gust[sel_rows] = grp_obs_gust$c_gust
+    
+    # =============================================================================================    
+    
     grp_obs_town = group_by(st_obs, town_key, tp_code, tp_cht, tp_eng) %>%
         summarise(
             t_precp_total = mean(precp_total), 
@@ -475,12 +527,11 @@ gen_station_observation = function() {
             t_gust        = max(gust))
 
     # =============================================================================================
-
-    village$town_key = paste0(village$CityName, village$TownName) %>% as.factor
-
+        
     tp_list = data.frame(tp = levels(st_obs$tp_eng))
     vil_tp  = merge(village, tp_list, all=TRUE)
-    vil_st  = left_join(vil_tp, grp_obs_city, by=c("CityName" = "city",     "tp" = "tp_eng"))
+    
+    vil_st  = left_join(vil_tp, grp_obs_city, by=c("city_grp" = "city_grp", "tp" = "tp_eng"))
     vil_st  = left_join(vil_st, grp_obs_town, by=c("town_key" = "town_key", "tp" = "tp_eng"))
 
     vil_st$precp_total = vil_st$t_precp_total
@@ -517,12 +568,26 @@ gen_station_observation = function() {
     null_rows = is.na(vil_st$wind)
     vil_st$wind[null_rows] = vil_st$c_wind[null_rows]
 
-    zero_rows = which(vil_st$gust == 0)
-    vil_st$gust[zero_rows] = vil_st$c_gust[zero_rows]
-
     null_rows = is.na(vil_st$gust)
     vil_st$gust[null_rows] = vil_st$c_gust[null_rows]
 
+    zero_rows = which(vil_st$wind == 0)
+    vil_st$wind[zero_rows] = vil_st$c_avg_wind[zero_rows]
+
+    zero_rows = which(vil_st$gust == 0)
+    vil_st$gust[zero_rows] = vil_st$c_gust[zero_rows]
+
+    zero_rows = which(vil_st$precp_24h == 0)
+    vil_st$precp_total[zero_rows] = vil_st$c_precp_total[zero_rows]
+    vil_st$precp_day[zero_rows]   = vil_st$c_avg_precp_day[zero_rows]
+    vil_st$precp_24h[zero_rows]   = vil_st$c_avg_precp_24h[zero_rows]
+    vil_st$precp_12h[zero_rows]   = vil_st$c_avg_precp_12h[zero_rows]
+    vil_st$precp_6h[zero_rows]    = vil_st$c_avg_precp_6h[zero_rows]
+    vil_st$precp_3h[zero_rows]    = vil_st$c_avg_precp_3h[zero_rows]
+    vil_st$precp_1h[zero_rows]    = vil_st$c_avg_precp_1h[zero_rows]
+
+    # =============================================================================================
+        
     write.csv(vil_st, file="./data/station_obs.csv", row.names=F, fileEncoding="UTF-8")
 }    
 
@@ -561,8 +626,27 @@ merge_all_info = function(f_last_submit) {
     merged$outage_pct = (merged$outage / merged$max_hh) * 100
     
     # =============================================================================================
+
+    merged$Towns = paste0(merged$CityName, merged$TownName)
+    merged$Vils  = paste0(merged$CityName, merged$TownName, merged$VilName)
+
+    merged$grp_city = merged$CityName
     
-    sel_cols = c("CityName", "TownName", "VilName", "VilCode", "key", "tp", "tp_code.x")
+    row_sel = which(merged$CityName == "嘉義市")
+    merged$grp_city[row_sel] = "嘉義縣"
+    
+    row_sel = which(merged$CityName == "新竹市")
+    merged$grp_city[row_sel] = "新竹縣"
+    
+    row_sel = which(merged$CityName == "連江縣")
+    merged$grp_city[row_sel] = "澎湖縣"
+    
+    row_sel = which(merged$CityName == "金門縣")
+    merged$grp_city[row_sel] = "澎湖縣"
+
+    # =============================================================================================
+    
+    sel_cols = c("CityName", "TownName", "VilName", "VilCode", "key", "grp_city", "Towns", "Vils", "tp", "tp_code.x")
     sel_cols = c(sel_cols, "pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
     sel_cols = c(sel_cols, "precp_total", "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
     sel_cols = c(sel_cols, "household", "meters", "max_outage", "max_hh", "outage", "outage_pct")
