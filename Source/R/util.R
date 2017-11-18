@@ -269,79 +269,15 @@ randomForest_all = function(save_model=T) {
 }
 
 # =================================================================================================
-# Build randomforest model per tp
-
-randomForest_tp = function() {
-    
-    st = Sys.time()
-    
-    md = list()
-    md$real = data$all$outage
-    md$pred = rep(0, length(md$real))
-
-    # info$tn_tp = c("Soudelor", "MerantiAndMalakas")
-    for (tp in info$tn_tp) {
-    
-        # tp = info$tn_tp[1]
-        build_md_st = Sys.time()
-        
-        raw = filter(data$all[info$row_tn,], tp == tp)
-        
-        row_tp = which(data$all$tp == tp)
-        row_raw = intersect(row_tp, info$row_tn)
-        raw_len = nrow(raw)
-        row_tn  = row_tp
-            
-        # tn_len   = as.integer(info$tn_ratio * raw_len)
-        tn_len = raw_len
-        # sampling_idx = sample(1:raw_len, replace=F)
-        # row_tn = row_raw[sampling_idx[1:tn_len]]
-        # row_vd = row_raw[sampling_idx[(tn_len+1):raw_len]]
-        
-        rf  = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
-        md$pred[row_tp] = round(predict(rf, newdata=data$all[row_tp, info$features]))
-        
-        tn_cm = CM(md$real[row_tn], md$pred[row_tn]) * 100
-        vd_cm = 0
-        # vd_cm = CM(md$real[row_vd], md$pred[row_vd]) * 100
-        
-        md[[tp]] = rf
-        
-        duration = difftime(Sys.time(), build_md_st, units="sec")
-        message(sprintf("%20s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", tp, tn_len, raw_len, tn_cm, vd_cm, duration))
-    }
-    
-    # =================================================================================================
-
-    row_tp = which(data$all$tp == "Megi")
-    md$pred[row_tp] = round(predict(md[["Soudelor"]], newdata=data$all[row_tp, info$features]))
-
-    row_tp = which(data$all$tp == "NesatAndHaitang")
-    md$pred[row_tp] = round(predict(md[["MerantiAndMalakas"]], newdata=data$all[row_tp, info$features]))
-
-    # =================================================================================================
-
-    cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
-    duration = difftime(Sys.time(), st, units="sec")
-    message(sprintf(" total - rows: %5d, duration: %6.2fs", length(info$row_tn), duration))
-
-    md$pred = apply(cbind(md$pred, data$all$max_outage), 1, FUN=min)
-
-    info$time_stamp = format(Sys.time(), "%m%d_%H%M%S")
-
-    save_submit(md$real, md$pred)
-    save_performance(model=md)
-    save_model(f_prefix="rf_tp_", model=md)
-    
-    return(md)
-}
-
-# =================================================================================================
 # Build randomforest model per type
 
-# result = rbind(result, evaluate_per_type(model=model, type_name="typhoon", type_idx="tp",       type_set=info$tn_tp))    
-
-randomForest_type = function(type_name, type_idx, type_set, outage_lv=0, tn_ratio=0.8) {
+randomForest_type = function(
+    type_name, 
+    type_idx, 
+    type_set, 
+    outage_lv=0, 
+    tn_ratio=0.8, 
+    en_vd=F) {
 
     # type_name="city"
     # type_idx="grp_city"
@@ -359,9 +295,6 @@ randomForest_type = function(type_name, type_idx, type_set, outage_lv=0, tn_rati
         # type = "新竹縣"
         build_md_st = Sys.time()
         
-        # type = info$cities[1]
-        # raw = filter(data$all[info$row_tn, ], type_idx == type)
-
         row_outage = which(data$all$outage >= outage_lv)        
         row_type = which(data$all[, type_idx] == type)
         row_raw  = intersect(row_type, info$row_tn)
@@ -369,20 +302,30 @@ randomForest_type = function(type_name, type_idx, type_set, outage_lv=0, tn_rati
         raw      = data$all[row_raw,]
         raw_len  = nrow(raw)
         
-        tn_len   = as.integer(tn_ratio * raw_len)
-        sampling_idx = sample(1:raw_len, replace=F)
+        # =========================================================================================
         
-        row_tn = row_raw[sampling_idx[1:tn_len]]
-        row_vd = row_raw[sampling_idx[(tn_len+1):raw_len]]
+        if (en_vd) {
+            tn_len   = as.integer(tn_ratio * raw_len)
+            sampling_idx = sample(1:raw_len, replace=F)
+            
+            row_tn = row_raw[sampling_idx[1:tn_len]]
+            row_vd = row_raw[sampling_idx[(tn_len+1):raw_len]]
+        } else {
+            tn_len = raw_len
+            row_tn = row_raw
+            row_vd = NULL
+        }
         
-        rf  = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
-        md$pred[row_type] = round(predict(rf, newdata=data$all[row_type, info$features]))
+        # =========================================================================================
         
+        md[[type]] = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
+        md$pred[row_type] = round(predict(md[[type]], newdata=data$all[row_type, info$features]))
+
+        # =========================================================================================
+
         tn_cm = CM(md$real[row_tn], md$pred[row_tn]) * 100
         vd_cm = CM(md$real[row_vd], md$pred[row_vd]) * 100
-        
-        md[[type]] = rf
-        
+    
         duration = difftime(Sys.time(), build_md_st, units="sec")
         message(sprintf("%20s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", type, tn_len, raw_len, tn_cm, vd_cm, duration))
     }
@@ -412,62 +355,6 @@ randomForest_type = function(type_name, type_idx, type_set, outage_lv=0, tn_rati
     save_submit(md$real, md$pred)
     save_performance(model=md)
     save_model(f_prefix=f_prefix, model=md)
-    
-    return (md)
-}
-
-# =================================================================================================
-# Build randomforest model per city
-
-randomForest_city = function(save_model=T) {
-
-    st = Sys.time()
-
-    md = list()
-    md$real = data$all$outage
-    md$pred = rep(0, length(md$real))
-
-    for (city in info$cities) {
-
-        build_md_st = Sys.time()
-
-        # city = info$cities[1]
-        raw = filter(data$all[info$row_tn,], CityName == city)
-
-        row_city = which(data$all$CityName == city)
-        row_raw  = intersect(row_city, info$row_tn)
-        raw_len  = nrow(raw)
-
-        tn_len   = as.integer(info$tn_ratio * raw_len)
-        sampling_idx = sample(1:raw_len, replace=F)
-        
-        row_tn = row_raw[sampling_idx[1:tn_len]]
-        row_vd = row_raw[sampling_idx[(tn_len+1):raw_len]]
-
-        rf  = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
-        md$pred[row_city] = round(predict(rf, newdata=data$all[row_city, info$features]))
-        
-        tn_cm = CM(md$real[row_tn], md$pred[row_tn]) * 100
-        vd_cm = CM(md$real[row_vd], md$pred[row_vd]) * 100
-        
-        md[[city]] = rf
-
-        duration = difftime(Sys.time(), build_md_st, units="sec")
-        message(sprintf("%8s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", city, tn_len, raw_len, tn_cm, vd_cm, duration))
-        # message(sprintf("%8s - rows: %5d, duration: %6.2fs", city, length(row_city), duration))
-    }
-
-    cm = CM(md$real[info$row_tn], md$pred[info$row_tn])
-    duration = difftime(Sys.time(), st, units="sec")
-    message(sprintf(" total - rows: %5d, duration: %6.2fs", length(info$row_tn), duration))
-    
-    info$time_stamp = format(Sys.time(), "%m%d_%H%M%S")
-    
-    md$pred = apply(cbind(md$pred, data$all$max_outage), 1, FUN=min)
-    
-    save_submit(md$real, md$pred)
-    save_performance(model=md)
-    save_model(f_prefix="rf_city_", model=md)
     
     return (md)
 }
