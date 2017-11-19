@@ -7,6 +7,11 @@ gen_data = function() {
     data$submit = read.csv("./data/submit.csv", fileEncoding="UTF-8")
     data$ref    = read.csv("./data/ref.csv",    fileEncoding="UTF-8")
     data$all    = read.csv("./data/merged.csv", fileEncoding="UTF-8")
+    
+    tp_city_sim = read.csv("./data/map_tp_city_similarity.csv", fileEncoding="UTF-8")
+    
+    tp_city_sim = data.table(tp_city_sim)
+    data$tp_city_sim = tp_city_sim[, .SD[which.min(dist)], by = c("ts_tp", "city")]
 
     # data$all$Towns = paste0(data$all$CityName, data$all$TownName) %>% as.factor()
     # data$all$Vils  = paste0(data$all$CityName, data$all$TownName, data$all$VilName) %>% as.factor()
@@ -27,7 +32,7 @@ gen_info = function() {
     features = c(features, "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
     # features = c(features, "precp_day", "wind", "gust")
     # features = c(features, "precp_day", "gust")
-    # features = c(features, "max_hh")
+    features = c(features, "max_hh")
     info$features = features
 
     info$cities   = levels(data$all$grp_city)
@@ -49,90 +54,6 @@ gen_info = function() {
     if ( !dir.exists(info$md_path) ) {
         dir.create(info$md_path)
     }
-
-    return (info)
-}
-
-# =================================================================================================
-
-data_pre_processing = function() {
-    # 載入颱風停電戶資料
-
-    # merge_all_info(f_last_submit="58.14500_submit_dc_1103_213554.csv")
-
-    data = list()
-    data$train  = read.csv("./data/train.csv",  fileEncoding="UTF-8")
-    data$submit = read.csv("./data/submit.csv", fileEncoding="UTF-8")
-    data$all    = read.csv("./data/merged.csv", fileEncoding="UTF-8")
-
-    info = collect_info(train=data$train, lastpd=data$lastpd)
-
-    data$tp = gen_tp_raw(train=data$train, lastpd=data$lastpd, tn_tp=info$tn_tp, ts_tp=info$ts_tp)
-
-    md      = list()
-    md$data = data
-    md$info = info
-
-    return (md)
-}
-
-# =================================================================================================
-# Define column and row index
-
-collect_info = function(train, lastpd) {
-
-    train = data$train
-
-    info = list()
-
-    info$tn_tp = c("Hagibis", "Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
-    # info$tn_tp = c("Chan.hom", "Dujuan", "Soudelor", "Fung.wong", "Matmo", "Nepartak", "MerantiAndMalakas")
-    # info$tn_tp = c("Dujuan", "Soudelor", "Matmo", "Nepartak", "MerantiAndMalakas")
-    info$ts_tp = c("NesatAndHaitang", "Megi")
-    # info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "household", "maxWind", "gust")
-    info$features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10", "meters", "maxWind", "gust")
-
-    # info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市", "新竹市")
-    info$city_ig = c("澎湖縣", "連江縣", "金門縣", "嘉義市")
-
-    # =============================================================================================
-
-    info$row_max = apply(train[, info$tn_tp], 1, max)
-
-    row_sum  = rowSums(train[, info$tn_tp])
-    row_zero = which(row_sum == 0)
-    row_none_zero = which(row_sum > 0)
-
-    row_zero_village = which(train$CityName %in% info$city_ig)
-
-    # info$row_zero = row_zero
-    info$row_zero = unique(c(row_zero, row_zero_village))
-    info$row_none_zero = setdiff(row_none_zero, info$row_zero)
-    info$vil_sel  = train$VilCode[row_none_zero]
-
-    message(sprintf("row_zero: %d, village_zero: %d", NROW(row_zero), NROW(row_zero_village)))
-    message(sprintf("total rows: %d, zero: %d, non-zero: %d", NROW(row_sum), NROW(info$row_zero), NROW(row_none_zero)))
-
-    # =============================================================================================
-
-    col_selL = c("VilCode", info$tn_tp)
-    col_selR = c("VilCode", info$ts_tp)
-    tp_list = c(info$tn_tp, info$ts_tp)
-
-    tp = left_join(train[col_selL], lastpd[col_selR], by="VilCode")
-    info$real  = round(tp[tp_list], 0)
-    info$magic = rep(1.57, length(tp_list))
-    names(info$magic) = tp_list
-
-    # =============================================================================================
-
-    row_city = list()
-    info$cities = setdiff(levels(train$City), info$city_ig)
-
-    for (city in info$cities)
-        row_city[[city]] = which(train$CityName == city)
-
-    info$row_city = row_city
 
     return (info)
 }
@@ -262,7 +183,8 @@ randomForest_type = function(
     type_set, 
     outage_lv=0, 
     tn_ratio=0.8, 
-    en_vd=F) {
+    en_vd=F,
+    pd_pct=F) {
 
     # type_name="city"
     # type_idx="grp_city"
@@ -270,6 +192,7 @@ randomForest_type = function(
     # outage_lv=0
     # tn_ratio=0.8
     # en_vd=F
+    # pd_pct=T
 
     # type_name="town"
     # type_idx="Towns"
@@ -291,6 +214,7 @@ randomForest_type = function(
     for (type in type_set) {
         # print(type)
         # type = "台中市中區"
+        # type = type_set[1]
         build_md_st = Sys.time()
         
         row_outage = which(data$all$outage >= outage_lv)
@@ -325,16 +249,44 @@ randomForest_type = function(
         
         # =========================================================================================
         
-        md[[type]] = randomForest(outage~., data=data$all[row_tn, info$col_tn], ntree=500)
-        md$pred[row_type] = round(predict(md[[type]], newdata=data$all[row_type, info$features]))
-
+        if (pd_pct) {
+            col_tn = c(info$features, "outage_lv")
+            md[[type]] = randomForest(outage_lv~., data=data$all[row_tn, col_tn], ntree=500)
+            md$pct[row_type] = predict(md[[type]], newdata=data$all[row_type, info$features])
+            md$pred[row_type] = round((md$pct[row_type] * data$all$max_outage[row_type]))
+        } else {
+            col_tn = c(info$features, "outage")
+            md[[type]] = randomForest(outage~., data=data$all[row_tn, col_tn], ntree=500)
+            md$pred[row_type] = round(predict(md[[type]], newdata=data$all[row_type, info$features]))
+            
+            # tn = data$all[row_tn,   info$features]
+            # vd = data$all[row_type, info$features]
+            # y  = data$all$outage[row_tn]
+            # 
+            # md[[type]] = xgboost(data=data.matrix(tn), 
+            #         label = y, 
+            #         objective = "reg:linear", 
+            #         eval_metric = "rmse",
+            #         max.depth =15, 
+            #         eta = 0.1, 
+            #         nround = 500 
+            # )
+            # 
+            # md$pred[row_type] <- predict(md[[type]], data.matrix(vd))
+        }
+        
         # =========================================================================================
 
         tn_cm = CM(md$real[row_tn], md$pred[row_tn]) * 100
         vd_cm = CM(md$real[row_vd], md$pred[row_vd]) * 100
+        
+        tn_rmse = rmse(md$real[row_tn], md$pred[row_tn])
+        vd_rmse = rmse(md$real[row_vd], md$pred[row_vd])
     
         duration = difftime(Sys.time(), build_md_st, units="sec")
-        message(sprintf("%20s - rows: %5d / %5d, tn_cm: %2.6f, vd_cm: %2.6f, duration: %6.2fs", type, tn_len, raw_len, tn_cm, vd_cm, duration))
+        message(sprintf("%20s - rows: %5d / %5d, tn_cm: %2.2f, tn_rmse: %6.2f, vd_cm: %2.2f, vd_rmse: %6.2f, duration: %6.2fs", type, tn_len, raw_len, tn_cm, tn_rmse, vd_cm, vd_rmse, duration))
+        
+        # l = readline()
     }
     
     # =================================================================================================
@@ -619,3 +571,35 @@ gen_predict = function(model, raw, magic_value=1) {
 }
 
 # =================================================================================================
+
+show_coorelation = function() {
+    
+    tn = data$all[info$row_tn,]
+    sel_rows = which(tn$outage > 6000)
+    colnames(tn)
+    for (type in info$cities) {
+        # for (type in info$towns) {
+        # for (type in info$tp_city) {
+        print(type)
+        tmp = filter(tn, CityName == type)
+        # tmp = filter(tn, Towns == type)
+        # tmp = filter(tn, tp_city == type)
+        corrplot(cor(tmp[, c("outage", "outage_pct", "outage_lv", info$features)]), method="circle")
+        l = readline()
+    }
+}
+
+# =================================================================================================
+
+cm_test() = function() {
+    
+    # =============================================================================================
+    # Same distance, over-estimation >> under-estimation
+    
+    a = c(1000)
+    b = c(1900)
+    c = c(100)
+    
+    CM(a, b)
+    CM(a, c)
+}

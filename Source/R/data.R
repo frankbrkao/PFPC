@@ -654,3 +654,54 @@ merge_all_info = function(f_last_submit) {
     write.csv(merged[,sel_cols], file="./data/merged.csv", row.names=F, fileEncoding="UTF-8")
 }
 
+calculate_tp_city_similarity = function() {
+
+    raw = read.csv("./data/merged.csv", fileEncoding="UTF-8")
+
+    sel_cols = c("precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
+    tab = raw[, c("CityName", "tp", sel_cols)]
+
+    map_tp = NULL
+
+    for( ts_tp in info$ts_tp ) {
+        for ( city in info$cities ) {
+            x = filter(tab, tp == ts_tp & CityName == city)
+            x = as.matrix(x[, sel_cols])
+            min_dist = .Machine$integer.max
+            
+            for ( tn_tp in info$tn_tp ) {
+                
+                # ts_tp = info$ts_tp[1]
+                # city  = info$cities[1]
+                # tn_tp = info$tn_tp[1]
+                # x = filter(tab, tp == ts_tp & CityName == city)
+                # x = as.matrix(x[, sel_cols])
+                # print(c(ts_tp, city, tn_tp))
+                
+                y = filter(tab, tp == tn_tp & CityName == city)
+                y = as.matrix(y[, sel_cols])
+                
+                d = proxy::dist(x, y, pairwise=T)
+                d = sqrt(mean(d^2))
+                
+                row = c(ts_tp, city, tn_tp, d)
+                map_tp = rbind(map_tp, row)    
+            }
+        }
+    }
+
+    colnames(map_tp) = c("ts_tp", "city", "tn_tp", "dist")
+    rownames(map_tp) = NULL
+    map_tp = as.data.frame(map_tp)
+    map_tp$dist = as.numeric(as.character(map_tp$dist))
+
+    map_tp = arrange(map_tp, ts_tp, city, dist)
+
+    f_submit = paste0("./data/map_tp_city_similarity.csv")
+    write.csv(map_tp, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+    
+    # library(data.table)
+    # test = data.table(map_tp)
+    # test[, .SD[which.min(dist)], by = c("ts_tp", "city")]    
+}
+
