@@ -472,12 +472,12 @@ gen_station_observation = function() {
     grp_obs_city = group_by(st_obs, city_grp, tp_code, tp_cht, tp_eng) %>% 
         summarise(
             c_precp_total   = mean(precp_total), 
-            c_precp_day     = max(precp_day),
-            c_precp_24h     = max(precp_24h),
-            c_precp_12h     = max(precp_12h),
-            c_precp_6h      = max(precp_6h),
-            c_precp_3h      = max(precp_3h),
-            c_precp_1h      = max(precp_1h),
+            c_precp_day     = mean(precp_day),
+            c_precp_24h     = mean(precp_24h),
+            c_precp_12h     = mean(precp_12h),
+            c_precp_6h      = mean(precp_6h),
+            c_precp_3h      = mean(precp_3h),
+            c_precp_1h      = mean(precp_1h),
             c_wind          = max(wind),
             c_gust          = max(gust),
             c_avg_precp_day = mean(precp_day),
@@ -486,12 +486,13 @@ gen_station_observation = function() {
             c_avg_precp_6h  = mean(precp_6h),
             c_avg_precp_3h  = mean(precp_3h),
             c_avg_precp_1h  = mean(precp_1h),
-            c_avg_wind      = mean(wind)
+            c_avg_wind      = mean(wind),
+            c_avg_gust      = mean(gust)
             )
 
     # =============================================================================================
 
-    obs_gust = filter(obs_gust, (city %in% c("新竹縣", "台中市")) & (gust > 0))
+    obs_gust = filter(st_obs, (city %in% c("新竹縣", "台中市")) & (gust > 0))
 
     grp_obs_gust = group_by(obs_gust, tp_code, tp_cht, tp_eng) %>% 
         summarise(c_gust = mean(gust))
@@ -501,7 +502,7 @@ gen_station_observation = function() {
 
     # =============================================================================================
 
-    obs_gust = filter(obs_gust, (city %in% c("台中市", "南投縣", "嘉義縣")) & (gust > 0))
+    obs_gust = filter(st_obs, (city %in% c("台中市", "南投縣", "嘉義縣")) & (gust > 0))
 
     grp_obs_gust = group_by(obs_gust, tp_code, tp_cht, tp_eng) %>% 
         summarise(c_gust = mean(gust))
@@ -517,12 +518,12 @@ gen_station_observation = function() {
     grp_obs_town = group_by(st_obs, town_key, tp_code, tp_cht, tp_eng) %>%
         summarise(
             t_precp_total = mean(precp_total), 
-            t_precp_day   = max(precp_day),
-            t_precp_24h   = max(precp_24h),
-            t_precp_12h   = max(precp_12h),
-            t_precp_6h    = max(precp_6h),
-            t_precp_3h    = max(precp_3h),
-            t_precp_1h    = max(precp_1h),
+            t_precp_day   = mean(precp_day),
+            t_precp_24h   = mean(precp_24h),
+            t_precp_12h   = mean(precp_12h),
+            t_precp_6h    = mean(precp_6h),
+            t_precp_3h    = mean(precp_3h),
+            t_precp_1h    = mean(precp_1h),
             t_wind        = max(wind),
             t_gust        = max(gust))
 
@@ -548,34 +549,34 @@ gen_station_observation = function() {
     vil_st$precp_total[null_rows] = vil_st$c_precp_total[null_rows]
 
     null_rows = is.na(vil_st$precp_day)
-    vil_st$precp_day[null_rows] = vil_st$c_precp_day[null_rows]
+    vil_st$precp_day[null_rows] = vil_st$c_avg_precp_day[null_rows]
 
     null_rows = is.na(vil_st$precp_24h)
-    vil_st$precp_24h[null_rows] = vil_st$c_precp_24h[null_rows]
+    vil_st$precp_24h[null_rows] = vil_st$c_avg_precp_24h[null_rows]
 
     null_rows = is.na(vil_st$precp_12h)
-    vil_st$precp_12h[null_rows] = vil_st$c_precp_12h[null_rows]
+    vil_st$precp_12h[null_rows] = vil_st$c_avg_precp_12h[null_rows]
 
     null_rows = is.na(vil_st$precp_6h)
-    vil_st$precp_6h[null_rows] = vil_st$c_precp_6h[null_rows]
+    vil_st$precp_6h[null_rows] = vil_st$c_avg_precp_6h[null_rows]
 
     null_rows = is.na(vil_st$precp_3h)
-    vil_st$precp_3h[null_rows] = vil_st$c_precp_3h[null_rows]
+    vil_st$precp_3h[null_rows] = vil_st$c_avg_precp_3h[null_rows]
 
     null_rows = is.na(vil_st$precp_1h)
-    vil_st$precp_1h[null_rows] = vil_st$c_precp_1h[null_rows]
+    vil_st$precp_1h[null_rows] = vil_st$c_avg_precp_1h[null_rows]
 
     null_rows = is.na(vil_st$wind)
-    vil_st$wind[null_rows] = vil_st$c_wind[null_rows]
+    vil_st$wind[null_rows] = vil_st$c_avg_wind[null_rows]
 
     null_rows = is.na(vil_st$gust)
-    vil_st$gust[null_rows] = vil_st$c_gust[null_rows]
+    vil_st$gust[null_rows] = vil_st$c_avg_gust[null_rows]
 
     zero_rows = which(vil_st$wind == 0)
     vil_st$wind[zero_rows] = vil_st$c_avg_wind[zero_rows]
 
     zero_rows = which(vil_st$gust == 0)
-    vil_st$gust[zero_rows] = vil_st$c_gust[zero_rows]
+    vil_st$gust[zero_rows] = vil_st$c_avg_gust[zero_rows]
 
     zero_rows = which(vil_st$precp_24h == 0)
     vil_st$precp_total[zero_rows] = vil_st$c_precp_total[zero_rows]
@@ -657,15 +658,20 @@ merge_all_info = function(f_last_submit) {
 calculate_tp_city_similarity = function() {
 
     raw = read.csv("./data/merged.csv", fileEncoding="UTF-8")
+    ref = read.csv("./data/ref.csv",    fileEncoding="UTF-8")
 
-    sel_cols = c("precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
-    tab = raw[, c("CityName", "tp", sel_cols)]
+    # sel_cols = c("precp_12h", "precp_6h", "wind", "gust")
+    # sel_cols = c("precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
+    sel_cols = c("precp_day", "wind", "gust")
+    # sel_cols = c("precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind")
+    tab = raw[, c("grp_city", "tp", sel_cols)]
+    tab[, sel_cols] = t(t(tab[, sel_cols]) / apply(tab[, sel_cols], 2, FUN=max))
 
     map_tp = NULL
 
     for( ts_tp in info$ts_tp ) {
         for ( city in info$cities ) {
-            x = filter(tab, tp == ts_tp & CityName == city)
+            x = filter(tab, tp == ts_tp & grp_city == city)
             x = as.matrix(x[, sel_cols])
             min_dist = .Machine$integer.max
             
@@ -674,11 +680,11 @@ calculate_tp_city_similarity = function() {
                 # ts_tp = info$ts_tp[1]
                 # city  = info$cities[1]
                 # tn_tp = info$tn_tp[1]
-                # x = filter(tab, tp == ts_tp & CityName == city)
+                # x = filter(tab, tp == ts_tp & grp_city == city)
                 # x = as.matrix(x[, sel_cols])
                 # print(c(ts_tp, city, tn_tp))
                 
-                y = filter(tab, tp == tn_tp & CityName == city)
+                y = filter(tab, tp == tn_tp & grp_city == city)
                 y = as.matrix(y[, sel_cols])
                 
                 d = proxy::dist(x, y, pairwise=T)
@@ -697,11 +703,110 @@ calculate_tp_city_similarity = function() {
 
     map_tp = arrange(map_tp, ts_tp, city, dist)
 
+    no = rep(c(1:8), nrow(map_tp)/8)
+    map_tp$dist_no = no
+
+    # =============================================================================================
+
+    outage_colnames = c("city", "tp", "outage")
+
+    ref_outage = melt(ref, id="City")
+    colnames(ref_outage) = outage_colnames
+
+    real_outage = group_by(raw, grp_city, tp) %>%
+        summarize(outage=sum(outage))
+
+    colnames(real_outage) = outage_colnames
+
+    map_tab = left_join(map_tp,  ref_outage,  by=c("ts_tp"="tp", "city"="city"))
+    map_tab = left_join(map_tab, real_outage, by=c("tn_tp"="tp", "city"="city"))
+    colnames(map_tab)[6:7] = c("ts_outage", "tn_outage")
+    map_tab$diff = abs(map_tab$ts_outage - map_tab$tn_outage)
+
+    map_tab = arrange(map_tab, ts_tp, city, diff)
+    map_tab$diff_no = no
+    map_tab = arrange(map_tab, ts_tp, city, dist)
+
+    # =============================================================================================
+
     f_submit = paste0("./data/map_tp_city_similarity.csv")
-    write.csv(map_tp, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
-    
-    # library(data.table)
-    # test = data.table(map_tp)
-    # test[, .SD[which.min(dist)], by = c("ts_tp", "city")]    
+    write.csv(map_tab, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
 }
+
+calculate_tp_town_similarity = function() {
+
+    raw = read.csv("./data/merged.csv", fileEncoding="UTF-8")
+    ref = read.csv("./data/ref.csv",    fileEncoding="UTF-8")
+
+    sel_cols = c("precp_day", "wind", "gust")
+    # sel_cols = c("precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
+    tab = raw[, c("Towns", "tp", sel_cols)]
+    tab[, sel_cols] = t(t(tab[, sel_cols]) / apply(tab[, sel_cols], 2, FUN=max))
+
+    map_tp = NULL
+
+    for( ts_tp in info$ts_tp ) {
+        for ( town in info$towns ) {
+            x = filter(tab, tp == ts_tp & Towns == town)
+            x = as.matrix(x[, sel_cols])
+            min_dist = .Machine$integer.max
+            
+            for ( tn_tp in info$tn_tp ) {
+                
+                # ts_tp = info$ts_tp[1]
+                # city  = info$cities[1]
+                # tn_tp = info$tn_tp[1]
+                # x = filter(tab, tp == ts_tp & grp_city == city)
+                # x = as.matrix(x[, sel_cols])
+                # print(c(ts_tp, city, tn_tp))
+                
+                y = filter(tab, tp == tn_tp & Towns == town)
+                y = as.matrix(y[, sel_cols])
+                
+                d = proxy::dist(x, y, pairwise=T)
+                d = sqrt(mean(d^2))
+                
+                row = c(ts_tp, town, tn_tp, d)
+                map_tp = rbind(map_tp, row)    
+            }
+        }
+    }
+
+    colnames(map_tp) = c("ts_tp", "town", "tn_tp", "dist")
+    rownames(map_tp) = NULL
+    map_tp = as.data.frame(map_tp)
+    map_tp$dist = as.numeric(as.character(map_tp$dist))
+
+    map_tp = arrange(map_tp, ts_tp, town, dist)
+
+    no = rep(c(1:8), nrow(map_tp)/8)
+    map_tp$dist_no = no
+
+    # =============================================================================================
+
+    outage_colnames = c("town", "tp", "outage")
+
+    # ref_outage = melt(ref, id="City")
+    # colnames(ref_outage) = outage_colnames
+
+    real_outage = group_by(raw, Towns, tp) %>%
+        summarize(outage=sum(outage))
+
+    colnames(real_outage) = outage_colnames
+
+    # map_tab = left_join(map_tp,  ref_outage,  by=c("ts_tp"="tp", "Tow"="city"))
+    map_tab = left_join(map_tp, real_outage, by=c("tn_tp"="tp", "town"="town"))
+    # colnames(map_tab)[6:7] = c("ts_outage", "tn_outage")
+    # map_tab$diff = abs(map_tab$ts_outage - map_tab$tn_outage)
+
+    # map_tab = arrange(map_tab, ts_tp, city, diff)
+    # map_tab$diff_no = no
+    # map_tab = arrange(map_tab, ts_tp, city, dist)
+
+    # =============================================================================================
+
+    f_submit = paste0("./data/map_tp_town_similarity.csv")
+    write.csv(map_tab, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+}
+
 

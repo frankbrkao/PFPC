@@ -30,8 +30,9 @@ library(corrplot)
 library(xgboost)
 library(Metrics)
 library(proxy)
-source("./R/util.R")
+library(data.table)
 source("./R/data.R")
+source("./R/util.R")
 
 # =================================================================================================
 
@@ -43,6 +44,7 @@ source("./R/data.R")
 # gen_station_observation()
 # merge_all_info(f_last_submit="59.01400_submit_dc_1112_233124.csv")
 # calculate_tp_city_similarity()
+# calculate_tp_town_similarity()
 
 # =================================================================================================
 
@@ -52,9 +54,6 @@ info = gen_info()
 data$all$outage_lv = data$all$outage / (data$all$max_outage * 1.2)
 data$all$outage_lv[is.na(data$all$outage_lv)]=0
 
-data$all$tp_city = paste0(data$all$tp, data$all$CityName)
-info$tp_city = levels(as.factor(data$all$tp_city))
-
 # =================================================================================================
 # Build randomforest via all data
 # randomForest_all()
@@ -63,9 +62,16 @@ info$tp_city = levels(as.factor(data$all$tp_city))
 # randomForest_city()
 # result = rbind(result, evaluate_per_type(model=model, type_name="typhoon", type_idx="tp",       type_set=info$tn_tp))    
 
-md = randomForest_type(type_name="city", type_idx="grp_city", type_set=info$cities, outage_lv=1, en_vd=F, pd_pct=F)
-md = randomForest_type(type_name="town", type_idx="Towns",    type_set=info$towns,  outage_lv=0, en_vd=F, pd_pct=T)
+md = randomForest_type(type_name="city", type_idx="grp_city", type_set=info$cities, outage_lv=0, en_vd=F, pd_pct=F)
+md = randomForest_type(type_name="town", type_idx="Towns",    type_set=info$towns,  outage_lv=0, en_vd=F, pd_pct=F)
 md = randomForest_type(type_name="tp",   type_idx="tp",       type_set=info$tn_tp,  outage_lv=0, en_vd=F)
+
+md = randomForest_type(type_name="tp_city", type_idx="tp_city", type_set=info$tn_tp_city, outage_lv=0, en_vd=F, pd_pct=F)
+md = randomForest_type(type_name="tp_town", type_idx="tp_town", type_set=info$tn_tp_town, outage_lv=0, en_vd=F, pd_pct=F)
 
 # =================================================================================================
 # md = randomForest_tp()
+
+# =================================================================================================
+
+md = randomForest_type(type_name="city", type_idx="grp_city", type_set=info$cities, outage_lv=0, en_vd=F, pd_pct=F)

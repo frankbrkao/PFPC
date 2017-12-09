@@ -7,12 +7,16 @@ gen_data = function() {
     data$submit = read.csv("./data/submit.csv", fileEncoding="UTF-8")
     data$ref    = read.csv("./data/ref.csv",    fileEncoding="UTF-8")
     data$all    = read.csv("./data/merged.csv", fileEncoding="UTF-8")
+    data$tp_city_sim = read.csv("./data/map_tp_city_similarity.csv", fileEncoding="UTF-8")
+    data$tp_town_sim = read.csv("./data/map_tp_town_similarity.csv", fileEncoding="UTF-8")
     
-    tp_city_sim = read.csv("./data/map_tp_city_similarity.csv", fileEncoding="UTF-8")
+    # tp_city_sim = data.table(tp_city_sim)
+    # data$tp_city_sim = tp_city_sim[, .SD[which.min(dist)], by = c("ts_tp", "city")]
+    # data$tp_city_sim = as.data.frame(data$tp_city_sim)
     
-    tp_city_sim = data.table(tp_city_sim)
-    data$tp_city_sim = tp_city_sim[, .SD[which.min(dist)], by = c("ts_tp", "city")]
-
+    data$all$tp_city = paste0(data$all$tp, data$all$grp_city)
+    data$all$tp_town = paste0(data$all$tp, data$all$Towns)
+    
     # data$all$Towns = paste0(data$all$CityName, data$all$TownName) %>% as.factor()
     # data$all$Vils  = paste0(data$all$CityName, data$all$TownName, data$all$VilName) %>% as.factor()
     # data$all <- droplevels(data$all)
@@ -29,20 +33,33 @@ gen_info = function() {
     info$tp = c(info$tn_tp, info$ts_tp)
 
     features = c("pole1", "pole2", "pole3", "pole4", "pole5", "pole6", "pole7", "pole8", "pole9", "pole10")
-    features = c(features, "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
+    # features = c(features, "precp_day", "precp_12h", "precp_6h", "wind", "gust")
+    features = c(features, "precp_day", "wind", "gust")
+    # features = c(features, "precp_day", "precp_24h", "precp_12h", "precp_6h", "precp_3h", "precp_1h", "wind", "gust")
     # features = c(features, "precp_day", "wind", "gust")
     # features = c(features, "precp_day", "gust")
-    features = c(features, "max_hh")
+    # features = c(features, "max_hh")
     info$features = features
 
     info$cities   = levels(data$all$grp_city)
     info$towns    = levels(data$all$Towns)
     info$villages = levels(data$all$Vils)
-
+    
     info$col_tn = c(info$features, "outage")
     info$row_tn = which(data$all$tp %in% info$tn_tp)
     info$row_ts = which(data$all$tp %in% info$ts_tp)
 
+    info$tn_tp_city = levels(as.factor(data$all$tp_city[info$row_tn]))
+    info$ts_tp_city = levels(as.factor(data$all$tp_city[info$row_ts]))
+
+    info$tn_tp_town = levels(as.factor(data$all$tp_town[info$row_tn]))
+    info$ts_tp_town = levels(as.factor(data$all$tp_town[info$row_ts]))
+        
+    row_sum  = rowSums(data$train[, info$tn_tp])
+    row_zero = which(row_sum == 0)
+    zero_village = as.character(data$train$VilCode[row_zero])
+    info$row_zero = which(data$all$VilCode %in% zero_village)
+    
     info$tn_ratio = 0.8
 
     info$pd_path = paste0(getwd(), "/prediction/")
@@ -201,20 +218,34 @@ randomForest_type = function(
     # tn_ratio=0.8
     # en_vd=F
     
+    # type_name="tp_city"
+    # type_idx="tp_city"
+    # type_set=info$tn_tp_city
+    # outage_lv=0
+    # tn_ratio=0.8
+    # en_vd=F
+    # pd_pct=F
+    
     st = Sys.time()
     
     md = list()
     md$real = data$all$outage
     md$pred = rep(0, length(md$real))
     
+    no_model = NULL
+    
     if (type_name == "tp") {
-        type_set = c("Soudelor", "MerantiAndMalakas")
+        # type_set = c("Soudelor", "MerantiAndMalakas", "Matmo")
+        # type_set = c("Soudelor", "Matmo")
+        type_set = c("Soudelor", "Nepartak")
+        # type_set = c("Soudelor", "MerantiAndMalakas")
     }
     
     for (type in type_set) {
         # print(type)
         # type = "台中市中區"
         # type = type_set[1]
+        # type = "Chan.hom南投縣"
         build_md_st = Sys.time()
         
         row_outage = which(data$all$outage >= outage_lv)
@@ -256,8 +287,17 @@ randomForest_type = function(
             md$pred[row_type] = round((md$pct[row_type] * data$all$max_outage[row_type]))
         } else {
             col_tn = c(info$features, "outage")
-            md[[type]] = randomForest(outage~., data=data$all[row_tn, col_tn], ntree=500)
-            md$pred[row_type] = round(predict(md[[type]], newdata=data$all[row_type, info$features]))
+            tn_data = data$all[row_tn, col_tn]
+            n_outages = length(levels(as.factor(tn_data$outage)))
+            # message(sprintf("n_outages: %d",  n_outages))
+            
+            if (  n_outages > 1 ) {
+                md[[type]] = randomForest(outage~., data=tn_data, ntree=500)
+                md$pred[row_type] = round(predict(md[[type]], newdata=data$all[row_type, info$features]))
+            } else {
+                no_model = c(no_model, type)
+                md$pred[row_type] = 0
+            }
             
             # tn = data$all[row_tn,   info$features]
             # vd = data$all[row_type, info$features]
@@ -292,11 +332,72 @@ randomForest_type = function(
     # =================================================================================================
     
     if (type_name == "tp") {
+        
         row_tp = which(data$all$tp == "Megi")
         md$pred[row_tp] = round(predict(md[["Soudelor"]], newdata=data$all[row_tp, info$features]))
         
         row_tp = which(data$all$tp == "NesatAndHaitang")
-        md$pred[row_tp] = round(predict(md[["MerantiAndMalakas"]], newdata=data$all[row_tp, info$features]))
+        # row_tp = which(data$all$tp == "Matmo")
+        md$pred[row_tp] = round(predict(md[["Nepartak"]], newdata=data$all[row_tp, info$features]))
+        
+    } else if (type_name == "tp_city") {
+
+        for (tp in info$ts_tp ) {
+            for (city in info$cities) {
+
+                # city1  = info$cities[1]
+                # ts_tp1 = info$ts_tp[1]
+                cityName = city
+                tp_city  = paste0(tp, city)
+                sel_row  = which(data$all$tp_city == tp_city)
+                
+                sim_records = filter(data$tp_city_sim, ts_tp == tp & city == cityName)
+                
+                for (i in 1:nrow(sim_records)) {
+                    sel_tp = paste0(as.character(sim_records[i,"tn_tp"]), city)
+                    # message(sprintf("%s, %s - sel model: %s", city, tp, sel_tp))
+                    if ( !(sel_tp %in% no_model) ) {
+                        print(c(city, tp, sel_tp))
+                        md$pred[sel_row] = round(predict(md[[sel_tp]], newdata=data$all[sel_row, info$features]))
+                        break
+                    }
+                }
+                
+                # cityName = city
+                # tp_city  = paste0(tp, city)
+                # sel_row  = which(data$all$tp_city == tp_city)
+                
+                # sim_record = filter(data$tp_city_sim, ts_tp == tp & city == cityName)
+                # sel_tp = paste0(as.character(sim_record$tn_tp), city)
+                # print(c(city, tp, sel_tp))
+                # md$pred[sel_row] = round(predict(md[[sel_tp]], newdata=data$all[sel_row, info$features]))
+            }
+        }
+        
+    } else if (type_name == "tp_town") {
+        
+        for (tp in info$ts_tp ) {
+            for (town in info$towns) {
+                
+                # city1  = info$cities[1]
+                # ts_tp1 = info$ts_tp[1]
+                townName = town
+                tp_town  = paste0(tp, town)
+                sel_row  = which(data$all$tp_town == tp_town)
+                
+                sim_records = filter(data$tp_town_sim, ts_tp == tp & town == townName)
+                
+                for (i in 1:nrow(sim_records)) {
+                    sel_tp = paste0(as.character(sim_records[i,"tn_tp"]), town)
+                    # message(sprintf("%s, %s - sel model: %s", city, tp, sel_tp))
+                    if ( !(sel_tp %in% no_model) ) {
+                        print(c(town, tp, sel_tp))
+                        md$pred[sel_row] = round(predict(md[[sel_tp]], newdata=data$all[sel_row, info$features]))
+                        break
+                    }
+                }
+            }
+        }
     }
     
     # =================================================================================================
@@ -325,7 +426,9 @@ save_submit = function(real, pred) {
     sel_cols = colnames(submit)
     ref      = data$ref
 
-    maxbd    = apply(cbind(pred, data$all$max_outage), 1, FUN=min)
+    # maxbd    = apply(cbind(pred, data$all$max_outage), 1, FUN=min)
+    maxbd    = pred
+    maxbd[info$row_zero] = 0
     
     for (tp in info$ts_tp) {
         row_tp = which(data$all$tp == tp)
@@ -344,6 +447,13 @@ save_submit = function(real, pred) {
     write.csv(submit[, sel_cols], file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
     message(sprintf("save submit: %s", f_submit))
     
+    submit_bd = submit[, c("CityName", "TownName", "VilCode", "VilName", "NesatAndHaitang_bd", "Megi_bd")]
+    colnames(submit_bd)[5:6] = c("NesatAndHaitang", "Megi")
+
+    f_submit = paste0(info$pd_path, "submit_", info$time_stamp, "_bd.csv")
+    write.csv(submit_bd, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+    message(sprintf("save submit_bd: %s", f_submit))
+    
     f_submit = paste0(info$pd_path, "submit_", info$time_stamp, "_diff.csv")
     write.csv(submit, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
     message(sprintf("save   diff: %s", f_submit))
@@ -356,12 +466,16 @@ save_submit = function(real, pred) {
 save_comparison = function(f_submit) {
     
     # f_submit = 'submit_1117_194831.csv'
+    # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/submit/58.14500_submit_dc_1103_213554.csv'
     # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/submit/59.01400_submit_dc_1112_233124.csv'
     # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/prediction/submit_1117_194831.csv'
     # f_submit = '/home/frank/Work/git/Power_Failure_Prediction/Source/prediction/submit_1118_204313_diff.csv'
     submit = read.csv(f_submit, fileEncoding="UTF-8")
     ref    = data$ref
     log    = NULL
+    
+    # submit$NesatAndHaitang_bd = submit$NesatAndHaitang
+    # submit$Megi_bd            = submit$Megi
     
     grp = group_by(submit, CityName) %>% 
         summarise(NandH_pd = sum(NesatAndHaitang), Megi_pd = sum(Megi), NandH_bd = sum(NesatAndHaitang_bd), Megi_bd = sum(Megi_bd))
@@ -385,7 +499,10 @@ save_comparison = function(f_submit) {
     result = transform(result, NandH_bd=as.integer(NandH_bd))
     result = transform(result, Megi_bd=as.integer(Megi_bd))
     
+    rlt_tp = NULL
+    
     for (tp in info$ts_tp) {
+        # tp = info$ts_tp[1]
         if (tp == "NesatAndHaitang") {
             tpname = "NandH"
         } else {
@@ -429,7 +546,15 @@ save_comparison = function(f_submit) {
         sel_col = c("City", tpname, tp_bd, tp_bddf, tp_bdro)
         raw_bd = result[order(-abs(result[,tp_bddf])), sel_col]
 
-        print(cbind(raw_pd, raw_bd))
+        rlt = cbind(raw_pd, raw_bd)
+        
+        if (is.null(rlt_tp)) {
+            rlt_tp = rlt
+        } else {
+            rlt_tp = cbind(rlt_tp, rlt)
+        }
+        
+        print(rlt)
     }    
     
     # print(result[order(-result$Megi, -result$NandH), sel_col])
@@ -438,6 +563,10 @@ save_comparison = function(f_submit) {
     write.csv(result, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
     write(log, file=f_submit, append=TRUE)
     message(sprintf("save  score: %s", f_submit))
+    
+    f_submit = paste0(info$pd_path, "submit_", info$time_stamp, "_result.csv")
+    write.csv(rlt_tp, file=f_submit, row.names=FALSE, fileEncoding="UTF-8")
+    message(sprintf("save  result: %s", f_submit))
 }
 
 # =================================================================================================
@@ -479,6 +608,8 @@ evaluate_per_type = function(model, type_name, type_idx, type_set) {
 
 save_performance = function(model) {
 
+    # load('./model/rf_city_1119_112847.md')
+    
     st = Sys.time()
     
     result = NULL
@@ -557,19 +688,6 @@ scoring = function(real, pred, bs, tg) {
     message(sprintf("final: %2.12f", score))
 }
 
-gen_predict = function(model, raw, magic_value=1) {
-    
-    row_zero = info$row_zero
-    row_max  = info$row_max
-    
-    pd = predict(model, newdata=raw) * magic_value
-    pd = round(pd, 0)
-    pd[row_zero] = 0
-    pd = apply(cbind(row_max, pd), 1, min)
-
-    return(pd)
-}
-
 # =================================================================================================
 
 show_coorelation = function() {
@@ -591,14 +709,127 @@ show_coorelation = function() {
 
 # =================================================================================================
 
-cm_test() = function() {
+cm_test = function() {
     
     # =============================================================================================
-    # Same distance, over-estimation >> under-estimation
+    # Case 1:
+    # Diff = 10, over-estimation > under-estimation
+    CM(20, 30)        # 0.9230769 - over-estimation
+    CM(20, 10)        # 0.8       - under-estimation
     
+    # Case 2:
+    # Diff = 10, over-estimation >> under-estimation
+    CM(11, 21)        # 0.8220641 - over-estimation
+    CM(11,  1)        # 0.1803279 - under-estimation (small order of magnitude / close to zero)
+
+    # Case 3:        
+    # Diff = 1000, scale-up a, b, c, compare to case 1, scores are the same
+    CM(2000, 3000)    # 0.9230769 - over-estimation
+    CM(2000, 1000)    # 0.8       - under-estimation
+
+    # Case 4:        
+    # Diff = 1000, low discrimination with a large order of magnitude
+    CM(5000, 6000)    # 0.9836066 - over-estimation
+    CM(5000, 4000)    # 0.9756098 - under-estimation
+    
+    # Case 5:
+    # Diff = 10, cannot handle zero
+    CM(10, 20)       # 0.8
+    CM(10,  0)       # 0.0
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    a = c(21)
+    b = c(31)
+    c = c(11)
+    
+    CM(a, b)    # 0.9230769
+    CM(a, c)    # 0.8
+
+    a = c(11)
+    b = c(21)
+    c = c(01)
+    
+    CM(a, b)    # 0.8220641
+    CM(a, c)    # 0.1803279
+
     a = c(1000)
-    b = c(1900)
+    b = c(1010)
+    c = c(990)
+    
+    CM(a, b)    # 0.9230769
+    CM(a, c)    # 0.8
+    
+        
+    a = c(200)
+    b = c(300)
     c = c(100)
+    
+    CM(a, b)
+    CM(a, c)
+    
+        
+    a = c(11000)
+    b = c(21000)
+    c = c(1000)
+    
+    CM(a, b)
+    CM(a, c)
+    
+
+    a = c(110, 110)
+    b = c(120, 120)
+    c = c(100, 100)
+    
+    CM(a, b)
+    CM(a, c)
+    
+    a = c(110, 110)
+    b = c(125, 115)
+    c = c( 95, 105)
+    
+    CM(a, b)
+    CM(a, c)
+    
+        
+    a = c(1100)
+    b = c(2100)
+    c = c(100)
+    
+    CM(a, b)
+    CM(a, c)
+
+    a = c(1000)
+    b = c(2000)
+    c = c(0)
+    
+    CM(a, b)
+    CM(a, c)
+    
+    a = c(100000)
+    b = c(100900)
+    c = c( 99100)
+    
+    CM(a, b)
+    CM(a, c)
+
+    a = c(901)
+    b = c(1801)
+    c = c(1)
+    
+    CM(a, b)
+    CM(a, c)
+
+    a = c(900)
+    b = c(1800)
+    c = c(0)
     
     CM(a, b)
     CM(a, c)

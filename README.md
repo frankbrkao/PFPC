@@ -1,30 +1,6 @@
 # 颱風停電預測挑戰賽
   https://dc.dsp.im/main/content/Typhoon-caused-Power-Outages-Prediction-Challenge
 
-# Working items
-* More Features
-  - Download the detail of wind / rain info from 颱風資料庫(http://rdc28.cwb.gov.tw/)
-
-* Clean data
-  - Family
-
-* Data normalization
-  - Predict the percenatge of failed household instead of # of failed household
-
-* Train
-  - Merge all typhoons' data to build one model
-  - Try: xgboost
-  - Implement cross validation
-
-* Scoring
-  - Try: Set the predicted value of a village to zero if the failed household is always 0 at this village
-
-* Survey
-  - Paper survey - features, learning method
-  - 2014-Forecasting hurricane-induced power outage durations
-    https://www.researchgate.net/publication/271920161_Forecasting_hurricane-induced_power_outage_durations
-    
-
 # Reference data
 * 颱風資料 - 颱風資料庫
   - http://rdc28.cwb.gov.tw/
@@ -78,6 +54,7 @@
 # Submit history
 * 59.01400_submit_dc_1112_233124.csv
   - Add CWB observation data (town-level)
+  - mix the prediction from 58.14500_submit_dc_1103_213554.csv as training data
 
 * 58.14500_submit_dc_1103_213554.csv
   - Replace meters with household
