@@ -1,15 +1,18 @@
 # 颱風停電預測挑戰賽
   https://dc.dsp.im/main/content/Typhoon-caused-Power-Outages-Prediction-Challenge
 
-### Data pre-processing
-* gen_pole_info()
-  - Source  
-    電桿資料 - 政府資料開放平台 - 台灣電力公司_電桿坐標及桿號  
-    https://data.gov.tw/dataset/33305  
-  - Inputs  
-    ./data/poledata/*pole.csv    
-  - Output  
-    ./data/pole.csv
+# Data pre-processing
+### # gen_pole_info()
+* Source  
+  電桿資料 - 政府資料開放平台 - 台灣電力公司_電桿坐標及桿號  
+  https://data.gov.tw/dataset/33305      
+* Inputs  
+  ./data/poledata/*pole.csv  
+* pre-processing  
+  - Merge all pole.csv and pole types  
+  - Fix naming of administrative regions  
+* Output  
+  ./data/pole.csv
 
 * gen_family_info()
   - Source  
@@ -37,6 +40,33 @@
     ./data/meters.csv  
   - Output  
     ./data/village.csv
+
+* gen_station_observation()
+  - Source  
+    - 氣象局 - 觀測資料查詢系統  
+      http://e-service.cwb.gov.tw/HistoryDataQuery/index.jsp  
+    - 有人氣象測站基本資料  
+      https://data.gov.tw/dataset/45128  
+    - 無人氣象測站基本資料  
+      https://data.gov.tw/dataset/34517  
+    - 每月氣象-過去9年局屬地面測站每月氣象資料  
+      https://data.gov.tw/dataset/23827  
+    - 一年觀測資料-本局屬地面測站一年觀測資料  
+      https://data.gov.tw/dataset/33029   
+  - Inputs  
+    ./data/station_locaion.csv  
+    ./data/station_observation.csv  
+    ./data/village.csv
+  - Output
+    ./data/station_obs.csv
+
+* merge_all_info()
+  - Inputs
+    ./submit/59.01400_submit_dc_1112_233124.csv
+    ./data/train.csv
+    ./data/station_obs.csv
+  - Output
+    ./data/merged.csv
 
 # Reference data
 * 颱風資料 - 颱風資料庫
