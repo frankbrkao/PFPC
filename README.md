@@ -9,64 +9,71 @@
 * Inputs  
   ./data/poledata/*pole.csv  
 * pre-processing  
-  - Merge all pole.csv and pole types  
-  - Fix naming of administrative regions  
+  x Merge all pole.csv and pole types  
+  x Fix naming of administrative regions  
 * Output  
   ./data/pole.csv
 
-* gen_family_info()
-  - Source  
-    人口戶數資料 - 政府資料開放平臺 - 村里戶數、單一年齡人口
-    https://data.gov.tw/dataset/32973#r0
-  - Inputs  
-    ./data/opendata10603M030.csv
-  - Output  
-    ./data/family.csv
+### # gen_family_info()
+* Source  
+  人口戶數資料 - 政府資料開放平臺 - 村里戶數、單一年齡人口
+  https://data.gov.tw/dataset/32973#r0
+* Inputs  
+  ./data/opendata10603M030.csv
+* pre-processing  
+  x Fix naming of administrative regions  
+* Output  
+  ./data/family.csv
 
-* gen_meters_info()
-  - Source
-    用電戶數 - 台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
-    http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
-  - Inputs
-    ./data/open_sell_amt_vil.csv
-  - Output  
-    ./data/meters.csv
+### # gen_meters_info()
+* Source
+  用電戶數 - 台電 - 縣市住商用電資訊 - 各縣市村里售電資訊
+  http://www.taipower.com.tw/content/announcement/ann01.aspx?BType=37
+* Inputs
+  ./data/open_sell_amt_vil.csv
+* pre-processing  
+  x Fix naming of administrative regions    
+* Output  
+  ./data/meters.csv
 
-* gen_village_info()
-  - Inputs  
-    ./data/train.csv  
-    ./data/pole.csv  
-    ./data/family.csv  
-    ./data/meters.csv  
-  - Output  
-    ./data/village.csv
+### # gen_village_info()
+* Inputs  
+  ./data/train.csv  
+  ./data/pole.csv  
+  ./data/family.csv  
+  ./data/meters.csv  
+* pre-processing  
+  x Fix naming of administrative regions    
+  X Set missing values to 0
+* Output  
+  ./data/village.csv
 
-* gen_station_observation()
-  - Source  
-    - 氣象局 - 觀測資料查詢系統  
-      http://e-service.cwb.gov.tw/HistoryDataQuery/index.jsp  
-    - 有人氣象測站基本資料  
-      https://data.gov.tw/dataset/45128  
-    - 無人氣象測站基本資料  
-      https://data.gov.tw/dataset/34517  
-    - 每月氣象-過去9年局屬地面測站每月氣象資料  
-      https://data.gov.tw/dataset/23827  
-    - 一年觀測資料-本局屬地面測站一年觀測資料  
-      https://data.gov.tw/dataset/33029   
-  - Inputs  
-    ./data/station_locaion.csv  
-    ./data/station_observation.csv  
-    ./data/village.csv
-  - Output
-    ./data/station_obs.csv
+### # gen_station_observation()
+* Source  
+  氣象局 - 觀測資料查詢系統  
+  http://e-service.cwb.gov.tw/HistoryDataQuery/index.jsp  
+  有人氣象測站基本資料  
+  https://data.gov.tw/dataset/45128  
+  無人氣象測站基本資料  
+  https://data.gov.tw/dataset/34517  
+  每月氣象-過去9年局屬地面測站每月氣象資料  
+  https://data.gov.tw/dataset/23827  
+  一年觀測資料-本局屬地面測站一年觀測資料  
+  https://data.gov.tw/dataset/33029   
+* Inputs  
+  ./data/station_locaion.csv  
+  ./data/station_observation.csv  
+  ./data/village.csv
+* Output
+  ./data/station_obs.csv
 
-* merge_all_info()
-  - Inputs
-    ./submit/59.01400_submit_dc_1112_233124.csv
-    ./data/train.csv
-    ./data/station_obs.csv
-  - Output
-    ./data/merged.csv
+### # merge_all_info()
+* Inputs
+  ./submit/59.01400_submit_dc_1112_233124.csv
+  ./data/train.csv
+  ./data/station_obs.csv
+* Output
+  ./data/merged.csv
 
 # Reference data
 * 颱風資料 - 颱風資料庫
