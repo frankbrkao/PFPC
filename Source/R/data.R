@@ -36,8 +36,8 @@ gen_pole_info = function() {
     pole$村里   = as.factor(pole$村里)
     pole$型式   = as.factor(pole$型式)
 
-    levels(pole$縣市)   = gsub(x=levels(pole$縣市), pattern="臺", replacement="台")
-    levels(pole$縣市)   = gsub(x=levels(pole$縣市), pattern="台東", replacement="臺東")
+    levels(pole$縣市)   = gsub(x=levels(pole$縣市),   pattern="臺",     replacement="台")
+    levels(pole$縣市)   = gsub(x=levels(pole$縣市),   pattern="台東",   replacement="臺東")
     levels(pole$行政區) = gsub(x=levels(pole$行政區), pattern="頭份鎮", replacement="頭份市")
 
     pole$key = paste0(pole$縣市, pole$行政區, pole$村里) %>% as.factor()
@@ -445,6 +445,7 @@ gen_station_observation = function() {
     levels(station_observation$tp_eng) = gsub(x=levels(station_observation$tp_eng), pattern="nesat",   replacement="nesatandhaitang")
 
     st_obs = right_join(st_locations, station_observation, by=c("st_no" = "st_code"))
+    st_obs = na.omit(st_obs)
 
     st_obs$town_key = paste0(st_obs$city, st_obs$town) %>% as.factor
         
@@ -453,9 +454,6 @@ gen_station_observation = function() {
     st_obs$city_grp[sel_rows] = "新竹縣"
     sel_rows = which(st_obs$city_grp == "嘉義市")
     st_obs$city_grp[sel_rows] = "嘉義縣"
-
-    # sel_rows = which(st_obs$city %in% c("新竹縣", "台中市", "南投縣", "嘉義縣"))
-    # st_obs_gust = st_obs[sel_rows,]
 
     # =============================================================================================
 
@@ -468,51 +466,73 @@ gen_station_observation = function() {
     village$city_grp[sel_rows] = "嘉義縣"
 
     # =============================================================================================
-
-    grp_obs_city = group_by(st_obs, city_grp, tp_code, tp_cht, tp_eng) %>% 
+ 
+    grp_obs_city = group_by(st_obs, city_grp, tp_code, tp_cht, tp_eng) %>%
         summarise(
-            c_precp_total   = mean(precp_total), 
-            c_precp_day     = mean(precp_day),
-            c_precp_24h     = mean(precp_24h),
-            c_precp_12h     = mean(precp_12h),
-            c_precp_6h      = mean(precp_6h),
-            c_precp_3h      = mean(precp_3h),
-            c_precp_1h      = mean(precp_1h),
-            c_wind          = max(wind),
-            c_gust          = max(gust),
-            c_avg_precp_day = mean(precp_day),
-            c_avg_precp_24h = mean(precp_24h),
-            c_avg_precp_12h = mean(precp_12h),
-            c_avg_precp_6h  = mean(precp_6h),
-            c_avg_precp_3h  = mean(precp_3h),
-            c_avg_precp_1h  = mean(precp_1h),
-            c_avg_wind      = mean(wind),
-            c_avg_gust      = mean(gust)
+            c_precp_total     = max(precp_total), 
+            c_precp_day       = max(precp_day),
+            c_precp_24h       = max(precp_24h),
+            c_precp_12h       = max(precp_12h),
+            c_precp_6h        = max(precp_6h),
+            c_precp_3h        = max(precp_3h),
+            c_precp_1h        = max(precp_1h),
+            c_wind            = max(wind),
+            c_gust            = max(gust),
+            c_avg_precp_total = mean(precp_total), 
+            c_avg_precp_day   = mean(precp_day),
+            c_avg_precp_24h   = mean(precp_24h),
+            c_avg_precp_12h   = mean(precp_12h),
+            c_avg_precp_6h    = mean(precp_6h),
+            c_avg_precp_3h    = mean(precp_3h),
+            c_avg_precp_1h    = mean(precp_1h)
+            # c_avg_wind      = mean(wind),
+            # c_avg_gust      = mean(gust)
             )
 
     # =============================================================================================
+    
+    # Select stations, where its' st_no begin with "46~" or "C0", to calculate the average wind
+    tmp_obs_city = st_obs %>% 
+        subset(startsWith(st_no, "46") | startsWith(st_no, "C0"), select=c("city_grp", "tp_code", "wind")) %>%
+        group_by(city_grp, tp_code) %>%
+        summarise(c_avg_wind = mean(wind))
 
-    obs_gust = filter(st_obs, (city %in% c("新竹縣", "台中市")) & (gust > 0))
+    grp_obs_city = left_join(grp_obs_city, tmp_obs_city, by=c("city_grp"="city_grp", "tp_code"="tp_code"))
 
-    grp_obs_gust = group_by(obs_gust, tp_code, tp_cht, tp_eng) %>% 
-        summarise(c_gust = mean(gust))
-
-    sel_rows = which(grp_obs_city$city_grp == "苗栗縣")
-    grp_obs_city$c_gust[sel_rows] = grp_obs_gust$c_gust
+    # Select stations, where its' st_no begin with "46~", to calculate the average wind
+    tmp_obs_city = st_obs %>% 
+        subset(startsWith(st_no, "46"), select=c("city_grp", "tp_code", "gust")) %>%
+        group_by(city_grp, tp_code) %>%
+        summarise(c_avg_gust = mean(gust))
+    
+    grp_obs_city = left_join(grp_obs_city, tmp_obs_city, by=c("city_grp"="city_grp", "tp_code"="tp_code"))
+    grp_obs_city[is.na(grp_obs_city)] = 0
 
     # =============================================================================================
 
-    obs_gust = filter(st_obs, (city %in% c("台中市", "南投縣", "嘉義縣")) & (gust > 0))
+    obs_gust = st_obs %>% 
+        filter(city_grp %in% c("新竹縣", "台中市")) %>% 
+        subset(startsWith(st_no, "46"), select=c("tp_code", "gust")) %>%
+        group_by(tp_code) %>% 
+        summarise(c_gust = max(gust), c_avg_gust = mean(gust))
 
-    grp_obs_gust = group_by(obs_gust, tp_code, tp_cht, tp_eng) %>% 
-        summarise(c_gust = mean(gust))
+    sel_rows = which(grp_obs_city$city_grp == "苗栗縣")
+    grp_obs_city[sel_rows, c("c_gust", "c_avg_gust")] = obs_gust[, c("c_gust", "c_avg_gust")]
+
+    # =============================================================================================
+   
+    obs_gust = st_obs %>% 
+        filter(city %in% c("台中市", "南投縣", "嘉義縣")) %>% 
+        subset(startsWith(st_no, "46"), select=c("tp_code", "st_no", "gust")) %>%
+        group_by(tp_code) %>% 
+        summarise(c_gust = max(gust), c_avg_gust = mean(gust))
 
     sel_rows = which(grp_obs_city$city_grp == "雲林縣")
-    grp_obs_city$c_gust[sel_rows] = grp_obs_gust$c_gust
+    grp_obs_city[sel_rows, c("c_gust", "c_avg_gust")] = obs_gust[, c("c_gust", "c_avg_gust")]
 
     sel_rows = which(grp_obs_city$city_grp == "彰化縣")
-    grp_obs_city$c_gust[sel_rows] = grp_obs_gust$c_gust
-    
+    grp_obs_city[sel_rows, c("c_gust", "c_avg_gust")] = obs_gust[, c("c_gust", "c_avg_gust")]
+
     # =============================================================================================    
     
     grp_obs_town = group_by(st_obs, town_key, tp_code, tp_cht, tp_eng) %>%
@@ -523,9 +543,23 @@ gen_station_observation = function() {
             t_precp_12h   = mean(precp_12h),
             t_precp_6h    = mean(precp_6h),
             t_precp_3h    = mean(precp_3h),
-            t_precp_1h    = mean(precp_1h),
-            t_wind        = max(wind),
-            t_gust        = max(gust))
+            t_precp_1h    = mean(precp_1h))
+            # t_wind        = max(wind),
+            # t_gust        = max(gust))
+
+    tmp_obs_town = st_obs %>% 
+        subset(startsWith(st_no, "46") | startsWith(st_no, "C0"), select=c("town_key", "tp_code", "wind")) %>%
+        group_by(town_key, tp_code) %>%
+        summarise(t_wind = max(wind))
+
+    grp_obs_town = left_join(grp_obs_town, tmp_obs_town, by=c("town_key"="town_key", "tp_code"="tp_code"))
+
+    tmp_obs_town = st_obs %>% 
+        subset(startsWith(st_no, "46"), select=c("town_key", "tp_code", "gust")) %>%
+        group_by(town_key, tp_code) %>%
+        summarise(t_gust = max(gust))
+
+    grp_obs_town = left_join(grp_obs_town, tmp_obs_town, by=c("town_key"="town_key", "tp_code"="tp_code"))
 
     # =============================================================================================
         
@@ -546,7 +580,7 @@ gen_station_observation = function() {
     vil_st$gust        = vil_st$t_gust
 
     null_rows = is.na(vil_st$precp_total)
-    vil_st$precp_total[null_rows] = vil_st$c_precp_total[null_rows]
+    vil_st$precp_total[null_rows] = vil_st$c_avg_precp_total[null_rows]
 
     null_rows = is.na(vil_st$precp_day)
     vil_st$precp_day[null_rows] = vil_st$c_avg_precp_day[null_rows]
@@ -572,20 +606,30 @@ gen_station_observation = function() {
     null_rows = is.na(vil_st$gust)
     vil_st$gust[null_rows] = vil_st$c_avg_gust[null_rows]
 
-    zero_rows = which(vil_st$wind == 0)
-    vil_st$wind[zero_rows] = vil_st$c_avg_wind[zero_rows]
+    colnames(vil_st)
+    subset(vil_st, gust < wind, select=c("key", "tp", "wind", "gust"))
 
-    zero_rows = which(vil_st$gust == 0)
-    vil_st$gust[zero_rows] = vil_st$c_avg_gust[zero_rows]
+    # colnames(vil_st)
+    # t = group_by(vil_st, city_grp, tp) %>% 
+    #     summarise(gust = max(gust), wind = max(wind))
+    # View(t)
 
-    zero_rows = which(vil_st$precp_24h == 0)
-    vil_st$precp_total[zero_rows] = vil_st$c_precp_total[zero_rows]
-    vil_st$precp_day[zero_rows]   = vil_st$c_avg_precp_day[zero_rows]
-    vil_st$precp_24h[zero_rows]   = vil_st$c_avg_precp_24h[zero_rows]
-    vil_st$precp_12h[zero_rows]   = vil_st$c_avg_precp_12h[zero_rows]
-    vil_st$precp_6h[zero_rows]    = vil_st$c_avg_precp_6h[zero_rows]
-    vil_st$precp_3h[zero_rows]    = vil_st$c_avg_precp_3h[zero_rows]
-    vil_st$precp_1h[zero_rows]    = vil_st$c_avg_precp_1h[zero_rows]
+    # zero_rows = which(vil_st$wind == 0)
+    # vil_st$wind[zero_rows] = vil_st$c_avg_wind[zero_rows]
+
+    # colnames(vil_st)
+    # zero_rows = which(vil_st$gust == 0)
+    # vil_st$gust[zero_rows] = vil_st$c_avg_gust[zero_rows]
+    # vil_st[zero_rows, c("key", "gust")]
+
+    # zero_rows = which(vil_st$precp_24h == 0)
+    # vil_st$precp_total[zero_rows] = vil_st$c_precp_total[zero_rows]
+    # vil_st$precp_day[zero_rows]   = vil_st$c_avg_precp_day[zero_rows]
+    # vil_st$precp_24h[zero_rows]   = vil_st$c_avg_precp_24h[zero_rows]
+    # vil_st$precp_12h[zero_rows]   = vil_st$c_avg_precp_12h[zero_rows]
+    # vil_st$precp_6h[zero_rows]    = vil_st$c_avg_precp_6h[zero_rows]
+    # vil_st$precp_3h[zero_rows]    = vil_st$c_avg_precp_3h[zero_rows]
+    # vil_st$precp_1h[zero_rows]    = vil_st$c_avg_precp_1h[zero_rows]
 
     # =============================================================================================
         
