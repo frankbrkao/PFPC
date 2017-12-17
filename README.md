@@ -16,7 +16,7 @@
 
 ### # gen_family_info()
 * Source  
-  人口戶數資料 - 政府資料開放平臺 - 村里戶數、單一年齡人口
+  人口戶數資料 - 政府資料開放平臺 - 村里戶數、單一年齡人口  
   https://data.gov.tw/dataset/32973#r0
 * Inputs  
   ./data/opendata10603M030.csv
@@ -50,8 +50,10 @@
 
 ### # gen_station_observation()
 * Source  
-  氣象局 - 觀測資料查詢系統  
-  http://e-service.cwb.gov.tw/HistoryDataQuery/index.jsp  
+  颱風資料庫：各測站極端值查詢    
+  http://rdc28.cwb.gov.tw/TDB/rank_by_station  
+  氣象局：觀測資料查詢系統    
+  http://e-service.cwb.gov.tw/HistoryDataQuery/index.jsp    
   有人氣象測站基本資料  
   https://data.gov.tw/dataset/45128  
   無人氣象測站基本資料  
